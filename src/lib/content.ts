@@ -41,12 +41,15 @@ export const values = [
   },
 ] as const;
 
+// Paint colours taken from the 212 T01 Blender model (one per factory colour)
 export const colors212 = [
-  { name: "Oliwkowy", hex: "#4b5a3a", src: `${U}/2025/10/212-car.png` },
-  { name: "Czarny", hex: "#121212", src: `${U}/2025/10/212-black.png` },
-  { name: "Grafitowy", hex: "#7d8085", src: `${U}/2025/10/212-gray-480x236.png` },
-  { name: "Biały", hex: "#ececec", src: `${U}/2025/10/212-white-2-480x236.png` },
+  { name: "Szałwiowa zieleń", hex: "#707465" },
+  { name: "Zieleń Medog", hex: "#37423f" },
+  { name: "Czerń północy", hex: "#3c3e41" },
+  { name: "Szary piaskowy", hex: "#5b5b5c" },
+  { name: "Biel", hex: "#dee7e4" },
 ];
+export const photo212 = `${U}/2025/10/212-car.png`;
 
 export const offroadSpecs = [
   { value: "2.0 T", label: "GDI — turbo z wtryskiem bezpośrednim" },

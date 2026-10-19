@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { Check } from "lucide-react";
+import dynamic from "next/dynamic";
+import { AnimatePresence, motion, useInView, useScroll, useTransform, type MotionValue } from "motion/react";
+import { Check, Rotate3d } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs } from "@/lib/content";
+import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs, photo212 } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
+
+const Car3D = dynamic(() => import("./Car3D"), { ssr: false });
 
 function useParallax(target: React.RefObject<HTMLElement | null>, distance: number): MotionValue<number> {
   const { scrollYProgress } = useScroll({ target, offset: ["start end", "end start"] });
@@ -47,6 +50,10 @@ function PriceCta({ label, price, cta }: { label: string; price: string; cta: st
 export function Offroad212() {
   const ref = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+  const [ready, setReady] = useState(false);
+  const viewer = useRef<HTMLDivElement>(null);
+  // Start downloading the 3D model only when the section gets close to the viewport
+  const nearView = useInView(viewer, { once: true, margin: "600px 0px" });
   const wordX = useParallax(ref, 160);
   const carY = useParallax(ref, 50);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
@@ -62,29 +69,43 @@ export function Offroad212() {
       </motion.div>
 
       <div className="relative mx-auto grid max-w-[1280px] items-center gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr]">
-        <div className="relative aspect-[4/3]">
+        <div ref={viewer} className="relative aspect-[4/3]">
           <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
           <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, x: -60, filter: "blur(8px)" }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={colors212[active].src}
-                  alt={`BAW 212 — ${colors212[active].name}`}
-                  fill
-                  sizes="(max-width:1024px) 100vw, 55vw"
-                  className="scale-110 object-contain drop-shadow-[0_40px_40px_rgba(0,0,0,.6)]"
-                  quality={90}
-                />
-              </motion.div>
+            <AnimatePresence>
+              {!ready && (
+                <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.6 }} className="absolute inset-0">
+                  <Image
+                    src={photo212}
+                    alt="BAW 212 Off-Road"
+                    fill
+                    sizes="(max-width:1024px) 100vw, 55vw"
+                    className="scale-110 object-contain drop-shadow-[0_40px_40px_rgba(0,0,0,.6)]"
+                    quality={90}
+                  />
+                </motion.div>
+              )}
             </AnimatePresence>
+            {nearView && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: ready ? 1 : 0 }}
+                transition={{ duration: 0.8 }}
+                className="absolute -inset-x-[8%] -inset-y-[4%] cursor-grab active:cursor-grabbing"
+              >
+                <Car3D paint={colors212[active].hex} onReady={() => setReady(true)} />
+              </motion.div>
+            )}
           </motion.div>
+          {ready && (
+            <motion.span
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="pointer-events-none absolute top-0 right-0 flex items-center gap-2 rounded-full border border-white/10 bg-ink/60 px-3 py-1.5 text-xs text-white/70 backdrop-blur-md"
+            >
+              <Rotate3d className="size-3.5 text-brand" /> Przeciągnij, aby obrócić
+            </motion.span>
+          )}
           <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-3 backdrop-blur-xl">
             {colors212.map((c, i) => (
               <button
@@ -105,7 +126,7 @@ export function Offroad212() {
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                className="ml-2 w-20 text-sm text-white/80"
+                className="ml-2 w-32 text-sm text-white/80"
               >
                 {colors212[active].name}
               </motion.span>
