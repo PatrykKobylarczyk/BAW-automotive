@@ -59,7 +59,10 @@ export function Offroad212() {
   const setActive = is3d ? setPaintIdx : setPhotoIdx;
   const wordX = useParallax(ref, 160);
   const carY = useParallax(ref, 50);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
+  // Slide-in is driven by the car box itself (not the whole section), so it finishes as soon as
+  // the car is fully on screen — on mobile the stacked section is much taller than the car
+  const carBox = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: carBox, offset: ["start end", "end end"] });
   const carX = useTransform(scrollYProgress, [0, 1], ["-25%", "0%"]);
 
   return (
@@ -72,7 +75,7 @@ export function Offroad212() {
       </motion.div>
 
       <div className="relative mx-auto grid max-w-[1280px] items-center gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr]">
-        <div className="relative aspect-[4/3]">
+        <div ref={carBox} className="relative aspect-[4/3]">
           <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
           <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
             {/* Photo view (default); stays visible until the 3D model has loaded */}
