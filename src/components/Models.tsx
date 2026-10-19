@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { AnimatePresence, motion, useInView, useScroll, useTransform, type MotionValue } from "motion/react";
-import { Check, Rotate3d } from "lucide-react";
+import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs, photo212 } from "@/lib/content";
+import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 
 const Car3D = dynamic(() => import("./Car3D"), { ssr: false });
@@ -49,11 +49,14 @@ function PriceCta({ label, price, cta }: { label: string; price: string; cta: st
 
 export function Offroad212() {
   const ref = useRef<HTMLElement>(null);
-  const [active, setActive] = useState(0);
+  const [mode, setMode] = useState<"photo" | "3d">("photo");
+  const [photoIdx, setPhotoIdx] = useState(0);
+  const [paintIdx, setPaintIdx] = useState(0);
   const [ready, setReady] = useState(false);
-  const viewer = useRef<HTMLDivElement>(null);
-  // Start downloading the 3D model only when the section gets close to the viewport
-  const nearView = useInView(viewer, { once: true, margin: "600px 0px" });
+  const is3d = mode === "3d";
+  const swatches = is3d ? paints212 : colors212;
+  const active = is3d ? paintIdx : photoIdx;
+  const setActive = is3d ? setPaintIdx : setPhotoIdx;
   const wordX = useParallax(ref, 160);
   const carY = useParallax(ref, 50);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
@@ -69,15 +72,23 @@ export function Offroad212() {
       </motion.div>
 
       <div className="relative mx-auto grid max-w-[1280px] items-center gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr]">
-        <div ref={viewer} className="relative aspect-[4/3]">
+        <div className="relative aspect-[4/3]">
           <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
           <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
-            <AnimatePresence>
-              {!ready && (
-                <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.6 }} className="absolute inset-0">
+            {/* Photo view (default); stays visible until the 3D model has loaded */}
+            <AnimatePresence mode="wait">
+              {!(is3d && ready) && (
+                <motion.div
+                  key={is3d ? "loading" : photoIdx}
+                  initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
+                  animate={{ opacity: is3d ? 0.35 : 1, x: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, x: is3d ? 0 : -60, filter: "blur(8px)" }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0"
+                >
                   <Image
-                    src={photo212}
-                    alt="BAW 212 Off-Road"
+                    src={colors212[photoIdx].src}
+                    alt={`BAW 212 — ${colors212[photoIdx].name}`}
                     fill
                     sizes="(max-width:1024px) 100vw, 55vw"
                     className="scale-110 object-contain drop-shadow-[0_40px_40px_rgba(0,0,0,.6)]"
@@ -86,28 +97,56 @@ export function Offroad212() {
                 </motion.div>
               )}
             </AnimatePresence>
-            {nearView && (
+
+            {/* 3D view: the model is downloaded only after the visitor asks for it */}
+            {is3d && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: ready ? 1 : 0 }}
                 transition={{ duration: 0.8 }}
                 className="absolute -inset-x-[8%] -inset-y-[4%] cursor-grab active:cursor-grabbing"
               >
-                <Car3D paint={colors212[active].hex} onReady={() => setReady(true)} />
+                <Car3D paint={paints212[paintIdx].hex} onReady={() => setReady(true)} />
               </motion.div>
             )}
+            {is3d && !ready && (
+              <div className="absolute inset-0 grid place-items-center">
+                <span className="flex items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-2 text-sm text-white/80 backdrop-blur-md">
+                  <Loader2 className="size-4 animate-spin text-brand" /> Ładowanie modelu 3D…
+                </span>
+              </div>
+            )}
           </motion.div>
-          {ready && (
-            <motion.span
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="pointer-events-none absolute top-0 right-0 flex items-center gap-2 rounded-full border border-white/10 bg-ink/60 px-3 py-1.5 text-xs text-white/70 backdrop-blur-md"
+
+          {/* Mode switch */}
+          <div className="absolute top-0 right-0 z-10 flex flex-col items-end gap-2">
+            <button
+              onClick={() => {
+                setMode(is3d ? "photo" : "3d");
+                if (is3d) setReady(false);
+              }}
+              onMouseEnter={() => void import("./Car3D")}
+              className="group flex items-center gap-2 rounded-full border border-white/15 bg-ink/70 px-4 py-2 text-sm font-semibold backdrop-blur-md transition hover:border-brand hover:bg-brand"
             >
-              <Rotate3d className="size-3.5 text-brand" /> Przeciągnij, aby obrócić
-            </motion.span>
-          )}
+              {is3d ? <ImageIcon className="size-4" /> : <Box className="size-4 text-brand transition group-hover:text-white" />}
+              {is3d ? "Wróć do zdjęć" : "Zobacz model 3D"}
+            </button>
+            <AnimatePresence>
+              {is3d && ready && (
+                <motion.span
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="pointer-events-none flex items-center gap-2 rounded-full border border-white/10 bg-ink/60 px-3 py-1.5 text-xs text-white/70 backdrop-blur-md"
+                >
+                  <Rotate3d className="size-3.5 text-brand" /> Przeciągnij, aby obrócić
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-3 backdrop-blur-xl">
-            {colors212.map((c, i) => (
+            {swatches.map((c, i) => (
               <button
                 key={c.name}
                 onClick={() => setActive(i)}
@@ -122,13 +161,13 @@ export function Offroad212() {
             ))}
             <AnimatePresence mode="wait">
               <motion.span
-                key={active}
+                key={mode + active}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 className="ml-2 w-32 text-sm text-white/80"
               >
-                {colors212[active].name}
+                {swatches[active].name}
               </motion.span>
             </AnimatePresence>
           </div>

@@ -124,4 +124,3 @@ export default function Car3D({ paint, onReady }: { paint: string; onReady?: () 
   );
 }
 
-useGLTF.preload(MODEL);
