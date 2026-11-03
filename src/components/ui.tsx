@@ -2,7 +2,10 @@
 
 import { motion, useInView, useMotionValue, useSpring, animate } from "motion/react";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, type ReactNode } from "react";
+
+const MotionLink = motion.create(Link);
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -106,8 +109,10 @@ export function MagneticButton({
     light: "bg-white text-brand-dark hover:shadow-[0_15px_40px_-12px_rgba(0,0,0,.6)]",
   }[variant];
 
+  // Internal pages go through next/link (client-side navigation); anchors and external links stay plain
+  const Tag = href.startsWith("/") ? MotionLink : motion.a;
   return (
-    <motion.a
+    <Tag
       ref={ref}
       href={href}
       style={{ x, y }}
@@ -124,7 +129,7 @@ export function MagneticButton({
     >
       {children}
       <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-    </motion.a>
+    </Tag>
   );
 }
 
