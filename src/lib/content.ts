@@ -121,6 +121,22 @@ export const models = [
     intro:
       "Terenowy SUV z napędem 4WD, blokadami dyferencjałów i silnikiem 2.0 T GDI. Brodzi do 659 mm, podjeżdża pod 80% nachylenia i zachowuje komfort na co dzień.",
     highlights: [...offroadFeatures, "Silnik 2.0 T GDI z turbodoładowaniem i wtryskiem bezpośrednim", "Kąt natarcia 40,3°, kąt zejścia 35,5°"],
+    specs: [
+      { label: "Długość × szerokość × wysokość", value: "4705 × 1895 × 1936 mm" },
+      { label: "Rozstaw osi", value: "2860 mm" },
+      { label: "Prześwit", value: "235 mm" },
+      { label: "Kąt rampowy", value: "23,6°" },
+      { label: "Masa własna", value: "2235 kg" },
+      { label: "Moc maksymalna", value: "125 kW" },
+      { label: "Maksymalny moment obrotowy", value: "415 Nm" },
+      { label: "Skrzynia biegów", value: "automatyczna ZF, 8 biegów" },
+      { label: "Napęd", value: "4WD part-time z reduktorem" },
+      { label: "Norma emisji", value: "Euro VI b" },
+      { label: "Zbiornik paliwa", value: "80 l" },
+      { label: "Opony", value: "265/70 R17" },
+      { label: "Hamulec postojowy", value: "elektryczny (EPB)" },
+    ],
+    options: ["Blokada przedniego dyferencjału", "Elektrycznie wysuwane stopnie", "Szyberdach", "Wyciągarka elektryczna"],
     faq: [
       {
         q: "Ile kosztuje BAW 212 T01 w Polsce?",
@@ -133,6 +149,10 @@ export const models = [
       {
         q: "Jaka jest głębokość brodzenia BAW 212?",
         a: "Maksymalna głębokość brodzenia BAW 212 wynosi 659 mm, a maksymalne nachylenie podjazdu to 80%.",
+      },
+      {
+        q: "Jakie są wymiary BAW 212 T01?",
+        a: "BAW 212 T01 ma 4705 mm długości, 1895 mm szerokości i 1936 mm wysokości. Rozstaw osi wynosi 2860 mm, a prześwit 235 mm.",
       },
       {
         q: "Gdzie można obejrzeć i kupić BAW 212?",
@@ -157,6 +177,20 @@ export const models = [
       "Układ kierowniczy stabilny przy wysokiej prędkości i lekki przy niskiej",
       "Stworzony do stałych tras, wysokiego obrotu i lekkiej dystrybucji",
     ],
+    specs: [
+      { label: "Bateria", value: "LiFePO4, 15,4 kWh, szczelność IP67" },
+      { label: "Zasięg", value: "min. 150 km" },
+      { label: "Moc silnika", value: "30 kW" },
+      { label: "Maksymalny moment obrotowy", value: "110 Nm" },
+      { label: "Prędkość maksymalna", value: "71 km/h" },
+      { label: "Liczba miejsc", value: "2" },
+      { label: "Długość × szerokość × wysokość", value: "3820 × 1480 × 1680 mm" },
+      { label: "Rozstaw osi", value: "2630 mm" },
+      { label: "Masa własna", value: "850 kg" },
+      { label: "Skrzynia ładunkowa (dł. × szer. × wys.)", value: "2015 × 1400 × 320 mm" },
+      { label: "Zabudowa furgon (wersja Box)", value: "3,6 m³" },
+    ],
+    options: ["Pakiet zimowy: lampa LED, pług śnieżny, posypywarka soli, łańcuchy śniegowe (+9 900 zł brutto)"],
     faq: [
       {
         q: "Ile kosztuje elektryczny BAW Mini Truck?",
@@ -169,6 +203,18 @@ export const models = [
       {
         q: "Jakie wersje Mini Trucka są dostępne?",
         a: "Mini Truck jest dostępny w dwóch wersjach zabudowy: Box oraz Cargo.",
+      },
+      {
+        q: "Jaki zasięg ma elektryczny BAW Mini Truck?",
+        a: "Mini Truck ma baterię LiFePO4 o pojemności 15,4 kWh i zasięg co najmniej 150 km, co wystarcza na typowy dzień dostaw w mieście.",
+      },
+      {
+        q: "Czy na BAW Mini Truck można dostać dopłatę NaszEauto?",
+        a: "Mini Truck może kwalifikować się do rządowego programu dopłat do samochodów elektrycznych NaszEauto. Aktualne warunki i kwoty sprawdzisz na gov.pl, a dealer pomoże przygotować wniosek.",
+      },
+      {
+        q: "Czy Mini Truck nadaje się do pracy zimą?",
+        a: "Tak. Dostępny jest pakiet zimowy z lampą LED, pługiem śnieżnym, posypywarką soli i łańcuchami śniegowymi za 9 900 zł brutto.",
       },
       {
         q: "Czy BAW Mini Truck można wziąć w leasing?",
@@ -193,6 +239,23 @@ export const models = [
       "Przednie hamulce tarczowe, tylne bębnowe",
       "Wersja Light Truck Cargo z zabudową Niewiadów",
     ],
+    specs: [
+      { label: "Długość", value: "5585 / 5985 mm" },
+      { label: "Szerokość × wysokość", value: "1880 × 2050 mm" },
+      { label: "Rozstaw osi", value: "3400 / 3600 mm" },
+      { label: "Ładowność", value: "2000 / 2500 kg" },
+      { label: "Masa własna", value: "1595 / 1740 kg" },
+      { label: "Pojemność silnika", value: "1590 / 1962 cm³" },
+      { label: "Moc maksymalna", value: "91 / 106 kW" },
+      { label: "Maksymalny moment obrotowy", value: "161 / 200 Nm" },
+      { label: "Prędkość maksymalna", value: "105 km/h" },
+      { label: "Skrzynia biegów", value: "manualna, 5 biegów" },
+      { label: "Napęd", value: "na tylną oś" },
+      { label: "Zawieszenie tylne", value: "resory piórowe" },
+      { label: "Opony", value: "185 R14 LT" },
+      { label: "Zabudowa Cargo (Niewiadów)", value: "kontener 3,6 × 1,8 m" },
+    ],
+    options: ["Zabudowa kontenerowa Niewiadów (wersja Cargo)", "Zabudowa furgon"],
     faq: [
       {
         q: "Ile kosztuje BAW Light Truck?",
@@ -200,7 +263,11 @@ export const models = [
       },
       {
         q: "Jakim paliwem jest napędzany BAW Light Truck?",
-        a: "BAW Light Truck ma silnik benzynowy.",
+        a: "BAW Light Truck ma silnik benzynowy o pojemności 1590 lub 1962 cm³ i mocy 91 lub 106 kW, w zależności od wersji. Napęd trafia na tylną oś przez 5-biegową skrzynię manualną.",
+      },
+      {
+        q: "Jaka jest ładowność BAW Light Truck?",
+        a: "W zależności od wersji BAW Light Truck przewozi od 2000 do 2500 kg ładunku. Wersje różnią się długością (5585 lub 5985 mm) i rozstawem osi.",
       },
       {
         q: "Czym różni się Light Truck od Light Truck Cargo?",

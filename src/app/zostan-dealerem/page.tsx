@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { Contact, Dealer } from "@/components/Closing";
+import { Dealer } from "@/components/Closing";
+import DealerForm from "@/components/DealerForm";
 import { Breadcrumbs, Faq, Section } from "@/components/PageParts";
+import { company } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata("dealer");
@@ -13,7 +15,7 @@ const benefits = [
 ];
 
 const steps = [
-  { title: "Zgłoszenie", text: "Wypełnij formularz poniżej i wybierz „Współpraca dealerska”." },
+  { title: "Zgłoszenie", text: "Wypełnij formularz zgłoszeniowy na dole strony." },
   { title: "Rozmowa", text: "Skontaktujemy się, aby poznać Twoją lokalizację, zaplecze i plany." },
   { title: "Umowa i start", text: "Ustalamy warunki, szkolimy zespół i dostarczamy pojazdy demonstracyjne." },
 ];
@@ -25,7 +27,7 @@ const faq = [
   },
   {
     q: "Jak zgłosić chęć współpracy?",
-    a: "Wypełnij formularz kontaktowy na tej stronie i wybierz temat „Współpraca dealerska”. Odezwiemy się z informacjami o warunkach.",
+    a: "Wypełnij formularz zgłoszeniowy na tej stronie. Odezwiemy się z informacjami o warunkach współpracy.",
   },
 ];
 
@@ -57,7 +59,21 @@ export default function Page() {
         </ol>
       </Section>
       <Faq items={faq} title="Współpraca dealerska — pytania" />
-      <Contact title="Porozmawiajmy o współpracy." defaultModel="Współpraca dealerska" />
+      <Section id="kontakt" eyebrow="Formularz zgłoszeniowy" title="Zgłoś chęć współpracy" className="border-t border-white/10">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
+          <div className="space-y-4 text-white/75">
+            <p>Wypełnij formularz, a skontaktujemy się z Tobą, aby omówić warunki współpracy dealerskiej w Twoim regionie.</p>
+            <p>
+              Możesz też napisać bezpośrednio na{" "}
+              <a href={`mailto:${company.email}`} className="text-brand underline-offset-4 hover:underline">
+                {company.email}
+              </a>
+              .
+            </p>
+          </div>
+          <DealerForm />
+        </div>
+      </Section>
     </main>
   );
 }

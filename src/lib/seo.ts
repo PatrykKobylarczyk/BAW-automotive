@@ -5,8 +5,12 @@ import { company, media } from "./content";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://bawautomotive.pl").replace(/\/$/, "");
 export const SITE_NAME = "BAW Automotive Polska";
 
-/** Only the production deployment is indexed; previews stay out of Google. */
-export const INDEXABLE = process.env.VERCEL_ENV ? process.env.VERCEL_ENV === "production" : true;
+/**
+ * The site is indexed only on production AND once NEXT_PUBLIC_SITE_URL is set (i.e. after the domain switch).
+ * Until then the vercel.app copy stays out of Google, so it does not compete with the WordPress site that
+ * currently ranks and brings leads on bawautomotive.pl.
+ */
+export const INDEXABLE = Boolean(process.env.NEXT_PUBLIC_SITE_URL) && (process.env.VERCEL_ENV ?? "production") === "production";
 
 type PageSeo = {
   path: string;
@@ -50,7 +54,7 @@ export const pages = {
   "baw-mini-truck": {
     path: "/modele/baw-mini-truck",
     label: "BAW Mini Truck",
-    title: "Elektryczny BAW Mini Truck — dostawczy od 64 900 zł",
+    title: "Elektryczny BAW Mini Truck od 64 900 zł",
     description:
       "Elektryczny BAW Mini Truck do miejskiej logistyki i dostaw ostatniej mili. Wersje Box i Cargo, cena od 64 900 zł brutto. Zapytaj o leasing.",
     changeFrequency: "monthly",
@@ -86,7 +90,7 @@ export const pages = {
   dealer: {
     path: "/zostan-dealerem",
     label: "Zostań dealerem",
-    title: "Zostań dealerem BAW — współpraca dealerska w Polsce",
+    title: "Zostań dealerem BAW — współpraca dealerska",
     description:
       "Dołącz do sieci dealerów BAW w Polsce. SUV-y terenowe, samochody użytkowe i elektryczne, wsparcie techniczne i marketingowe importera.",
     changeFrequency: "yearly",
@@ -94,12 +98,12 @@ export const pages = {
   },
   service: {
     path: "/serwis",
-    label: "Serwis",
-    title: "Serwis i części BAW — autoryzowana obsługa",
+    label: "Salony i serwis",
+    title: "Salony i serwis BAW w Polsce",
     description:
-      "Serwis, przeglądy i części do samochodów BAW. Umów wizytę u oficjalnego importera BAW w Ksawerowie koło Łodzi.",
-    changeFrequency: "yearly",
-    priority: 0.6,
+      "Znajdź salon i serwis BAW w Polsce. Sprzedaż, jazdy próbne, przeglądy i oryginalne części u oficjalnego importera w Ksawerowie koło Łodzi.",
+    changeFrequency: "monthly",
+    priority: 0.7,
   },
   contact: {
     path: "/kontakt",

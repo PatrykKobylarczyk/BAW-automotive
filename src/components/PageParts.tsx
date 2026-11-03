@@ -139,6 +139,44 @@ export function Highlights({ model }: { model: Model }) {
   );
 }
 
+export function SpecTable({ model }: { model: Model }) {
+  return (
+    <Section eyebrow="Dane techniczne" title={`${model.name} — dane techniczne`}>
+      <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr]">
+        <div className="overflow-hidden rounded-3xl border border-white/10">
+          <table className="w-full text-left text-[15px]">
+            <caption className="sr-only">Dane techniczne {model.name}</caption>
+            <tbody className="divide-y divide-white/10">
+              {model.specs.map((r) => (
+                <tr key={r.label}>
+                  <th scope="row" className="w-1/2 bg-ink-2 px-6 py-4 font-medium text-muted">
+                    {r.label}
+                  </th>
+                  <td className="px-6 py-4 font-semibold">{r.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 className="mb-4 text-xs font-semibold tracking-[0.2em] text-white/50 uppercase">Wyposażenie dodatkowe</h3>
+          <ul className="space-y-3">
+            {model.options.map((o) => (
+              <li key={o} className="flex gap-3 text-white/80">
+                <Plus className="mt-0.5 size-5 shrink-0 text-brand" />
+                {o}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 text-sm text-muted">
+            Dane według informacji producenta. Pełną specyfikację wybranej wersji otrzymasz od dealera.
+          </p>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
 export function Faq({ items, title = "Najczęstsze pytania" }: { items: readonly { q: string; a: string }[]; title?: string }) {
   return (
     <Section eyebrow="FAQ" title={title}>

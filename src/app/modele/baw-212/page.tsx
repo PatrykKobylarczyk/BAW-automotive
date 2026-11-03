@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import OffroadReveal from "@/components/OffroadReveal";
 import { Offroad212 } from "@/components/Models";
 import { Contact } from "@/components/Closing";
-import { Breadcrumbs, Faq, Highlights, JsonLd, OtherModels } from "@/components/PageParts";
+import { Breadcrumbs, Faq, Highlights, JsonLd, OtherModels, SpecTable } from "@/components/PageParts";
 import { modelBySlug } from "@/lib/content";
 import { pageMetadata, productLd } from "@/lib/seo";
 
@@ -17,6 +17,7 @@ export default function Page() {
       <Offroad212 headingAs="h1" />
       <OffroadReveal />
       <Highlights model={model} />
+      <SpecTable model={model} />
       <Faq items={model.faq} title="BAW 212 — pytania i odpowiedzi" />
       <OtherModels current={model.slug} />
       <Contact title="Umów jazdę próbną BAW 212." defaultModel="212 T01" />

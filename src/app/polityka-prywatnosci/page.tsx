@@ -20,7 +20,7 @@ export default function Page() {
             </p>
 
             <h2>2. Jakie dane przetwarzamy i w jakim celu</h2>
-            <p>Przetwarzamy dane, które podajesz w formularzu kontaktowym: imię i nazwisko, nazwę firmy, adres e-mail, numer telefonu i treść wiadomości. Używamy ich, aby:</p>
+            <p>Przetwarzamy dane, które podajesz w formularzu kontaktowym lub zgłoszeniowym: imię i nazwisko, dane firmy (nazwa, stanowisko, NIP, adres, strona internetowa), adres e-mail, numer telefonu i treść wiadomości. Razem z wiadomością zapisujemy adres podstrony, z której ją wysłano, oraz źródło wizyty (np. kampania reklamowa). Używamy tych danych, aby:</p>
             <ul>
               <li>odpowiedzieć na zapytanie, przygotować ofertę lub umówić jazdę próbną (art. 6 ust. 1 lit. b RODO),</li>
               <li>prowadzić rozmowy o współpracy dealerskiej (art. 6 ust. 1 lit. f RODO, nasz prawnie uzasadniony interes),</li>
@@ -29,8 +29,8 @@ export default function Page() {
 
             <h2>3. Jak długo przechowujemy dane</h2>
             <p>
-              Dane z zapytań przechowujemy przez czas potrzebny do obsługi sprawy, a następnie do upływu terminów
-              przedawnienia roszczeń. Jeśli zawrzemy umowę, dane przechowujemy przez okres wymagany przepisami podatkowymi i
+              Dane z zapytań przechowujemy przez czas potrzebny do obsługi sprawy, nie dłużej niż 12 miesięcy od
+              ostatniego kontaktu, chyba że dłuższe przechowywanie jest potrzebne do dochodzenia roszczeń. Jeśli zawrzemy umowę, dane przechowujemy przez okres wymagany przepisami podatkowymi i
               rachunkowymi.
             </p>
 

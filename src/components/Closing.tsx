@@ -3,13 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
-import { Mail, MapPin, Send } from "lucide-react";
-import { useRef, useState, type MouseEvent } from "react";
+import { Mail, MapPin } from "lucide-react";
+import { useRef, type MouseEvent } from "react";
 import { company, media, models, nav, prices } from "@/lib/content";
+import { LeadForm } from "./LeadForm";
 import { Logo } from "./Navbar";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 
-function PriceCard({ p, i }: { p: (typeof prices)[number]; i: number }) {
+function PriceCard({ p, i, as: H = "h3" }: { p: (typeof prices)[number]; i: number; as?: "h2" | "h3" }) {
   const rx = useSpring(useMotionValue(0), { stiffness: 150, damping: 15 });
   const ry = useSpring(useMotionValue(0), { stiffness: 150, damping: 15 });
   const mx = useMotionValue(50);
@@ -56,11 +57,11 @@ function PriceCard({ p, i }: { p: (typeof prices)[number]; i: number }) {
           <Image src={p.img} alt={p.name} fill sizes="300px" className="object-contain" />
         </div>
         <span className="text-[11px] font-semibold tracking-[0.15em] text-brand uppercase">{p.fuel}</span>
-        <h3 className="mt-1.5 mb-6 text-lg leading-tight font-semibold">
+        <H className="mt-1.5 mb-6 text-lg leading-tight font-semibold">
           <Link href={p.href} className="after:absolute after:inset-0">
             BAW {p.name}
           </Link>
-        </h3>
+        </H>
         <div className="mt-auto">
           <div className="font-display text-2xl font-bold">{p.gross} zł</div>
           <div className="text-[13px] text-muted">{p.net} zł netto</div>
@@ -97,7 +98,7 @@ export function Pricing({
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {prices.map((p, i) => (
-            <PriceCard key={p.name} p={p} i={i} />
+            <PriceCard key={p.name} p={p} i={i} as={headingAs === "h1" ? "h2" : "h3"} />
           ))}
         </div>
       </div>
@@ -162,10 +163,6 @@ export function Contact({
   /** Pre-selected option in the "model" select, e.g. on a model page */
   defaultModel?: string;
 }) {
-  const [sent, setSent] = useState(false);
-  const field =
-    "w-full rounded-xl border border-white/10 bg-ink-3/60 px-4 py-3.5 text-[15px] outline-none transition placeholder:text-muted/70 focus:border-brand focus:bg-ink-3";
-
   return (
     <section id="kontakt" className={`relative overflow-hidden border-t border-white/10 ${headingAs === "h1" ? "pt-40 md:pt-48" : "pt-28 md:pt-36"} pb-28 md:pb-36`}>
       <div className="mx-auto grid max-w-[1280px] gap-16 px-5 md:px-8 lg:grid-cols-2">
@@ -200,48 +197,7 @@ export function Contact({
         </div>
 
         <Reveal delay={0.15}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSent(true);
-            }}
-            className="relative rounded-3xl border border-white/10 bg-ink-2 p-6 md:p-10"
-          >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <input className={field} name="name" autoComplete="name" aria-label="Imię i nazwisko" placeholder="Imię i nazwisko" required />
-              <input className={field} name="company" autoComplete="organization" aria-label="Firma" placeholder="Firma" />
-              <input className={field} name="email" type="email" autoComplete="email" aria-label="E-mail" placeholder="E-mail" required />
-              <input className={field} name="phone" type="tel" autoComplete="tel" aria-label="Telefon" placeholder="Telefon" />
-              <select className={`${field} sm:col-span-2`} name="model" aria-label="Interesujący model" defaultValue={defaultModel}>
-                <option value="" disabled>
-                  Interesujący model
-                </option>
-                {prices.map((p) => (
-                  <option key={p.name}>{p.name}</option>
-                ))}
-                <option>Współpraca dealerska</option>
-              </select>
-              <textarea className={`${field} min-h-32 sm:col-span-2`} name="message" aria-label="Wiadomość" placeholder="Wiadomość" />
-            </div>
-            <label className="mt-5 flex gap-3 text-sm text-muted">
-              <input type="checkbox" required className="mt-1 accent-brand" />
-              <span>
-                Wyrażam zgodę na przetwarzanie danych zgodnie z{" "}
-                <Link href="/polityka-prywatnosci" className="text-white/85 underline underline-offset-4 hover:text-brand">
-                  polityką prywatności
-                </Link>
-                .
-              </span>
-            </label>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-full bg-brand py-4 font-semibold"
-            >
-              {sent ? "Dziękujemy! Odezwiemy się wkrótce." : "Wyślij zapytanie"}
-              {!sent && <Send className="size-4" />}
-            </motion.button>
-          </form>
+          <LeadForm defaultModel={defaultModel} />
         </Reveal>
       </div>
 
@@ -256,7 +212,7 @@ const footerColumns = [
     links: [
       { label: "Wszystkie modele", href: "/modele" },
       { label: "Cennik", href: "/cennik" },
-      { label: "Serwis i części", href: "/serwis" },
+      { label: "Salony i serwis", href: "/serwis" },
       { label: "Zostań dealerem", href: "/zostan-dealerem" },
     ],
   },
