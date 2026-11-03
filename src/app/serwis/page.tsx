@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Contact } from "@/components/Closing";
+import DealerMap from "@/components/DealerMap";
 import { PageHeader, Section } from "@/components/PageParts";
 import { company } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
@@ -33,34 +34,15 @@ export default function Page() {
           ))}
         </div>
       </Section>
-      <Section eyebrow="Punkty sprzedaży" title="Gdzie kupić i serwisować BAW" className="bg-ink-2">
-        <div className="grid gap-5 md:grid-cols-2">
-          <article className="rounded-3xl border border-brand/50 bg-ink p-8 md:p-10">
-            <span className="text-[11px] font-semibold tracking-[0.15em] text-brand uppercase">Importer · salon · serwis</span>
-            <h3 className="mt-2 mb-4 font-display text-2xl font-bold">BAW Automotive Polska, Ksawerów</h3>
-            <address className="space-y-1 text-white/80 not-italic">
-              <div>{company.name}</div>
-              <div>
-                {company.street}, {company.city}
-              </div>
-              <div className="text-sm text-muted">{company.note}</div>
-              <a href={`mailto:${company.email}`} className="mt-3 inline-block text-brand">
-                {company.email}
-              </a>
-            </address>
-          </article>
-          <article className="rounded-3xl border border-white/10 p-8 md:p-10">
-            <span className="text-[11px] font-semibold tracking-[0.15em] text-muted uppercase">Wkrótce</span>
-            <h3 className="mt-2 mb-4 font-display text-2xl font-bold">Kolejne salony w Polsce</h3>
-            <p className="text-white/75">
-              Adresy kolejnych dealerów opublikujemy wkrótce. Prowadzisz salon lub serwis?{" "}
-              <Link href="/zostan-dealerem" className="text-brand underline-offset-4 hover:underline">
-                Zostań dealerem BAW
-              </Link>
-              .
-            </p>
-          </article>
-        </div>
+      <Section id="mapa" eyebrow="Wybierz oddział" title="Gdzie kupić i serwisować BAW" className="bg-ink-2">
+        <DealerMap />
+        <p className="mt-10 text-white/75">
+          Prowadzisz salon lub serwis?{" "}
+          <Link href="/zostan-dealerem" className="text-brand underline-offset-4 hover:underline">
+            Zostań dealerem BAW
+          </Link>
+          .
+        </p>
       </Section>
       <Contact title="Umów wizytę lub jazdę próbną." defaultModel="Serwis i części" />
     </main>

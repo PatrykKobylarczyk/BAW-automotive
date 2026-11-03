@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Dealer } from "@/components/Closing";
 import DealerForm from "@/components/DealerForm";
+import DealerMap from "@/components/DealerMap";
 import { Breadcrumbs, Faq, Section } from "@/components/PageParts";
 import { company } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
@@ -36,6 +37,9 @@ export default function Page() {
     <main>
       <Breadcrumbs page="dealer" className="relative z-10 -mb-16 pt-28 md:-mb-20 md:pt-32" />
       <Dealer headingAs="h1" ctaHref="#kontakt" />
+      <Section id="mapa" eyebrow="Sieć BAW w Polsce" title="Salony i serwisy BAW na mapie">
+        <DealerMap />
+      </Section>
       <Section eyebrow="Dlaczego BAW" title="Co zyskujesz jako dealer BAW" className="bg-ink-2">
         <div className="grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-2">
           {benefits.map((b, i) => (

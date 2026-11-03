@@ -283,3 +283,36 @@ export const models = [
 
 export type Model = (typeof models)[number];
 export const modelBySlug = (slug: Model["slug"]) => models.find((m) => m.slug === slug)!;
+
+/**
+ * Points on the dealer map (/zostan-dealerem, /serwis). Add a dealer here: name, address, coordinates
+ * (right-click the place in Google Maps to copy them) and optionally phone, e-mail and website.
+ */
+export type Dealer = {
+  id: string;
+  name: string;
+  kind: "Importer" | "Dealer" | "Serwis" | "Dealer i serwis";
+  street: string;
+  city: string;
+  region: string;
+  lat: number;
+  lng: number;
+  phone?: string;
+  email?: string;
+  url?: string;
+};
+
+export const dealers: Dealer[] = [
+  {
+    id: "ksawerow",
+    name: "BAW Automotive Polska",
+    kind: "Importer",
+    street: company.street,
+    city: company.city,
+    region: "łódzkie",
+    lat: 51.6826,
+    lng: 19.4012,
+    email: company.email,
+    url: "/kontakt",
+  },
+];
