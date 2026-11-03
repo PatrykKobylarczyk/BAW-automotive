@@ -3,7 +3,8 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
@@ -35,7 +36,7 @@ function SpecGrid({ specs }: { specs: { value: string; label: string }[] }) {
   );
 }
 
-function PriceCta({ label, price, cta }: { label: string; price: string; cta: string }) {
+function PriceCta({ label, price, cta, detailsHref }: { label: string; price: string; cta: string; detailsHref?: string }) {
   return (
     <div className="mt-8 flex flex-wrap items-center gap-7">
       <div>
@@ -43,11 +44,27 @@ function PriceCta({ label, price, cta }: { label: string; price: string; cta: st
         <strong className="font-display text-3xl font-bold">{price} zł</strong>
       </div>
       <MagneticButton href="#kontakt">{cta}</MagneticButton>
+      {detailsHref && (
+        <Link
+          href={detailsHref}
+          className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white/80 transition hover:text-white"
+        >
+          Szczegóły modelu
+          <ArrowUpRight className="size-4 text-brand transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </Link>
+      )}
     </div>
   );
 }
 
-export function Offroad212() {
+type SectionProps = {
+  /** "h1" on the model's own page, "h2" on the home page */
+  headingAs?: "h1" | "h2";
+  /** Link to the model page, shown on the home page */
+  detailsHref?: string;
+};
+
+export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
   const ref = useRef<HTMLElement>(null);
   const [mode, setMode] = useState<"photo" | "3d">("photo");
   const [photoIdx, setPhotoIdx] = useState(0);
@@ -180,7 +197,7 @@ export function Offroad212() {
           <Reveal>
             <Eyebrow>SUV terenowy</Eyebrow>
           </Reveal>
-          <SplitText text="212 Off-Road" className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
+          <SplitText as={headingAs} text={headingAs === "h1" ? "BAW 212 T01 Off-Road" : "212 Off-Road"} className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
           <Reveal delay={0.1}>
             <ul className="mb-8 space-y-3">
               {offroadFeatures.map((f) => (
@@ -192,7 +209,7 @@ export function Offroad212() {
           </Reveal>
           <Reveal delay={0.2}>
             <SpecGrid specs={offroadSpecs} />
-            <PriceCta label="T01 Diesel, od" price="174 500" cta="Umów jazdę próbną" />
+            <PriceCta label="T01 Diesel, od" price="174 500" cta="Umów jazdę próbną" detailsHref={detailsHref} />
           </Reveal>
         </div>
       </div>
@@ -200,7 +217,7 @@ export function Offroad212() {
   );
 }
 
-export function MiniTruck() {
+export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const intro = useRef<HTMLElement>(null);
   const photoY = useParallax(intro, 70);
   const pin = useRef<HTMLElement>(null);
@@ -224,7 +241,7 @@ export function MiniTruck() {
             <Reveal>
               <Eyebrow>Elektryczny dostawczak</Eyebrow>
             </Reveal>
-            <SplitText text="Mini Truck EV" className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
+            <SplitText as={headingAs} text={headingAs === "h1" ? "BAW Mini Truck EV" : "Mini Truck EV"} className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
             <Reveal delay={0.1}>
               <p className="mb-5 text-lg text-white/80">
                 Przełomowy produkt, przemyślany od konstrukcji mechanicznej, przez systemy, aż po serwis. Stworzony do
@@ -244,7 +261,7 @@ export function MiniTruck() {
                   { value: "Krótkie trasy", label: "idealny do dostaw ostatniej mili" },
                 ]}
               />
-              <PriceCta label="Mini Truck, od" price="64 900" cta="Zapytaj o ofertę" />
+              <PriceCta label="Mini Truck, od" price="64 900" cta="Zapytaj o ofertę" detailsHref={detailsHref} />
             </Reveal>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] lg:order-first">
@@ -264,7 +281,7 @@ export function MiniTruck() {
           <div className="mx-auto mb-10 flex w-full max-w-[1280px] items-end justify-between px-5 md:px-8">
             <div>
               <span className="mb-3 block text-xs font-semibold tracking-[0.22em] text-brand uppercase">Galeria</span>
-              <h3 className="font-display text-[clamp(26px,3vw,40px)] font-bold">Mini Truck z każdej strony</h3>
+              <h2 className="font-display text-[clamp(26px,3vw,40px)] font-bold">Mini Truck z każdej strony</h2>
             </div>
             <div className="hidden h-0.5 w-48 bg-ink/10 md:block">
               <motion.div style={{ width: bar }} className="h-full bg-brand" />
@@ -292,7 +309,7 @@ export function MiniTruck() {
   );
 }
 
-export function LightTruck() {
+export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const ref = useRef<HTMLElement>(null);
   const [img, setImg] = useState(lightTruck.image);
   const carY = useParallax(ref, 60);
@@ -311,7 +328,7 @@ export function LightTruck() {
           <Reveal>
             <Eyebrow>Samochód użytkowy</Eyebrow>
           </Reveal>
-          <SplitText text="Light Truck" className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
+          <SplitText as={headingAs} text={headingAs === "h1" ? "BAW Light Truck" : "Light Truck"} className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
           <Reveal delay={0.1}>
             <p className="mb-8 text-lg text-white/80">
               Nowa generacja konstrukcji w dwóch typach — bezramowej i z ramą. Przestronna kabina, wygodne fotele,
@@ -320,7 +337,7 @@ export function LightTruck() {
           </Reveal>
           <Reveal delay={0.2}>
             <SpecGrid specs={lightTruck.specs} />
-            <PriceCta label="Light Truck, od" price="89 900" cta="Zapytaj o ofertę" />
+            <PriceCta label="Light Truck, od" price="89 900" cta="Zapytaj o ofertę" detailsHref={detailsHref} />
           </Reveal>
         </div>
         <div>
@@ -350,7 +367,7 @@ export function LightTruck() {
                   img === g ? "border-brand" : "border-white/10 opacity-60 hover:opacity-100"
                 }`}
               >
-                <Image src={g} alt="" fill sizes="120px" className="object-cover" />
+                <Image src={g} alt="BAW Light Truck — miniatura zdjęcia" fill sizes="120px" className="object-cover" />
               </button>
             ))}
           </div>

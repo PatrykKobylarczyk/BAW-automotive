@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { Mail, MapPin, Send } from "lucide-react";
 import { useRef, useState, type MouseEvent } from "react";
-import { company, media, prices } from "@/lib/content";
+import { company, media, models, nav, prices } from "@/lib/content";
 import { Logo } from "./Navbar";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 
@@ -55,7 +56,11 @@ function PriceCard({ p, i }: { p: (typeof prices)[number]; i: number }) {
           <Image src={p.img} alt={p.name} fill sizes="300px" className="object-contain" />
         </div>
         <span className="text-[11px] font-semibold tracking-[0.15em] text-brand uppercase">{p.fuel}</span>
-        <h3 className="mt-1.5 mb-6 text-lg leading-tight font-semibold">{p.name}</h3>
+        <h3 className="mt-1.5 mb-6 text-lg leading-tight font-semibold">
+          <Link href={p.href} className="after:absolute after:inset-0">
+            BAW {p.name}
+          </Link>
+        </h3>
         <div className="mt-auto">
           <div className="font-display text-2xl font-bold">{p.gross} zł</div>
           <div className="text-[13px] text-muted">{p.net} zł netto</div>
@@ -65,9 +70,15 @@ function PriceCard({ p, i }: { p: (typeof prices)[number]; i: number }) {
   );
 }
 
-export function Pricing() {
+export function Pricing({
+  headingAs = "h2",
+  title = "Wybierz pojazd dla swojej firmy.",
+}: {
+  headingAs?: "h1" | "h2";
+  title?: string;
+}) {
   return (
-    <section id="cennik" className="bg-ink-2 py-28 md:py-40">
+    <section id="cennik" className={`bg-ink-2 ${headingAs === "h1" ? "pt-40 pb-28 md:pt-48 md:pb-40" : "py-28 md:py-40"}`}>
       <div className="mx-auto max-w-[1280px] px-5 md:px-8">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -75,7 +86,8 @@ export function Pricing() {
               <Eyebrow>Cennik</Eyebrow>
             </Reveal>
             <SplitText
-              text="Wybierz pojazd dla swojej firmy."
+              as={headingAs}
+              text={title}
               className="mt-5 max-w-[16ch] font-display text-[clamp(34px,4.6vw,64px)] leading-[1.02] font-bold tracking-tight"
             />
           </div>
@@ -93,7 +105,7 @@ export function Pricing() {
   );
 }
 
-export function Dealer() {
+export function Dealer({ headingAs = "h2", ctaHref = "/zostan-dealerem" }: { headingAs?: "h1" | "h2"; ctaHref?: string }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
@@ -116,6 +128,7 @@ export function Dealer() {
               <Eyebrow light>Współpraca</Eyebrow>
             </Reveal>
             <SplitText
+              as={headingAs}
               text="Zostań dealerem marki BAW"
               className="mt-5 mb-6 font-display text-[clamp(34px,4.8vw,66px)] leading-[1.02] font-extrabold tracking-tight"
             />
@@ -128,7 +141,7 @@ export function Dealer() {
               <p className="mb-9 text-white/85">
                 Wspólnie budujemy przyszłość marki BAW w Polsce — zaufanie, jakość i zysk idą tu w parze.
               </p>
-              <MagneticButton href="#kontakt" variant="light">
+              <MagneticButton href={ctaHref} variant="light">
                 Zostań dealerem
               </MagneticButton>
             </Reveal>
@@ -139,20 +152,30 @@ export function Dealer() {
   );
 }
 
-export function Contact() {
+export function Contact({
+  headingAs = "h2",
+  title = "Porozmawiajmy o Twojej flocie.",
+  defaultModel = "",
+}: {
+  headingAs?: "h1" | "h2";
+  title?: string;
+  /** Pre-selected option in the "model" select, e.g. on a model page */
+  defaultModel?: string;
+}) {
   const [sent, setSent] = useState(false);
   const field =
     "w-full rounded-xl border border-white/10 bg-ink-3/60 px-4 py-3.5 text-[15px] outline-none transition placeholder:text-muted/70 focus:border-brand focus:bg-ink-3";
 
   return (
-    <footer id="kontakt" className="relative overflow-hidden border-t border-white/10 pt-28 md:pt-36">
+    <section id="kontakt" className={`relative overflow-hidden border-t border-white/10 ${headingAs === "h1" ? "pt-40 md:pt-48" : "pt-28 md:pt-36"} pb-28 md:pb-36`}>
       <div className="mx-auto grid max-w-[1280px] gap-16 px-5 md:px-8 lg:grid-cols-2">
         <div>
           <Reveal>
             <Eyebrow>Kontakt</Eyebrow>
           </Reveal>
           <SplitText
-            text="Porozmawiajmy o Twojej flocie."
+            as={headingAs}
+            text={title}
             className="mt-5 mb-10 max-w-[14ch] font-display text-[clamp(34px,4vw,56px)] leading-[1.02] font-bold tracking-tight"
           />
           <Reveal delay={0.1} className="space-y-6">
@@ -185,11 +208,11 @@ export function Contact() {
             className="relative rounded-3xl border border-white/10 bg-ink-2 p-6 md:p-10"
           >
             <div className="grid gap-4 sm:grid-cols-2">
-              <input className={field} placeholder="Imię i nazwisko" required />
-              <input className={field} placeholder="Firma" />
-              <input className={field} type="email" placeholder="E-mail" required />
-              <input className={field} type="tel" placeholder="Telefon" />
-              <select className={`${field} sm:col-span-2`} defaultValue="">
+              <input className={field} name="name" autoComplete="name" aria-label="Imię i nazwisko" placeholder="Imię i nazwisko" required />
+              <input className={field} name="company" autoComplete="organization" aria-label="Firma" placeholder="Firma" />
+              <input className={field} name="email" type="email" autoComplete="email" aria-label="E-mail" placeholder="E-mail" required />
+              <input className={field} name="phone" type="tel" autoComplete="tel" aria-label="Telefon" placeholder="Telefon" />
+              <select className={`${field} sm:col-span-2`} name="model" aria-label="Interesujący model" defaultValue={defaultModel}>
                 <option value="" disabled>
                   Interesujący model
                 </option>
@@ -198,11 +221,17 @@ export function Contact() {
                 ))}
                 <option>Współpraca dealerska</option>
               </select>
-              <textarea className={`${field} min-h-32 sm:col-span-2`} placeholder="Wiadomość" />
+              <textarea className={`${field} min-h-32 sm:col-span-2`} name="message" aria-label="Wiadomość" placeholder="Wiadomość" />
             </div>
             <label className="mt-5 flex gap-3 text-sm text-muted">
               <input type="checkbox" required className="mt-1 accent-brand" />
-              Wyrażam zgodę na przetwarzanie danych zgodnie z polityką prywatności.
+              <span>
+                Wyrażam zgodę na przetwarzanie danych zgodnie z{" "}
+                <Link href="/polityka-prywatnosci" className="text-white/85 underline underline-offset-4 hover:text-brand">
+                  polityką prywatności
+                </Link>
+                .
+              </span>
             </label>
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -216,8 +245,59 @@ export function Contact() {
         </Reveal>
       </div>
 
-      <div className="mx-auto mt-28 max-w-[1280px] px-5 md:px-8">
+    </section>
+  );
+}
+
+const footerColumns = [
+  { title: "Pojazdy", links: models.map((m) => ({ label: m.name, href: `/modele/${m.slug}` })) },
+  {
+    title: "Oferta",
+    links: [
+      { label: "Wszystkie modele", href: "/modele" },
+      { label: "Cennik", href: "/cennik" },
+      { label: "Serwis i części", href: "/serwis" },
+      { label: "Zostań dealerem", href: "/zostan-dealerem" },
+    ],
+  },
+  {
+    title: "BAW Polska",
+    links: [...nav.filter((n) => ["/o-marce", "/kontakt"].includes(n.href)), { label: "Polityka prywatności", href: "/polityka-prywatnosci" }],
+  },
+];
+
+export function Footer() {
+  return (
+    <footer className="relative overflow-hidden border-t border-white/10 pt-20">
+      <div className="mx-auto grid max-w-[1280px] gap-12 px-5 sm:grid-cols-2 md:px-8 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div>
+          <Logo />
+          <p className="mt-5 max-w-[34ch] text-sm text-muted">
+            Oficjalny importer samochodów BAW w Polsce. {company.name}, {company.street}, {company.city}.
+          </p>
+          <a href={`mailto:${company.email}`} className="mt-4 inline-block text-sm text-white/80 transition hover:text-brand">
+            {company.email}
+          </a>
+        </div>
+        {footerColumns.map((c) => (
+          <nav key={c.title} aria-label={c.title}>
+            <h2 className="mb-4 text-xs font-semibold tracking-[0.2em] text-white/50 uppercase">{c.title}</h2>
+            <ul className="space-y-2.5 text-[15px]">
+              {c.links.map((l) => (
+                <li key={l.href + l.label}>
+                  <Link href={l.href} className="text-white/80 transition hover:text-white">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+      </div>
+
+      <div className="mx-auto mt-20 max-w-[1280px] px-5 md:px-8">
         <motion.div
+          aria-hidden
           initial={{ y: "40%", opacity: 0 }}
           whileInView={{ y: "0%", opacity: 1 }}
           viewport={{ once: true }}
@@ -227,11 +307,12 @@ export function Contact() {
           BAW
         </motion.div>
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 py-8 text-sm text-muted">
-          <Logo />
-          <span>© 2026 BAW Automotive Polska · Polityka prywatności</span>
+          <span>© 2026 BAW Automotive Polska</span>
+          <span>
+            NIP {company.nip} · REGON {company.regon}
+          </span>
         </div>
       </div>
     </footer>
   );
 }
-

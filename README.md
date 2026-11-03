@@ -8,6 +8,21 @@ npm run dev      # http://localhost:3000
 npm run build    # build produkcyjny
 ```
 
+## Podstrony (SEO)
+
+| Adres | Zawartość |
+| --- | --- |
+| `/` | strona główna |
+| `/modele` | przegląd gamy |
+| `/modele/baw-212`, `/modele/baw-mini-truck`, `/modele/baw-light-truck` | strona modelu: sekcja modelu, cechy, FAQ, inne modele, formularz |
+| `/cennik` | karty cen + tabela brutto/netto + FAQ |
+| `/o-marce`, `/zostan-dealerem`, `/serwis`, `/kontakt`, `/polityka-prywatnosci` | strony informacyjne |
+
+- Tytuły, opisy i adresy kanoniczne: `src/lib/seo.ts` (`pages`). Dane modeli i FAQ: `models` w `src/lib/content.ts`.
+- `sitemap.xml` i `robots.txt` generują się z tej samej listy. Na podglądach Vercela (`VERCEL_ENV=preview`) strona ma `noindex`.
+- Dane strukturalne JSON-LD: AutoDealer (cała strona), BreadcrumbList, Product/Car z ceną, FAQPage, ItemList.
+- Domena: ustaw `NEXT_PUBLIC_SITE_URL` w Vercelu (domyślnie `https://bawautomotive.pl`).
+
 ## Struktura
 
 - `src/lib/content.ts` — wszystkie teksty, ceny, dane firmy i adresy zdjęć
