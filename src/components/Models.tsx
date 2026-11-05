@@ -5,9 +5,10 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import Link from "next/link";
 import { ArrowUpRight, Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
+import ModelGallery from "./ModelGallery";
 
 const Car3D = dynamic(() => import("./Car3D"), { ssr: false });
 
@@ -220,18 +221,6 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
 export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const intro = useRef<HTMLElement>(null);
   const photoY = useParallax(intro, 70);
-  const pin = useRef<HTMLElement>(null);
-  const track = useRef<HTMLDivElement>(null);
-  const [distance, setDistance] = useState(0);
-  useEffect(() => {
-    const measure = () => track.current && setDistance(track.current.scrollWidth - window.innerWidth + 40);
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-  const { scrollYProgress } = useScroll({ target: pin, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], [0, -distance]);
-  const bar = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <>
@@ -275,36 +264,7 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
         </div>
       </section>
 
-      {/* Horizontal scroll gallery */}
-      <section ref={pin} className="relative h-[300vh] bg-[#eef0f3] text-ink">
-        <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden">
-          <div className="mx-auto mb-10 flex w-full max-w-[1280px] items-end justify-between px-5 md:px-8">
-            <div>
-              <span className="mb-3 block text-xs font-semibold tracking-[0.22em] text-brand uppercase">Galeria</span>
-              <h2 className="font-display text-[clamp(26px,3vw,40px)] font-bold">Mini Truck z każdej strony</h2>
-            </div>
-            <div className="hidden h-0.5 w-48 bg-ink/10 md:block">
-              <motion.div style={{ width: bar }} className="h-full bg-brand" />
-            </div>
-          </div>
-          <motion.div ref={track} style={{ x }} className="flex w-max gap-6 pl-5 md:pl-[max(2rem,calc((100vw-1280px)/2+2rem))]">
-            {miniTruckGallery.map((src, i) => (
-              <div key={src} className="group relative aspect-[1630/860] w-[82vw] shrink-0 md:h-[min(52vh,440px)] md:w-auto overflow-hidden rounded-3xl bg-white shadow-[0_30px_60px_-30px_rgba(10,11,14,.35)]">
-                <Image
-                  src={src}
-                  alt={`BAW Mini Truck — zdjęcie ${i + 1}`}
-                  fill
-                  sizes="60vw"
-                  className="object-cover transition-transform duration-[1.2s] ease-out-expo group-hover:scale-105"
-                />
-                <span className="absolute bottom-4 left-5 font-display text-sm text-ink/50">
-                  {String(i + 1).padStart(2, "0")} / {miniTruckGallery.length}
-                </span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      <ModelGallery title="Mini Truck z każdej strony" alt="BAW Mini Truck" images={miniTruckGallery} />
     </>
   );
 }
