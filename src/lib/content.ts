@@ -296,12 +296,13 @@ export type Dealer = {
   id: string;
   name: string;
   kind: "Importer" | "Dealer" | "Serwis" | "Dealer i serwis";
-  street: string;
+  /** Leave out when the address is not known yet: the card then shows only the city. */
+  street?: string;
   city: string;
   region: string;
   lat: number;
   lng: number;
-  phone?: string;
+  phone?: string | string[];
   email?: string;
   url?: string;
 };
@@ -318,5 +319,64 @@ export const dealers: Dealer[] = [
     lng: 19.4012,
     email: company.email,
     url: "/kontakt",
+  },
+  // Dealers below are copied from the old WordPress map (bawautomotive.pl/dealer-serwis), November 2026.
+  {
+    id: "warszawa-edmark",
+    name: "EDMARK AUTO - Markowska i Wspólnicy Sp.J.",
+    kind: "Dealer",
+    street: "ul. Grochowska 168A",
+    city: "04-357 Warszawa",
+    region: "mazowieckie",
+    lat: 52.2445,
+    lng: 21.0962,
+    phone: "882 177 007",
+    url: "https://www.212.edmark.com.pl",
+  },
+  {
+    id: "lodz",
+    name: "BAW Łódź",
+    kind: "Dealer",
+    // The old site gives no street address for Łódź, so the pin sits in the city centre.
+    city: "Łódź",
+    region: "łódzkie",
+    lat: 51.7592,
+    lng: 19.456,
+    phone: ["501 187 265", "508 084 803"],
+    email: "biuro@baw-polska.pl",
+  },
+  {
+    id: "konin-nowicki",
+    name: "BAW Nowicki",
+    kind: "Dealer",
+    street: "ul. Poznańska 48",
+    city: "62-510 Konin",
+    region: "wielkopolskie",
+    lat: 52.2277,
+    lng: 18.2394,
+    phone: "63 245 44 35",
+    email: "salon@bawkonin.pl",
+  },
+  {
+    id: "kalisz-nowicki",
+    name: "BAW Nowicki Oddział Kalisz",
+    kind: "Dealer",
+    street: "ul. Stańczukowskiego 18",
+    city: "62-800 Kalisz",
+    region: "wielkopolskie",
+    lat: 51.7614,
+    lng: 18.0595,
+    phone: "63 245 44 35",
+    email: "sprzedaz@bawkalisz.pl",
+  },
+  {
+    id: "czestochowa",
+    name: "BAW Częstochowa",
+    kind: "Dealer",
+    street: "ul. Chłopska 20",
+    city: "42-271 Częstochowa",
+    region: "śląskie",
+    lat: 50.7657,
+    lng: 19.0376,
   },
 ];

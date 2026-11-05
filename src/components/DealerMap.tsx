@@ -8,7 +8,7 @@ import { dealers, type Dealer } from "@/lib/content";
 import { POLAND_PATH, POLAND_VIEWBOX, project } from "@/lib/poland";
 
 const directions = (d: Dealer) =>
-  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${d.street}, ${d.city}`)}`;
+  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(d.street ? `${d.street}, ${d.city}` : d.city)}`;
 
 function DealerCard({ d }: { d: Dealer }) {
   const external = d.url && /^https?:/.test(d.url);
@@ -28,16 +28,14 @@ function DealerCard({ d }: { d: Dealer }) {
       <address className="space-y-2.5 text-white/80 not-italic">
         <p className="flex gap-3">
           <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
-          <span>
-            {d.street}, {d.city}
-          </span>
+          <span>{d.street ? `${d.street}, ${d.city}` : d.city}</span>
         </p>
-        {d.phone && (
-          <a href={`tel:${d.phone.replace(/\s/g, "")}`} className="flex gap-3 transition hover:text-white">
+        {[d.phone ?? []].flat().map((phone) => (
+          <a key={phone} href={`tel:${phone.replace(/\s/g, "")}`} className="flex gap-3 transition hover:text-white">
             <Phone className="mt-0.5 size-4 shrink-0 text-brand" />
-            {d.phone}
+            {phone}
           </a>
-        )}
+        ))}
         {d.email && (
           <a href={`mailto:${d.email}`} className="flex gap-3 transition hover:text-white">
             <Mail className="mt-0.5 size-4 shrink-0 text-brand" />
