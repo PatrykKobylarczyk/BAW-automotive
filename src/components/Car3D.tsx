@@ -90,7 +90,7 @@ function Studio() {
       <Lightformer intensity={2.2} position={[0, 5, 0]} rotation-x={Math.PI / 2} scale={[10, 4, 1]} />
       <Lightformer intensity={1.4} position={[-6, 2, 2]} rotation-y={Math.PI / 2} scale={[8, 2, 1]} />
       <Lightformer intensity={1.4} position={[6, 2, -2]} rotation-y={-Math.PI / 2} scale={[8, 2, 1]} />
-      <Lightformer intensity={0.5} color="#c8103f" position={[0, 0.6, -7]} scale={[12, 0.8, 1]} />
+      <Lightformer intensity={0.5} color="#99003a" position={[0, 0.6, -7]} scale={[12, 0.8, 1]} />
       <Lightformer intensity={0.6} position={[0, 1, 7]} rotation-y={Math.PI} scale={[12, 3, 1]} />
     </Environment>
   );

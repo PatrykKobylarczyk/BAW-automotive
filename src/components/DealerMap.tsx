@@ -52,14 +52,14 @@ function DealerCard({ d }: { d: Dealer }) {
               href={d.url}
               target="_blank"
               rel="noopener"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold transition hover:bg-[#e2124a]"
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold transition hover:bg-brand-hover"
             >
               Strona dealera <ArrowUpRight className="size-4" />
             </a>
           ) : (
             <Link
               href={d.url}
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold transition hover:bg-[#e2124a]"
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold transition hover:bg-brand-hover"
             >
               Kontakt <ArrowUpRight className="size-4" />
             </Link>
