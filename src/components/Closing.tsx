@@ -15,7 +15,7 @@ function PriceCard({ p, i, as: H = "h3" }: { p: (typeof prices)[number]; i: numb
   const ry = useSpring(useMotionValue(0), { stiffness: 150, damping: 15 });
   const mx = useMotionValue(50);
   const my = useMotionValue(50);
-  const glare = useMotionTemplate`radial-gradient(circle at ${mx}% ${my}%, rgba(153,0,58,.28), transparent 60%)`;
+  const glare = useMotionTemplate`radial-gradient(circle at ${mx}% ${my}%, rgba(144,29,58,.28), transparent 60%)`;
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();

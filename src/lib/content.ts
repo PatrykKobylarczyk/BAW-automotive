@@ -72,6 +72,10 @@ export const offroadFeatures = [
   "Pięciopunktowe, niezależne zawieszenie przód i tył",
 ];
 
+export const gallery212 = ["34-front", "side", "34-rear", "front", "paint-white", "paint-graphite", "paint-black", "top"].map(
+  (n) => `/gallery/212/${n}.webp`,
+);
+
 export const miniTruckGallery = [1, 10, 6, 7, 12, 11, 3, 2, 8, 5, 9].map(
   (n) => `${U}/2025/10/Mini_truck_est_${n}-${[6, 12, 8, 5].includes(n) ? 2 : 1}-1630x860.jpg`,
 );
