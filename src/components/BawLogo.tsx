@@ -1,6 +1,6 @@
 /**
  * Oficjalny logotyp BAW, wektor przeniesiony 1:1 z księgi znaku (BAW CI, A.01).
- * Kolor dziedziczy z `currentColor`, domyślnie używamy `text-brand` (Forbidden City Red #99003A).
+ * Kolor dziedziczy z `currentColor`, domyślnie używamy `text-brand` (Forbidden City Red #901D3A).
  */
 export function BawLogo({ className, title = "BAW" }: { className?: string; title?: string }) {
   return (

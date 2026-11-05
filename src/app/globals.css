@@ -4,10 +4,10 @@
   --color-ink: #0a0b0e;
   --color-ink-2: #121419;
   --color-ink-3: #1b1e25;
-  /* Forbidden City Red, BAW CI: Pantone 1955 C, RGB 153/0/58 */
-  --color-brand: #99003a;
-  --color-brand-dark: #99003a;
-  --color-brand-hover: #b0104d;
+  /* Forbidden City Red, BAW CI: Pantone 1955 C, ekranowa próbka z księgi (CMYK 46/100/73/11), HEX w księdze: #99003A */
+  --color-brand: #901d3a;
+  --color-brand-dark: #901d3a;
+  --color-brand-hover: #a52a4a;
   /* Tech Gray, BAW CI: Pantone Gray 8 C */
   --color-tech-gray: #848484;
   --color-muted: #9aa0ab;
