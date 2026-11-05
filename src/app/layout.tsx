@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Unbounded } from "next/font/google";
+import { Archivo, Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { Footer } from "@/components/Closing";
 import { JsonLd } from "@/components/PageParts";
@@ -8,10 +8,11 @@ import { INDEXABLE, SITE_NAME, SITE_URL, organizationLd, pages } from "@/lib/seo
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin", "latin-ext"] });
-const unbounded = Unbounded({
-  variable: "--font-unbounded",
+// Headings: Archivo in its expanded width, straight-sided and modern.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin", "latin-ext"],
-  weight: ["500", "700", "800"],
+  axes: ["wdth"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pl" className={`${inter.variable} ${unbounded.variable} antialiased`}>
+    <html lang="pl" className={`${inter.variable} ${archivo.variable} antialiased`}>
       <body className="font-sans">
         <JsonLd data={organizationLd} />
         <SmoothScroll>
