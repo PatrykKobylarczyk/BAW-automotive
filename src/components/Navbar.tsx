@@ -87,7 +87,7 @@ export default function Navbar() {
             className="fixed inset-0 z-[60] flex flex-col bg-brand-dark px-6 py-6"
           >
             <div className="flex items-center justify-between">
-              <span className="font-display text-2xl font-extrabold">BAW</span>
+              <BawLogo className="h-5 w-auto text-white" />
               <button onClick={() => setOpen(false)} className="p-2" aria-label="Zamknij menu">
                 <X />
               </button>
