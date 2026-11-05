@@ -12,7 +12,7 @@
   --color-tech-gray: #848484;
   --color-muted: #9aa0ab;
   --font-sans: var(--font-inter);
-  --font-display: var(--font-unbounded);
+  --font-display: var(--font-archivo);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -35,6 +35,11 @@ body {
   color: #f2f3f5;
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
+}
+
+/* Archivo is a width-variable font: the expanded cut gives headings their wide, automotive look. */
+.font-display {
+  font-stretch: 112%;
 }
 
 ::selection {
