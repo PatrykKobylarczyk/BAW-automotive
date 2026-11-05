@@ -6,12 +6,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { models, nav } from "@/lib/content";
+import { BawLogo } from "./BawLogo";
 
 export function Logo() {
   return (
-    <Link href="/" aria-label="BAW Automotive Polska — strona główna" className="flex items-baseline gap-2">
-      <span className="font-display text-[26px] font-extrabold tracking-tight text-brand">BAW</span>
-      <span className="text-[10px] font-medium tracking-[0.32em] text-muted">AUTOMOTIVE POLSKA</span>
+    <Link href="/" aria-label="BAW Automotive Polska — strona główna" className="flex items-center">
+      <BawLogo className="h-5 w-auto text-brand" />
+      <span className="ml-5 text-[10px] font-medium tracking-[0.32em] text-muted">AUTOMOTIVE POLSKA</span>
     </Link>
   );
 }
@@ -65,7 +66,7 @@ export default function Navbar() {
           </nav>
           <Link
             href="/zostan-dealerem"
-            className="hidden rounded-full bg-brand px-5 py-2.5 text-sm font-semibold transition hover:bg-[#e2124a] lg:inline-block"
+            className="hidden rounded-full bg-brand px-5 py-2.5 text-sm font-semibold transition hover:bg-brand-hover lg:inline-block"
           >
             Zostań dealerem
           </Link>
