@@ -11,6 +11,8 @@
   /* Tech Gray, BAW CI: Pantone Gray 8 C */
   --color-tech-gray: #848484;
   --color-muted: #9aa0ab;
+  /* Dealer map: locations marked "Otwarcie wkrótce" */
+  --color-soon: #d4a72c;
   --font-sans: var(--font-inter);
   --font-display: var(--font-archivo);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
