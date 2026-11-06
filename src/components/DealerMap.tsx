@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { useState } from "react";
 import { dealers, type Dealer } from "@/lib/content";
-import { POLAND_PATH, POLAND_VIEWBOX, project } from "@/lib/poland";
+import { POLAND_PATH, POLAND_VIEWBOX, VOIVODESHIPS_PATH, project } from "@/lib/poland";
 
 const directions = (d: Dealer) =>
   `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(d.street ? `${d.street}, ${d.city}` : d.city)}`;
@@ -95,6 +95,7 @@ export default function DealerMap() {
             </pattern>
           </defs>
           <path d={POLAND_PATH} fill="url(#pl-dots)" stroke="rgb(255 255 255 / 0.28)" strokeWidth="2" strokeLinejoin="round" />
+          <path d={VOIVODESHIPS_PATH} fill="none" stroke="rgb(255 255 255 / 0.18)" strokeWidth="1.5" strokeLinejoin="round" />
           {dealers.map((d) => {
             const [x, y] = project(d.lat, d.lng);
             const on = d.id === active?.id;
