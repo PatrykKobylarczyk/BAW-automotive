@@ -305,6 +305,8 @@ export type Dealer = {
   phone?: string | string[];
   email?: string;
   url?: string;
+  /** A location announced but not open yet: gold pin, "Otwarcie wkrótce" card, listed separately. */
+  comingSoon?: true;
 };
 
 export const dealers: Dealer[] = [
@@ -378,5 +380,46 @@ export const dealers: Dealer[] = [
     region: "śląskie",
     lat: 50.7657,
     lng: 19.0376,
+  },
+  // Announced locations, not open yet. Pins sit in the city centre until the addresses are known.
+  {
+    id: "wroclaw",
+    name: "BAW Wrocław",
+    kind: "Dealer",
+    city: "Wrocław",
+    region: "dolnośląskie",
+    lat: 51.1079,
+    lng: 17.0385,
+    comingSoon: true,
+  },
+  {
+    id: "trojmiasto",
+    name: "BAW Trójmiasto",
+    kind: "Dealer",
+    city: "Trójmiasto",
+    region: "pomorskie",
+    lat: 54.4416,
+    lng: 18.5601,
+    comingSoon: true,
+  },
+  {
+    id: "bydgoszcz",
+    name: "BAW Bydgoszcz",
+    kind: "Dealer",
+    city: "Bydgoszcz",
+    region: "kujawsko-pomorskie",
+    lat: 53.1235,
+    lng: 18.0084,
+    comingSoon: true,
+  },
+  {
+    id: "gorzow",
+    name: "BAW Gorzów Wielkopolski",
+    kind: "Dealer",
+    city: "Gorzów Wielkopolski",
+    region: "lubuskie",
+    lat: 52.7368,
+    lng: 15.2288,
+    comingSoon: true,
   },
 ];

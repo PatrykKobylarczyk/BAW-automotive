@@ -10,7 +10,29 @@ import { POLAND_PATH, POLAND_VIEWBOX, VOIVODESHIPS_PATH, project } from "@/lib/p
 const directions = (d: Dealer) =>
   `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(d.street ? `${d.street}, ${d.city}` : d.city)}`;
 
+function SoonCard({ d }: { d: Dealer }) {
+  return (
+    <motion.article
+      key={d.id}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className="rounded-3xl border border-soon/30 bg-ink p-7"
+    >
+      <span className="text-[11px] font-semibold tracking-[0.15em] text-soon uppercase">Otwarcie wkrótce · {d.region}</span>
+      <h3 className="mt-2 mb-4 font-display text-2xl font-bold">{d.name}</h3>
+      <p className="flex gap-3 text-white/80">
+        <MapPin className="mt-0.5 size-4 shrink-0 text-soon" />
+        <span>{d.city}</span>
+      </p>
+      <p className="mt-4 text-white/70">Nowy salon BAW rusza tu już niedługo. Adres i dane kontaktowe podamy wkrótce.</p>
+    </motion.article>
+  );
+}
+
 function DealerCard({ d }: { d: Dealer }) {
+  if (d.comingSoon) return <SoonCard d={d} />;
   const external = d.url && /^https?:/.test(d.url);
   return (
     <motion.article
@@ -79,6 +101,33 @@ function DealerCard({ d }: { d: Dealer }) {
 export default function DealerMap() {
   const [activeId, setActiveId] = useState(dealers[0]?.id);
   const active = dealers.find((d) => d.id === activeId) ?? dealers[0];
+  const open = dealers.filter((d) => !d.comingSoon);
+  const soon = dealers.filter((d) => d.comingSoon);
+
+  const listItem = (d: Dealer) => {
+    const on = d.id === active?.id;
+    return (
+      <li key={d.id}>
+        <button
+          onClick={() => setActiveId(d.id)}
+          aria-pressed={on}
+          className={`flex w-full items-center justify-between gap-4 px-6 py-4 text-left transition ${
+            on ? (d.comingSoon ? "bg-soon/15" : "bg-brand/15") : "hover:bg-white/5"
+          }`}
+        >
+          <span>
+            <span className="block font-semibold">{d.name}</span>
+            <span className="text-sm text-muted">
+              {d.city.replace(/^\d{2}-\d{3}\s/, "")} · {d.comingSoon ? "otwarcie wkrótce" : d.kind}
+            </span>
+          </span>
+          <MapPin
+            className={`size-5 shrink-0 ${d.comingSoon ? (on ? "text-soon" : "text-soon/50") : on ? "text-brand" : "text-white/40"}`}
+          />
+        </button>
+      </li>
+    );
+  };
 
   return (
     <div className="grid items-start gap-10 lg:grid-cols-[1.25fr_1fr]">
@@ -96,23 +145,25 @@ export default function DealerMap() {
           </defs>
           <path d={POLAND_PATH} fill="url(#pl-dots)" stroke="rgb(255 255 255 / 0.28)" strokeWidth="2" strokeLinejoin="round" />
           <path d={VOIVODESHIPS_PATH} fill="none" stroke="rgb(255 255 255 / 0.18)" strokeWidth="1.5" strokeLinejoin="round" />
-          {dealers.map((d) => {
+          {/* Open locations are drawn last so they sit on top where pins overlap. */}
+          {[...soon, ...open].map((d) => {
             const [x, y] = project(d.lat, d.lng);
             const on = d.id === active?.id;
+            const accent = d.comingSoon ? "var(--color-soon)" : "var(--color-brand)";
             return (
               <g
                 key={d.id}
                 transform={`translate(${x} ${y})`}
                 role="button"
                 tabIndex={0}
-                aria-label={`${d.name}, ${d.city}`}
+                aria-label={`${d.name}, ${d.city}${d.comingSoon ? ", otwarcie wkrótce" : ""}`}
                 aria-pressed={on}
                 onClick={() => setActiveId(d.id)}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), setActiveId(d.id))}
                 className="cursor-pointer outline-none [&:focus-visible_.pin]:stroke-white"
               >
                 {on && (
-                  <circle r="18" fill="var(--color-brand)" opacity="0.35">
+                  <circle r="18" fill={accent} opacity="0.35">
                     <animate attributeName="r" values="16;46" dur="1.8s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="0.45;0" dur="1.8s" repeatCount="indefinite" />
                   </circle>
@@ -121,43 +172,41 @@ export default function DealerMap() {
                 <path
                   className="pin transition-transform duration-300"
                   d="M0 0c-4-9-16-17-16-29a16 16 0 1 1 32 0c0 12-12 20-16 29Z"
-                  fill={on ? "var(--color-brand)" : "#f2f3f5"}
+                  fill={on || d.comingSoon ? accent : "#f2f3f5"}
                   stroke="var(--color-ink)"
                   strokeWidth="3"
                   transform={on ? "scale(1.25)" : undefined}
                 />
-                <circle cy="-29" r="5.5" fill={on ? "#fff" : "var(--color-brand)"} transform={on ? "scale(1.25)" : undefined} />
+                <circle
+                  cy="-29"
+                  r="5.5"
+                  fill={on ? "#fff" : d.comingSoon ? "var(--color-ink)" : "var(--color-brand)"} transform={on ? "scale(1.25)" : undefined} />
               </g>
             );
           })}
         </svg>
-        <p className="mt-2 text-sm text-muted">Kliknij punkt na mapie, aby zobaczyć dane kontaktowe.</p>
+        <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
+          <span className="inline-flex items-center gap-2">
+            <span className="size-3 rounded-full bg-[#f2f3f5] ring-2 ring-brand ring-inset" /> Salony i serwisy
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <span className="size-3 rounded-full bg-soon" /> Otwarcie wkrótce
+          </span>
+          <span>Kliknij punkt na mapie, aby zobaczyć szczegóły.</span>
+        </div>
       </div>
 
       <div className="space-y-5">
         <AnimatePresence mode="wait">{active && <DealerCard key={active.id} d={active} />}</AnimatePresence>
         <ul className="divide-y divide-white/10 overflow-hidden rounded-3xl border border-white/10">
-          {dealers.map((d) => (
-            <li key={d.id}>
-              <button
-                onClick={() => setActiveId(d.id)}
-                aria-pressed={d.id === active?.id}
-                className={`flex w-full items-center justify-between gap-4 px-6 py-4 text-left transition ${
-                  d.id === active?.id ? "bg-brand/15" : "hover:bg-white/5"
-                }`}
-              >
-                <span>
-                  <span className="block font-semibold">{d.name}</span>
-                  <span className="text-sm text-muted">
-                    {d.city.replace(/^\d{2}-\d{3}\s/, "")} · {d.kind}
-                  </span>
-                </span>
-                <MapPin className={`size-5 shrink-0 ${d.id === active?.id ? "text-brand" : "text-white/40"}`} />
-              </button>
-            </li>
-          ))}
-          <li className="px-6 py-4 text-sm text-muted">Kolejne salony i serwisy w Polsce wkrótce.</li>
+          {open.map(listItem)}
         </ul>
+        {soon.length > 0 && (
+          <div>
+            <h3 className="mb-3 px-1 text-[11px] font-semibold tracking-[0.15em] text-soon uppercase">Otwarcie wkrótce</h3>
+            <ul className="divide-y divide-white/10 overflow-hidden rounded-3xl border border-soon/25">{soon.map(listItem)}</ul>
+          </div>
+        )}
       </div>
     </div>
   );
