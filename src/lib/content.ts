@@ -422,4 +422,14 @@ export const dealers: Dealer[] = [
     lng: 15.2288,
     comingSoon: true,
   },
+  {
+    id: "nowy-sacz",
+    name: "BAW Nowy Sącz",
+    kind: "Dealer",
+    city: "Nowy Sącz",
+    region: "małopolskie",
+    lat: 49.6218,
+    lng: 20.697,
+    comingSoon: true,
+  },
 ];
