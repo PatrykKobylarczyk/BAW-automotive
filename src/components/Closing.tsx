@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
-import { Mail, MapPin } from "lucide-react";
+import { ArrowRight, Mail, MapPin } from "lucide-react";
 import { useRef, type MouseEvent } from "react";
 import { company, media, models, nav, prices } from "@/lib/content";
 import { LeadForm } from "./LeadForm";
@@ -73,10 +73,13 @@ function PriceCard({ p, i, as: H = "h3" }: { p: (typeof prices)[number]; i: numb
 
 export function Pricing({
   headingAs = "h2",
-  title = "Wybierz pojazd dla swojej firmy.",
+  title = "Wybierz pojazd dla siebie lub firmy.",
+  moreHref,
 }: {
   headingAs?: "h1" | "h2";
   title?: string;
+  /** Link to the full price list, shown under the cards (home page) */
+  moreHref?: string;
 }) {
   return (
     <section id="cennik" className={`bg-ink-2 ${headingAs === "h1" ? "pt-40 pb-28 md:pt-48 md:pb-40" : "py-28 md:py-40"}`}>
@@ -101,6 +104,14 @@ export function Pricing({
             <PriceCard key={p.name} p={p} i={i} as={headingAs === "h1" ? "h2" : "h3"} />
           ))}
         </div>
+        {moreHref && (
+          <Reveal delay={0.1} className="mt-10">
+            <Link href={moreHref} className="group inline-flex items-center gap-2 font-semibold text-white/85 transition hover:text-white">
+              Pełny cennik, wersje i finansowanie
+              <ArrowRight className="size-4 text-brand transition group-hover:translate-x-1" />
+            </Link>
+          </Reveal>
+        )}
       </div>
     </section>
   );
@@ -153,9 +164,30 @@ export function Dealer({ headingAs = "h2", ctaHref = "/zostan-dealerem" }: { hea
   );
 }
 
+/** Slim invitation for prospective dealers (home page, about page) */
+export function DealerStrip() {
+  return (
+    <section aria-label="Współpraca dealerska" className="border-t border-white/10 bg-brand-dark">
+      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-6 px-5 py-10 md:px-8">
+        <div>
+          <span className="text-[11px] font-semibold tracking-[0.2em] text-white/60 uppercase">Współpraca</span>
+          <p className="mt-2 font-display text-xl font-bold md:text-2xl">Prowadzisz salon lub serwis? Zostań dealerem BAW.</p>
+        </div>
+        <Link
+          href="/zostan-dealerem"
+          className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-semibold transition hover:border-white hover:bg-white hover:text-brand-dark"
+        >
+          Dowiedz się więcej
+          <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 export function Contact({
   headingAs = "h2",
-  title = "Porozmawiajmy o Twojej flocie.",
+  title = "Umów jazdę próbną lub zapytaj o ofertę.",
   defaultModel = "",
 }: {
   headingAs?: "h1" | "h2";
@@ -206,7 +238,14 @@ export function Contact({
 }
 
 const footerColumns = [
-  { title: "Pojazdy", links: models.map((m) => ({ label: m.name, href: `/modele/${m.slug}` })) },
+  {
+    title: "Pojazdy",
+    links: models.map((m) => ({
+      // Cargo versions have no page of their own; they live on the base model's page
+      label: m.slug === "baw-212" ? m.name : `${m.name} i Cargo`,
+      href: `/modele/${m.slug}`,
+    })),
+  },
   {
     title: "Oferta",
     links: [

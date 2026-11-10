@@ -65,10 +65,10 @@ export default function Navbar() {
             ))}
           </nav>
           <Link
-            href="/zostan-dealerem"
+            href="/kontakt"
             className="hidden rounded-full bg-brand px-5 py-2.5 text-sm font-semibold transition hover:bg-brand-hover lg:inline-block"
           >
-            Zostań dealerem
+            Jazda próbna
           </Link>
           <button onClick={() => setOpen(true)} className="p-2 lg:hidden" aria-label="Otwórz menu">
             <Menu />
@@ -93,7 +93,7 @@ export default function Navbar() {
               </button>
             </div>
             <nav className="mt-12 flex flex-col gap-4 overflow-y-auto">
-              {[...nav, { label: "Zostań dealerem", href: "/zostan-dealerem" }].map((n, i) => (
+              {[...nav, { label: "Jazda próbna", href: "/kontakt" }].map((n, i) => (
                 <motion.div
                   key={n.href}
                   initial={{ opacity: 0, x: 40 }}

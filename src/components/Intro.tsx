@@ -56,7 +56,7 @@ export function Values() {
             <Eyebrow>Dlaczego BAW</Eyebrow>
           </Reveal>
           <SplitText
-            text="Globalna marka, lokalne wsparcie."
+            text="Solidne auta do pracy i w teren."
             className="mt-5 font-display text-[clamp(34px,4.6vw,64px)] leading-[1.02] font-bold tracking-tight"
           />
           <Reveal delay={0.2}>

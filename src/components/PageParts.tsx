@@ -204,12 +204,28 @@ export function Faq({ items, title = "Najczęstsze pytania" }: { items: readonly
 
 const pln = (n: number) => n.toLocaleString("pl-PL").replace(/ /g, " ");
 
-export function ModelCard({ model, headingAs: H = "h2" }: { model: Model; headingAs?: "h2" | "h3" }) {
+export function ModelCard({
+  model,
+  headingAs: H = "h2",
+  featured = false,
+}: {
+  model: Model;
+  headingAs?: "h2" | "h3";
+  /** Highlights the flagship card */
+  featured?: boolean;
+}) {
   return (
     <Link
       href={`/modele/${model.slug}`}
-      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-ink-2 p-6 transition hover:-translate-y-1 hover:border-brand/60 md:p-8"
+      className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border p-6 transition hover:-translate-y-1 hover:border-brand/60 md:p-8 ${
+        featured ? "border-brand/50 bg-brand-dark/25" : "border-white/10 bg-ink-2"
+      }`}
     >
+      {featured && (
+        <span className="absolute top-5 right-5 z-10 rounded-full bg-brand px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
+          Flagowy
+        </span>
+      )}
       <div className="relative mb-6 aspect-[16/10]">
         <div className="absolute inset-x-6 bottom-0 h-1/3 rounded-full bg-brand/25 blur-2xl transition group-hover:bg-brand/40" />
         <Image src={model.image} alt={model.name} fill sizes="(max-width:768px) 100vw, 33vw" className="object-contain" />
