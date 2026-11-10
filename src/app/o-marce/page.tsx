@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Contact } from "@/components/Closing";
+import { Contact, DealerStrip } from "@/components/Closing";
 import { Marquee, Stats, Values } from "@/components/Intro";
 import { ModelCard, PageHeader, Prose, Section } from "@/components/PageParts";
 import { company, models } from "@/lib/content";
@@ -38,6 +38,7 @@ export default function Page() {
         </div>
       </Section>
       <Contact />
+      <DealerStrip />
     </main>
   );
 }

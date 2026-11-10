@@ -11,8 +11,8 @@ export const media = {
 export const nav = [
   { label: "Pojazdy", href: "/modele" },
   { label: "Cennik", href: "/cennik" },
+  { label: "Salony i serwis", href: "/serwis" },
   { label: "O marce", href: "/o-marce" },
-  { label: "Serwis", href: "/serwis" },
   { label: "Kontakt", href: "/kontakt" },
 ];
 
@@ -165,6 +165,63 @@ export const models = [
     ],
   },
   {
+    slug: "baw-light-truck",
+    name: "BAW Light Truck",
+    short: "Light Truck",
+    category: "Lekki samochód użytkowy",
+    fuel: "Benzyna",
+    priceFrom: 89900,
+    image: lightTruck.image,
+    intro:
+      "Lekki samochód użytkowy nowej generacji, w konstrukcji bezramowej lub z ramą. Przestronna kabina, szerokie pole widzenia i wersja Cargo z zabudową Niewiadów.",
+    highlights: [
+      "Dwa typy konstrukcji: bezramowa (frameless) lub z ramą (on-frame)",
+      "Przestronna kabina, wygodne fotele i szerokie pole widzenia",
+      '7" wielofunkcyjny ekran dotykowy i elektroniczny panel wskaźników LCD',
+      "Przednie hamulce tarczowe, tylne bębnowe",
+      "Wersja Light Truck Cargo z zabudową Niewiadów",
+    ],
+    specs: [
+      { label: "Długość", value: "5585 / 5985 mm" },
+      { label: "Szerokość × wysokość", value: "1880 × 2050 mm" },
+      { label: "Rozstaw osi", value: "3400 / 3600 mm" },
+      { label: "Ładowność", value: "2000 / 2500 kg" },
+      { label: "Masa własna", value: "1595 / 1740 kg" },
+      { label: "Pojemność silnika", value: "1590 / 1962 cm³" },
+      { label: "Moc maksymalna", value: "91 / 106 kW" },
+      { label: "Maksymalny moment obrotowy", value: "161 / 200 Nm" },
+      { label: "Prędkość maksymalna", value: "105 km/h" },
+      { label: "Skrzynia biegów", value: "manualna, 5 biegów" },
+      { label: "Napęd", value: "na tylną oś" },
+      { label: "Zawieszenie tylne", value: "resory piórowe" },
+      { label: "Opony", value: "185 R14 LT" },
+      { label: "Zabudowa Cargo (Niewiadów)", value: "kontener 3,6 × 1,8 m" },
+    ],
+    options: ["Zabudowa kontenerowa Niewiadów (wersja Cargo)", "Zabudowa furgon"],
+    faq: [
+      {
+        q: "Ile kosztuje BAW Light Truck?",
+        a: "BAW Light Truck kosztuje od 89 900 zł brutto (73 089,43 zł netto). Wersja Light Truck Cargo z zabudową Niewiadów kosztuje od 99 900 zł brutto (81 219,51 zł netto).",
+      },
+      {
+        q: "Jakim paliwem jest napędzany BAW Light Truck?",
+        a: "BAW Light Truck ma silnik benzynowy o pojemności 1590 lub 1962 cm³ i mocy 91 lub 106 kW, w zależności od wersji. Napęd trafia na tylną oś przez 5-biegową skrzynię manualną.",
+      },
+      {
+        q: "Jaka jest ładowność BAW Light Truck?",
+        a: "W zależności od wersji BAW Light Truck przewozi od 2000 do 2500 kg ładunku. Wersje różnią się długością (5585 lub 5985 mm) i rozstawem osi.",
+      },
+      {
+        q: "Czym różni się Light Truck od Light Truck Cargo?",
+        a: "Light Truck Cargo ma fabrycznie przygotowaną zabudowę Niewiadów, gotową do przewozu towarów.",
+      },
+      {
+        q: "Gdzie kupić BAW Light Truck?",
+        a: `U oficjalnego importera BAW w Polsce: ${company.name}, ${company.street}, ${company.city}.`,
+      },
+    ],
+  },
+  {
     slug: "baw-mini-truck",
     name: "BAW Mini Truck EV",
     short: "Mini Truck",
@@ -223,63 +280,6 @@ export const models = [
       {
         q: "Czy BAW Mini Truck można wziąć w leasing?",
         a: "Tak. Zapytaj dealera o finansowanie i leasing dla firm przez formularz kontaktowy.",
-      },
-    ],
-  },
-  {
-    slug: "baw-light-truck",
-    name: "BAW Light Truck",
-    short: "Light Truck",
-    category: "Lekki samochód użytkowy",
-    fuel: "Benzyna",
-    priceFrom: 89900,
-    image: lightTruck.image,
-    intro:
-      "Lekki samochód użytkowy nowej generacji, w konstrukcji bezramowej lub z ramą. Przestronna kabina, szerokie pole widzenia i wersja Cargo z zabudową Niewiadów.",
-    highlights: [
-      "Dwa typy konstrukcji: bezramowa (frameless) lub z ramą (on-frame)",
-      "Przestronna kabina, wygodne fotele i szerokie pole widzenia",
-      '7" wielofunkcyjny ekran dotykowy i elektroniczny panel wskaźników LCD',
-      "Przednie hamulce tarczowe, tylne bębnowe",
-      "Wersja Light Truck Cargo z zabudową Niewiadów",
-    ],
-    specs: [
-      { label: "Długość", value: "5585 / 5985 mm" },
-      { label: "Szerokość × wysokość", value: "1880 × 2050 mm" },
-      { label: "Rozstaw osi", value: "3400 / 3600 mm" },
-      { label: "Ładowność", value: "2000 / 2500 kg" },
-      { label: "Masa własna", value: "1595 / 1740 kg" },
-      { label: "Pojemność silnika", value: "1590 / 1962 cm³" },
-      { label: "Moc maksymalna", value: "91 / 106 kW" },
-      { label: "Maksymalny moment obrotowy", value: "161 / 200 Nm" },
-      { label: "Prędkość maksymalna", value: "105 km/h" },
-      { label: "Skrzynia biegów", value: "manualna, 5 biegów" },
-      { label: "Napęd", value: "na tylną oś" },
-      { label: "Zawieszenie tylne", value: "resory piórowe" },
-      { label: "Opony", value: "185 R14 LT" },
-      { label: "Zabudowa Cargo (Niewiadów)", value: "kontener 3,6 × 1,8 m" },
-    ],
-    options: ["Zabudowa kontenerowa Niewiadów (wersja Cargo)", "Zabudowa furgon"],
-    faq: [
-      {
-        q: "Ile kosztuje BAW Light Truck?",
-        a: "BAW Light Truck kosztuje od 89 900 zł brutto (73 089,43 zł netto). Wersja Light Truck Cargo z zabudową Niewiadów kosztuje od 99 900 zł brutto (81 219,51 zł netto).",
-      },
-      {
-        q: "Jakim paliwem jest napędzany BAW Light Truck?",
-        a: "BAW Light Truck ma silnik benzynowy o pojemności 1590 lub 1962 cm³ i mocy 91 lub 106 kW, w zależności od wersji. Napęd trafia na tylną oś przez 5-biegową skrzynię manualną.",
-      },
-      {
-        q: "Jaka jest ładowność BAW Light Truck?",
-        a: "W zależności od wersji BAW Light Truck przewozi od 2000 do 2500 kg ładunku. Wersje różnią się długością (5585 lub 5985 mm) i rozstawem osi.",
-      },
-      {
-        q: "Czym różni się Light Truck od Light Truck Cargo?",
-        a: "Light Truck Cargo ma fabrycznie przygotowaną zabudowę Niewiadów, gotową do przewozu towarów.",
-      },
-      {
-        q: "Gdzie kupić BAW Light Truck?",
-        a: `U oficjalnego importera BAW w Polsce: ${company.name}, ${company.street}, ${company.city}.`,
       },
     ],
   },
