@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -17,6 +17,10 @@ export function Logo() {
   );
 }
 
+/** Links to another site (the 212 brand site) open in a new tab */
+const externalProps = (n: { href: string; external?: boolean }) =>
+  n.external ? { target: "_blank", rel: "noopener" } : {};
+
 export default function Navbar() {
   const { scrollY, scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 25 });
@@ -24,7 +28,7 @@ export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = (href: string) => href.startsWith("/") && (pathname === href || pathname.startsWith(`${href}/`));
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
@@ -52,10 +56,12 @@ export default function Navbar() {
               <Link
                 key={n.href}
                 href={n.href}
+                {...externalProps(n)}
                 aria-current={isActive(n.href) ? "page" : undefined}
-                className={`group relative transition-colors hover:text-white ${isActive(n.href) ? "text-white" : "text-white/75"}`}
+                className={`group relative inline-flex items-center gap-1 transition-colors hover:text-white ${isActive(n.href) ? "text-white" : "text-white/75"}`}
               >
                 {n.label}
+                {"external" in n && <ArrowUpRight className="size-3.5 text-brand" aria-hidden />}
                 <span
                   className={`absolute -bottom-1.5 left-0 h-0.5 bg-brand transition-all duration-300 group-hover:w-full ${
                     isActive(n.href) ? "w-full" : "w-0"
@@ -100,8 +106,14 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <Link href={n.href} onClick={() => setOpen(false)} className="font-display text-4xl font-bold">
+                  <Link
+                    href={n.href}
+                    {...externalProps(n)}
+                    onClick={() => setOpen(false)}
+                    className="inline-flex items-center gap-2 font-display text-4xl font-bold"
+                  >
                     {n.label}
+                    {"external" in n && <ArrowUpRight className="size-7 opacity-70" aria-hidden />}
                   </Link>
                   {n.href === "/modele" && (
                     <div className="mt-3 mb-2 flex flex-col gap-2 border-l border-white/25 pl-4">

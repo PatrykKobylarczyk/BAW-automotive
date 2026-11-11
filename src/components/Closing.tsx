@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowRight, Mail, MapPin } from "lucide-react";
-import { useRef, type MouseEvent } from "react";
+import { useRef, type MouseEvent, type ReactNode } from "react";
 import { company, media, models, nav, prices } from "@/lib/content";
 import { LeadForm } from "./LeadForm";
 import { Logo } from "./Navbar";
+import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 
 function PriceCard({ p, i, as: H = "h3" }: { p: (typeof prices)[number]; i: number; as?: "h2" | "h3" }) {
@@ -82,7 +83,7 @@ export function Pricing({
   moreHref?: string;
 }) {
   return (
-    <section id="cennik" className={`bg-ink-2 ${headingAs === "h1" ? "pt-40 pb-28 md:pt-48 md:pb-40" : "py-28 md:py-40"}`}>
+    <section id="cennik" className={`bg-ink-2 ${headingAs === "h1" ? `${pageTop} pb-28 md:pb-40` : "py-28 md:py-40"}`}>
       <div className="mx-auto max-w-[1280px] px-5 md:px-8">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -92,7 +93,7 @@ export function Pricing({
             <SplitText
               as={headingAs}
               text={title}
-              className="mt-5 max-w-[16ch] font-display text-[clamp(34px,4.6vw,64px)] leading-[1.02] font-bold tracking-tight"
+              className={`mt-5 ${headingAs === "h1" ? `max-w-[20ch] ${pageTitle}` : "max-w-[16ch] font-display text-[clamp(34px,4.6vw,64px)] leading-[1.02] font-bold tracking-tight"}`}
             />
           </div>
           <Reveal delay={0.2}>
@@ -117,7 +118,19 @@ export function Pricing({
   );
 }
 
-export function Dealer({ headingAs = "h2", ctaHref = "/zostan-dealerem" }: { headingAs?: "h1" | "h2"; ctaHref?: string }) {
+export function Dealer({
+  headingAs = "h2",
+  ctaHref = "/zostan-dealerem",
+  breadcrumbs,
+}: {
+  headingAs?: "h1" | "h2";
+  ctaHref?: string;
+  /** On the dealer page: breadcrumbs shown inside the card, above the heading */
+  breadcrumbs?: ReactNode;
+}) {
+  // As the page's first section the card starts higher and its text sits at the top, so the heading starts at
+  // the same height as on the other pages (see `pageTop`)
+  const isPage = headingAs === "h1";
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
@@ -125,24 +138,25 @@ export function Dealer({ headingAs = "h2", ctaHref = "/zostan-dealerem" }: { hea
   const radius = useTransform(scrollYProgress, [0, 0.4], [64, 32]);
 
   return (
-    <section ref={ref} id="dealer" className="py-28 md:py-40">
+    <section ref={ref} id="dealer" className={isPage ? "pt-28 pb-28 md:pt-30 md:pb-40" : "py-28 md:py-40"}>
       <div className="mx-auto max-w-[1280px] px-5 md:px-8">
         <motion.div
           style={{ scale, borderRadius: radius }}
-          className="relative flex min-h-[560px] items-center overflow-hidden p-8 md:p-20"
+          className={`relative flex min-h-[560px] overflow-hidden p-8 md:p-20 ${isPage ? "items-start md:pt-10" : "items-center"}`}
         >
           <motion.div style={{ y: bgY }} className="absolute -inset-y-[20%] inset-x-0">
             <Image src={media.dealerBg} alt="" fill sizes="100vw" className="object-cover grayscale" />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/90 to-ink/70" />
           <div className="relative z-10 max-w-[620px]">
+            {breadcrumbs}
             <Reveal>
               <Eyebrow light>Współpraca</Eyebrow>
             </Reveal>
             <SplitText
               as={headingAs}
               text="Zostań dealerem marki BAW"
-              className="mt-5 mb-6 font-display text-[clamp(34px,4.8vw,66px)] leading-[1.02] font-extrabold tracking-tight"
+              className={`mt-5 mb-6 ${isPage ? pageTitle : "font-display text-[clamp(34px,4.8vw,66px)] leading-[1.02] font-extrabold tracking-tight"}`}
             />
             <Reveal delay={0.15}>
               <p className="mb-4 text-lg text-white/85">
@@ -175,7 +189,7 @@ export function Contact({
   defaultModel?: string;
 }) {
   return (
-    <section id="kontakt" className={`relative overflow-hidden border-t border-white/10 ${headingAs === "h1" ? "pt-40 md:pt-48" : "pt-28 md:pt-36"} pb-28 md:pb-36`}>
+    <section id="kontakt" className={`relative overflow-hidden ${headingAs === "h1" ? pageTop : "border-t border-white/10 pt-28 md:pt-36"} pb-28 md:pb-36`}>
       <div className="mx-auto grid max-w-[1280px] gap-16 px-5 md:px-8 lg:grid-cols-2">
         <div>
           <Reveal>
@@ -184,7 +198,7 @@ export function Contact({
           <SplitText
             as={headingAs}
             text={title}
-            className="mt-5 mb-10 max-w-[14ch] font-display text-[clamp(34px,4vw,56px)] leading-[1.02] font-bold tracking-tight"
+            className={`mt-5 mb-10 ${headingAs === "h1" ? `max-w-[20ch] ${pageTitle}` : "max-w-[14ch] font-display text-[clamp(34px,4vw,56px)] leading-[1.02] font-bold tracking-tight"}`}
           />
           <Reveal delay={0.1} className="space-y-6">
             <div className="flex gap-4">

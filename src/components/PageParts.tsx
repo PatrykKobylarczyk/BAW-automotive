@@ -4,6 +4,7 @@ import { ArrowUpRight, Check, ChevronRight, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 import { models, type Model } from "@/lib/content";
 import { breadcrumbLd, trail, type PageKey } from "@/lib/seo";
+import { pageTitle } from "@/lib/styles";
 import { Eyebrow, Reveal, SplitText } from "./ui";
 
 export function JsonLd({ data }: { data: object | object[] }) {
@@ -15,12 +16,13 @@ export function JsonLd({ data }: { data: object | object[] }) {
   );
 }
 
-export function Breadcrumbs({ page, className = "" }: { page: PageKey; className?: string }) {
+/** `bare` drops the page container, for breadcrumbs placed inside a box that already has its own padding. */
+export function Breadcrumbs({ page, className = "", bare = false }: { page: PageKey; className?: string; bare?: boolean }) {
   const crumbs = trail(page);
   return (
     <>
       <JsonLd data={breadcrumbLd(page)} />
-      <nav aria-label="Ścieżka" className={`mx-auto max-w-[1280px] px-5 md:px-8 ${className}`}>
+      <nav aria-label="Ścieżka" className={`${bare ? "" : "mx-auto max-w-[1280px] px-5 md:px-8"} ${className}`}>
         <ol className="flex flex-wrap items-center gap-1.5 text-[13px] text-muted">
           {crumbs.map((c, i) => (
             <li key={c.path} className="flex items-center gap-1.5">
@@ -69,7 +71,7 @@ export function PageHeader({
           animateOnMount
           delay={0.1}
           text={title}
-          className="mt-5 max-w-[20ch] font-display text-[clamp(36px,5.6vw,80px)] leading-[1.02] font-extrabold tracking-tight"
+          className={`mt-5 max-w-[20ch] ${pageTitle}`}
         />
         {lead && (
           <Reveal delay={0.25}>

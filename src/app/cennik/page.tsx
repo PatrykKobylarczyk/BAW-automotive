@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Contact, Pricing } from "@/components/Closing";
 import { Breadcrumbs, Faq, Section } from "@/components/PageParts";
 import { prices } from "@/lib/content";
+import { crumbsOverlay } from "@/lib/styles";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata("pricing");
@@ -24,8 +25,8 @@ const faq = [
 
 export default function Page() {
   return (
-    <main>
-      <Breadcrumbs page="pricing" className="relative z-10 -mb-32 pt-28 md:-mb-40 md:pt-32" />
+    <main className="relative">
+      <Breadcrumbs page="pricing" className={crumbsOverlay} />
       <Pricing headingAs="h1" title="Cennik samochodów BAW 2026" />
       <Section eyebrow="Tabela cen" title="Ceny wszystkich wersji">
         <div className="overflow-x-auto rounded-3xl border border-white/10">

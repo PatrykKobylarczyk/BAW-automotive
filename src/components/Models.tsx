@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowUpRight, Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
 import { useRef, useState } from "react";
 import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
+import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 import ModelGallery from "./ModelGallery";
 
@@ -97,6 +98,12 @@ type SectionProps = {
   detailsHref?: string;
 };
 
+/** On a model's own page the section is the top of the page: heading in the shared page style, starting at the shared height */
+const modelTitle = (as: "h1" | "h2") =>
+  as === "h1" ? `mt-5 mb-6 ${pageTitle}` : "mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold";
+const modelSection = (as: "h1" | "h2") => (as === "h1" ? `${pageTop} pb-28 md:pb-40` : "py-28 md:py-40");
+const modelGrid = (as: "h1" | "h2") => (as === "h1" ? "items-start" : "items-center");
+
 export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
   const ref = useRef<HTMLElement>(null);
   const [mode, setMode] = useState<"photo" | "3d">("photo");
@@ -116,7 +123,7 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
   const carX = useTransform(scrollYProgress, [0, 1], ["-25%", "0%"]);
 
   return (
-    <section ref={ref} id="modele" className="relative overflow-hidden py-28 md:py-40">
+    <section ref={ref} id="modele" className={`relative overflow-hidden ${modelSection(headingAs)}`}>
       <motion.div
         style={{ x: wordX }}
         className="text-outline-faint pointer-events-none absolute top-16 left-0 font-display text-[clamp(160px,30vw,460px)] leading-none font-extrabold whitespace-nowrap select-none"
@@ -124,7 +131,7 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
         212 OFF-ROAD
       </motion.div>
 
-      <div className="relative mx-auto grid max-w-[1280px] items-center gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr]">
+      <div className={`relative mx-auto grid max-w-[1280px] gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr] ${modelGrid(headingAs)}`}>
         <div ref={carBox} className="relative aspect-[4/3]">
           <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
           <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
@@ -219,11 +226,11 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
           </div>
         </div>
 
-        <div>
+        <div className={headingAs === "h1" ? "order-first lg:order-none" : undefined}>
           <Reveal>
             <Eyebrow>SUV terenowy</Eyebrow>
           </Reveal>
-          <SplitText as={headingAs} text={headingAs === "h1" ? "BAW 212 T01 Off-Road" : "212 Off-Road"} className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
+          <SplitText as={headingAs} text={headingAs === "h1" ? "BAW 212 T01 Off-Road" : "212 Off-Road"} className={modelTitle(headingAs)} />
           <Reveal delay={0.1}>
             <ul className="mb-8 space-y-3">
               {offroadFeatures.map((f) => (
@@ -249,13 +256,13 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
 
   return (
     <>
-      <section ref={intro} className="relative overflow-hidden bg-ink-2 py-28 md:py-40">
-        <div className="mx-auto grid max-w-[1280px] items-center gap-14 px-5 md:px-8 lg:grid-cols-[1fr_1.1fr]">
+      <section ref={intro} className={`relative overflow-hidden bg-ink-2 ${modelSection(headingAs)}`}>
+        <div className={`mx-auto grid max-w-[1280px] gap-14 px-5 md:px-8 lg:grid-cols-[1fr_1.1fr] ${modelGrid(headingAs)}`}>
           <div>
             <Reveal>
               <Eyebrow>Elektryczny dostawczak</Eyebrow>
             </Reveal>
-            <SplitText as={headingAs} text={headingAs === "h1" ? "BAW Mini Truck EV" : "Mini Truck EV"} className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
+            <SplitText as={headingAs} text={headingAs === "h1" ? "BAW Mini Truck EV" : "Mini Truck EV"} className={modelTitle(headingAs)} />
             <Reveal delay={0.1}>
               <p className="mb-5 text-lg text-white/80">
                 Przełomowy produkt, przemyślany od konstrukcji mechanicznej, przez systemy, aż po serwis. Stworzony do
@@ -301,19 +308,19 @@ export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const wordX = useParallax(ref, -140);
 
   return (
-    <section ref={ref} className="relative overflow-hidden py-28 md:py-40">
+    <section ref={ref} className={`relative overflow-hidden ${modelSection(headingAs)}`}>
       <motion.div
         style={{ x: wordX }}
         className="text-outline-faint pointer-events-none absolute right-0 bottom-10 font-display text-[clamp(160px,30vw,460px)] leading-none font-extrabold whitespace-nowrap select-none"
       >
         LIGHT TRUCK
       </motion.div>
-      <div className="relative mx-auto grid max-w-[1280px] items-center gap-14 px-5 md:px-8 lg:grid-cols-[1fr_1.15fr]">
+      <div className={`relative mx-auto grid max-w-[1280px] gap-14 px-5 md:px-8 lg:grid-cols-[1fr_1.15fr] ${modelGrid(headingAs)}`}>
         <div>
           <Reveal>
             <Eyebrow>Samochód użytkowy</Eyebrow>
           </Reveal>
-          <SplitText as={headingAs} text={headingAs === "h1" ? "BAW Light Truck" : "Light Truck"} className="mt-4 mb-6 font-display text-[clamp(40px,5.4vw,76px)] leading-none font-extrabold" />
+          <SplitText as={headingAs} text={headingAs === "h1" ? "BAW Light Truck" : "Light Truck"} className={modelTitle(headingAs)} />
           <Reveal delay={0.1}>
             <p className="mb-8 text-lg text-white/80">
               Nowa generacja konstrukcji w dwóch typach — bezramowej i z ramą. Przestronna kabina, wygodne fotele,
