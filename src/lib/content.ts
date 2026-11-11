@@ -104,29 +104,30 @@ export const prices = [
 
 /**
  * Every version with its price, for the table on /cennik. Source: "Modele i ceny" in BAW_baza_danych.xlsx
- * (project files, baw-dane). Gross prices in PLN; net is gross / 1.23. Where the workbook gave only a net
- * figure, the gross is that net × 1.23 rounded to the round price it clearly comes from.
+ * (project files, baw-dane), taken from the importer's "Wsad do strony". Each row has the one price the
+ * importer gave, gross or net, exactly as in the sheet; the other one is worked out with 23% VAT.
  */
-export const priceList: {
+export const priceList: ({
   model: string;
   version: string;
   fuel: string;
-  gross: number;
   href?: string;
-}[] = [
+} & ({ gross: number; net?: never } | { net: number; gross?: never }))[] = [
   { model: "212 T01", version: "SUV", fuel: "Diesel", gross: 174500, href: "/modele/baw-212" },
-  { model: "212 T01", version: "Pick-up", fuel: "Diesel", gross: 219000, href: "/modele/baw-212" },
+  { model: "212 T01", version: "Pick-up", fuel: "Diesel", net: 178049, href: "/modele/baw-212" },
   { model: "212 Mavero", version: "SUV", fuel: "Benzyna", gross: 199900 },
-  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", gross: 89900, href: "/modele/baw-light-truck" },
-  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", gross: 94500, href: "/modele/baw-light-truck" },
-  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", gross: 99900, href: "/modele/baw-light-truck" },
-  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", gross: 99900, href: "/modele/baw-light-truck" },
-  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", gross: 104900, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", net: 73089, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", net: 76829, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", net: 104900, href: "/modele/baw-light-truck" },
   { model: "Mini Truck EV", version: "Box", fuel: "Elektryczny", gross: 64900, href: "/modele/baw-mini-truck" },
   { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck" },
 ];
 
-export const netOf = (gross: number) => Math.round((gross / 1.23) * 100) / 100;
+const round2 = (n: number) => Math.round(n * 100) / 100;
+export const grossOf = (p: { gross?: number; net?: number }) => p.gross ?? round2(p.net! * 1.23);
+export const netOf = (p: { gross?: number; net?: number }) => p.net ?? round2(p.gross! / 1.23);
 
 export const company = {
   name: "SERICA trade Sp. z o.o.",

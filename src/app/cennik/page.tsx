@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Contact, Pricing } from "@/components/Closing";
 import { Breadcrumbs, Faq, Section } from "@/components/PageParts";
-import { netOf, priceList } from "@/lib/content";
+import { grossOf, netOf, priceList } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata("pricing");
@@ -57,8 +57,8 @@ export default function Page() {
                   </th>
                   <td className="px-6 py-5 text-white/85">{p.version}</td>
                   <td className="px-6 py-5 text-white/75">{p.fuel}</td>
-                  <td className="px-6 py-5 text-right font-display font-bold whitespace-nowrap">{zl(p.gross)} zł</td>
-                  <td className="px-6 py-5 text-right whitespace-nowrap text-muted">{zl(netOf(p.gross))} zł</td>
+                  <td className="px-6 py-5 text-right font-display font-bold whitespace-nowrap">{zl(grossOf(p))} zł</td>
+                  <td className="px-6 py-5 text-right whitespace-nowrap text-muted">{zl(netOf(p))} zł</td>
                 </tr>
               ))}
             </tbody>
