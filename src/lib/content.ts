@@ -98,9 +98,35 @@ export const prices = [
   { name: "212 T01", fuel: "Diesel", gross: "174 500", net: "141 869,92", img: `${U}/2025/10/212-black.png`, href: "/modele/baw-212", featured: true },
   { name: "Light Truck", fuel: "Benzyna", gross: "89 900", net: "73 089,43", img: `${U}/2025/10/BAW_Small_005_gallery.png.webp`, href: "/modele/baw-light-truck" },
   { name: "Light Truck Cargo", fuel: "Benzyna · zabudowa Niewiadów", gross: "99 900", net: "81 219,51", img: `${U}/2025/10/BAW_Small_004_gallery.png.webp`, href: "/modele/baw-light-truck" },
-  { name: "Mini Truck", fuel: "Elektryczny", gross: "64 900", net: "52 764,00", img: `${U}/2025/10/baw-mini-box.webp`, href: "/modele/baw-mini-truck" },
+  { name: "Mini Truck", fuel: "Elektryczny", gross: "64 900", net: "52 764,23", img: `${U}/2025/10/baw-mini-box.webp`, href: "/modele/baw-mini-truck" },
   { name: "Mini Truck Cargo", fuel: "Elektryczny", gross: "69 900", net: "56 829,27", img: `${U}/2025/11/BAW-mimitruck.webp`, href: "/modele/baw-mini-truck" },
 ];
+
+/**
+ * Every version with its price, for the table on /cennik. Source: "Modele i ceny" in BAW_baza_danych.xlsx
+ * (project files, baw-dane). Gross prices in PLN; net is gross / 1.23. Where the workbook gave only a net
+ * figure, the gross is that net × 1.23 rounded to the round price it clearly comes from.
+ */
+export const priceList: {
+  model: string;
+  version: string;
+  fuel: string;
+  gross: number;
+  href?: string;
+}[] = [
+  { model: "212 T01", version: "SUV", fuel: "Diesel", gross: 174500, href: "/modele/baw-212" },
+  { model: "212 T01", version: "Pick-up", fuel: "Diesel", gross: 219000, href: "/modele/baw-212" },
+  { model: "212 Mavero", version: "SUV", fuel: "Benzyna", gross: 199900 },
+  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", gross: 89900, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", gross: 94500, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", gross: 99900, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", gross: 99900, href: "/modele/baw-light-truck" },
+  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", gross: 104900, href: "/modele/baw-light-truck" },
+  { model: "Mini Truck EV", version: "Box", fuel: "Elektryczny", gross: 64900, href: "/modele/baw-mini-truck" },
+  { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck" },
+];
+
+export const netOf = (gross: number) => Math.round((gross / 1.23) * 100) / 100;
 
 export const company = {
   name: "SERICA trade Sp. z o.o.",
@@ -255,7 +281,7 @@ export const models = [
     faq: [
       {
         q: "Ile kosztuje elektryczny BAW Mini Truck?",
-        a: "BAW Mini Truck kosztuje od 64 900 zł brutto (52 764 zł netto), a wersja Mini Truck Cargo od 69 900 zł brutto (56 829,27 zł netto).",
+        a: "BAW Mini Truck kosztuje od 64 900 zł brutto (52 764,23 zł netto), a wersja Mini Truck Cargo od 69 900 zł brutto (56 829,27 zł netto).",
       },
       {
         q: "Do czego najlepiej sprawdzi się BAW Mini Truck?",
