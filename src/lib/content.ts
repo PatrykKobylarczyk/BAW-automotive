@@ -10,6 +10,8 @@ export const media = {
 
 export const nav = [
   { label: "Pojazdy", href: "/modele" },
+  // Separate site of the 212 brand (green identity), opened in a new tab
+  { label: "212", href: "https://212-polska.vercel.app", external: true },
   { label: "Cennik", href: "/cennik" },
   { label: "Salony i serwis", href: "/serwis" },
   { label: "O marce", href: "/o-marce" },

@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { media } from "@/lib/content";
+import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, SplitText } from "./ui";
 
 export default function Hero() {
@@ -14,7 +15,7 @@ export default function Hero() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   return (
-    <section ref={ref} className="grain relative flex h-svh min-h-[680px] items-end overflow-hidden">
+    <section ref={ref} className="grain relative flex min-h-svh items-start overflow-hidden">
       <motion.div style={{ y: videoY, scale: videoScale }} className="absolute inset-0">
         <video
           className="size-full object-cover"
@@ -31,7 +32,7 @@ export default function Hero() {
 
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
-        className="relative z-10 mx-auto w-full max-w-[1280px] px-5 pb-24 md:px-8 md:pb-32"
+        className={`relative z-10 mx-auto w-full max-w-[1280px] px-5 pb-24 md:px-8 md:pb-32 ${pageTop}`}
       >
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1 }}>
           <Eyebrow light>Oficjalny importer BAW w Polsce</Eyebrow>
@@ -41,7 +42,7 @@ export default function Hero() {
           animateOnMount
           delay={0.35}
           text="Moc w każdej klasie. Niezawodność w każdej trasie."
-          className="mt-6 mb-8 max-w-[17ch] font-display text-[clamp(34px,6.2vw,96px)] leading-[0.98] font-extrabold tracking-tight"
+          className={`mt-5 mb-8 max-w-[17ch] ${pageTitle}`}
         />
         <motion.p
           initial={{ opacity: 0, y: 20 }}

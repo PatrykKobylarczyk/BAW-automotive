@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Contact } from "@/components/Closing";
 import Link from "next/link";
 import { Breadcrumbs, Section } from "@/components/PageParts";
+import { crumbsOverlay } from "@/lib/styles";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata("contact");
@@ -14,8 +15,8 @@ const topics = [
 
 export default function Page() {
   return (
-    <main>
-      <Breadcrumbs page="contact" className="relative z-10 -mb-32 pt-28 md:-mb-40 md:pt-32" />
+    <main className="relative">
+      <Breadcrumbs page="contact" className={crumbsOverlay} />
       <Contact headingAs="h1" title="Kontakt z BAW Automotive Polska" />
       <Section eyebrow="W czym pomożemy" title="Najczęstsze sprawy" className="bg-ink-2">
         <div className="grid gap-5 md:grid-cols-3">

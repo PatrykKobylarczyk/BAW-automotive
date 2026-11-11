@@ -35,8 +35,7 @@ const faq = [
 export default function Page() {
   return (
     <main>
-      <Breadcrumbs page="dealer" className="relative z-10 -mb-16 pt-28 md:-mb-20 md:pt-32" />
-      <Dealer headingAs="h1" ctaHref="#kontakt" />
+      <Dealer headingAs="h1" ctaHref="#kontakt" breadcrumbs={<Breadcrumbs page="dealer" bare className="mb-6 md:mb-10" />} />
       <Section id="mapa" eyebrow="Sieć BAW w Polsce" title="Salony i serwisy BAW na mapie">
         <DealerMap />
       </Section>
