@@ -31,7 +31,7 @@ function SoonCard({ d }: { d: Dealer }) {
   );
 }
 
-export function DealerCard({ d }: { d: Dealer }) {
+function DealerCard({ d }: { d: Dealer }) {
   if (d.comingSoon) return <SoonCard d={d} />;
   const external = d.url && /^https?:/.test(d.url);
   return (
@@ -97,15 +97,26 @@ export function DealerCard({ d }: { d: Dealer }) {
   );
 }
 
+/** Pins whose city label goes to the left, where a neighbour (Ksawerów next to Łódź, Nowy Targ next to Nowy Sącz) would cover it. */
+const LABEL_LEFT = new Set(["ksawerow", "nowy-targ"]);
+
 /** Map of Poland with a pin per location: open ones in white/brand, announced ones in gold. */
 export function PinsMap({
   activeId,
   onSelect,
   className = "",
+  visibleIds,
+  labels = false,
+  legend = true,
 }: {
   activeId?: string;
   onSelect: (id: string) => void;
   className?: string;
+  /** Pins not in the set are hidden and pop in when added (used by the scroll animation). All shown when omitted. */
+  visibleIds?: ReadonlySet<string>;
+  /** City name next to each pin */
+  labels?: boolean;
+  legend?: boolean;
 }) {
   const open = dealers.filter((d) => !d.comingSoon);
   const soon = dealers.filter((d) => d.comingSoon);
@@ -129,18 +140,28 @@ export function PinsMap({
           const [x, y] = project(d.lat, d.lng);
           const on = d.id === activeId;
           const accent = d.comingSoon ? "var(--color-soon)" : "var(--color-brand)";
+          const shown = !visibleIds || visibleIds.has(d.id);
           return (
             <g
               key={d.id}
               transform={`translate(${x} ${y})`}
               role="button"
-              tabIndex={0}
+              tabIndex={shown ? 0 : -1}
+              aria-hidden={!shown || undefined}
               aria-label={`${d.name}, ${d.city}${d.comingSoon ? ", otwarcie wkrótce" : ""}`}
               aria-pressed={on}
               onClick={() => onSelect(d.id)}
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onSelect(d.id))}
-              className="cursor-pointer outline-none [&:focus-visible_.pin]:stroke-white"
+              className={`cursor-pointer outline-none [&:focus-visible_.pin]:stroke-white ${shown ? "" : "pointer-events-none"}`}
             >
+              <g
+                style={{
+                  transform: shown ? "scale(1)" : "scale(0)",
+                  opacity: shown ? 1 : 0,
+                  transformOrigin: "0px 0px",
+                  transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s",
+                }}
+              >
               {on && (
                 <circle r="18" fill={accent} opacity="0.35">
                   <animate attributeName="r" values="16;46" dur="1.8s" repeatCount="indefinite" />
@@ -160,10 +181,27 @@ export function PinsMap({
                 cy="-29"
                 r="5.5"
                 fill={on ? "#fff" : d.comingSoon ? "var(--color-ink)" : "var(--color-brand)"} transform={on ? "scale(1.25)" : undefined} />
+                {labels && (
+                  <text
+                    x={LABEL_LEFT.has(d.id) ? -22 : 22}
+                    y={LABEL_LEFT.has(d.id) ? 6 : -22}
+                    textAnchor={LABEL_LEFT.has(d.id) ? "end" : "start"}
+                    fontSize="24"
+                    fontWeight="600"
+                    fill={d.comingSoon ? "var(--color-soon)" : "#f2f3f5"}
+                    stroke="var(--color-ink)"
+                    strokeWidth="6"
+                    paintOrder="stroke"
+                  >
+                    {d.city.replace(/^\d{2}-\d{3}\s/, "")}
+                  </text>
+                )}
+              </g>
             </g>
           );
         })}
       </svg>
+      {legend && (
       <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
         <span className="inline-flex items-center gap-2">
           <span className="size-3 rounded-full bg-[#f2f3f5] ring-2 ring-brand ring-inset" /> Salony i serwisy
@@ -173,6 +211,7 @@ export function PinsMap({
         </span>
         <span>Kliknij punkt na mapie, aby zobaczyć szczegóły.</span>
       </div>
+      )}
     </div>
   );
 }
