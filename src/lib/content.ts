@@ -77,9 +77,19 @@ export const offroadFeatures = [
   "Pięciopunktowe, niezależne zawieszenie przód i tył",
 ];
 
-export const gallery212 = ["34-front", "side", "34-rear", "front", "paint-white", "paint-graphite", "paint-black", "top"].map(
-  (n) => `/gallery/212/${n}.webp`,
-);
+export const gallery212 = [
+  ...["34-front", "side", "34-rear", "front", "paint-white", "paint-graphite", "paint-black", "top"].map((n) => `/gallery/212/${n}.webp`),
+  // Our photos (T01 SUV and Pick-up), cut out of the background
+  ...["t01-czarny", "t01-bialy-przod", "t01-bialy-tyl", "pickup-grafit-przod", "pickup-grafit", "pickup-wyciagarka"].map(
+    (n) => `/cutouts/212/${n}.webp`,
+  ),
+];
+
+/** Mini Truck versions on its section: our photos cut out of the background */
+export const miniTruckVersions = [
+  { src: "/cutouts/mini-truck/box.webp", label: "Box" },
+  { src: "/cutouts/mini-truck/cargo.webp", label: "Cargo" },
+];
 
 export const miniTruckGallery = [1, 10, 6, 7, 12, 11, 3, 2, 8, 5, 9].map(
   (n) => `${U}/2025/10/Mini_truck_est_${n}-${[6, 12, 8, 5].includes(n) ? 2 : 1}-1630x860.jpg`,
@@ -101,12 +111,18 @@ export const lightTruckGallery = [
   "komunalna-wymiary-bok",
 ].map((n) => `/gallery/light-truck/${n}.webp`);
 
+// Our own studio photos (the "auta" folder), cut out of the white background: public/cutouts
 export const lightTruck = {
-  image: `${U}/2025/10/BAW_Small_005_gallery.png.webp`,
-  gallery: [1, 2, 3, 4, 5, 6].map((n) => {
-    const twin = [2, 3].includes(n) ? ".png-kopia-blizniak" : n === 6 ? ".png-kopiablizniak" : ".png";
-    return `${U}/2025/10/BAW_Small_00${n}_gallery${twin}.webp`;
-  }),
+  image: "/cutouts/light-truck/skrzynia.webp",
+  // One photo per body type, switched with the thumbnails on the Light Truck section
+  gallery: [
+    { src: "/cutouts/light-truck/skrzynia.webp", label: "Skrzynia" },
+    { src: "/cutouts/light-truck/skrzynia-tyl.webp", label: "Skrzynia, tył" },
+    { src: "/cutouts/light-truck/komunalna.webp", label: "Skrzynia komunalna" },
+    { src: "/cutouts/light-truck/kontener.webp", label: "Kontener" },
+    { src: "/cutouts/light-truck/wywrotka-jednostronna.webp", label: "Wywrotka jednostronna" },
+    { src: "/cutouts/light-truck/wywrotka-trojstronna.webp", label: "Wywrotka trójstronna" },
+  ],
   specs: [
     { value: '7"', label: "wielofunkcyjny ekran dotykowy" },
     { value: "LCD", label: "elektroniczny panel wskaźników" },
@@ -134,20 +150,20 @@ export const priceList: ({
   version: string;
   fuel: string;
   href?: string;
-  /** Studio photo (white background) from the "auta" folder; none yet for 212 Mavero */
+  /** Our photo from the "auta" folder, cut out of the background; none yet for 212 Mavero */
   img?: string;
   featured?: boolean;
 } & ({ gross: number; net?: never } | { net: number; gross?: never }))[] = [
-  { model: "212 T01", version: "SUV", fuel: "Diesel", gross: 174500, href: "/modele/baw-212", img: "/gallery/212/t01-czarny-przod.webp", featured: true },
-  { model: "212 T01", version: "Pick-up", fuel: "Diesel", net: 178049, href: "/modele/baw-212", img: "/gallery/212/pickup-grafit-tyl.webp" },
+  { model: "212 T01", version: "SUV", fuel: "Diesel", gross: 174500, href: "/modele/baw-212", img: "/cutouts/212/t01-czarny.webp", featured: true },
+  { model: "212 T01", version: "Pick-up", fuel: "Diesel", net: 178049, href: "/modele/baw-212", img: "/cutouts/212/pickup-grafit.webp" },
   { model: "212 Mavero", version: "SUV", fuel: "Benzyna", gross: 199900 },
-  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", net: 73089, href: "/modele/baw-light-truck", img: "/gallery/light-truck/skrzynia-przod-34-1.webp" },
-  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", net: 76829, href: "/modele/baw-light-truck", img: "/gallery/light-truck/komunalna-przod-34-1.webp" },
-  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/gallery/light-truck/kontener-przod-34-1.webp" },
-  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/gallery/light-truck/wywrotka-bok.webp" },
-  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", net: 104900, href: "/modele/baw-light-truck", img: "/gallery/light-truck/wywrotka-bok-podniesiona-1.webp" },
-  { model: "Mini Truck EV", version: "Box", fuel: "Elektryczny", gross: 64900, href: "/modele/baw-mini-truck", img: "/gallery/mini-truck/skrzynia-przod-34.webp" },
-  { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck", img: "/gallery/mini-truck/cargo-przod-34-1.webp" },
+  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", net: 73089, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/skrzynia.webp" },
+  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", net: 76829, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/komunalna.webp" },
+  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/kontener.webp" },
+  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/wywrotka-jednostronna.webp" },
+  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", net: 104900, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/wywrotka-trojstronna.webp" },
+  { model: "Mini Truck EV", version: "Box", fuel: "Elektryczny", gross: 64900, href: "/modele/baw-mini-truck", img: "/cutouts/mini-truck/box.webp" },
+  { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck", img: "/cutouts/mini-truck/cargo.webp" },
 ];
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -280,7 +296,7 @@ export const models = [
     category: "Elektryczny samochód dostawczy",
     fuel: "Elektryczny",
     priceFrom: 64900,
-    image: `${U}/2025/10/baw-mini-box.webp`,
+    image: "/cutouts/mini-truck/box.webp",
     intro:
       "W pełni elektryczny, kompaktowy samochód dostawczy do miejskiej logistyki i dostaw ostatniej mili. Dostępny w wersji Box i Cargo.",
     highlights: [
