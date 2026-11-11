@@ -29,6 +29,8 @@ export default function Hero() {
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/10 to-ink" />
       <div className="absolute inset-0 bg-gradient-to-r from-ink/70 via-transparent to-transparent" />
+      {/* Long eased fade into the page colour, solid well before the edge, so the video melts into the next section */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-[linear-gradient(to_bottom,rgb(10_11_14/0)_0%,rgb(10_11_14/.25)_25%,rgb(10_11_14/.6)_50%,rgb(10_11_14/.88)_72%,var(--color-ink)_90%)]" />
 
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
