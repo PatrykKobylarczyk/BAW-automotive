@@ -83,6 +83,22 @@ export const miniTruckGallery = [1, 10, 6, 7, 12, 11, 3, 2, 8, 5, 9].map(
   (n) => `${U}/2025/10/Mini_truck_est_${n}-${[6, 12, 8, 5].includes(n) ? 2 : 1}-1630x860.jpg`,
 );
 
+// Studio renders on a white background, one or two per body type (model page gallery)
+export const lightTruckGallery = [
+  "przod",
+  "skrzynia-przod-34-1",
+  "skrzynia-tyl-34-1",
+  "kontener-przod-34-1",
+  "kontener-tyl-34-1",
+  "kontener-tyl-otwarty",
+  "wywrotka-przod-podniesiona",
+  "wywrotka-bok-podniesiona-1",
+  "wywrotka-trzy-strony",
+  "komunalna-przod-34-1",
+  "komunalna-tyl-34-1",
+  "komunalna-wymiary-bok",
+].map((n) => `/gallery/light-truck/${n}.webp`);
+
 export const lightTruck = {
   image: `${U}/2025/10/BAW_Small_005_gallery.png.webp`,
   gallery: [1, 2, 3, 4, 5, 6].map((n) => {
