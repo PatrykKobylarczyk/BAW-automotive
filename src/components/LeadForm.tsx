@@ -44,8 +44,13 @@ export function LeadForm({
   kind = "kontakt",
   defaultModel = "",
   submitLabel = "Wyślij zapytanie",
+  successText = "Otrzymaliśmy Twoją wiadomość. Odezwiemy się najszybciej, jak to możliwe.",
+  className = "",
   children,
 }: {
+  successText?: string;
+  /** Extra classes for the form box, e.g. a lighter padding in compact places */
+  className?: string;
   kind?: "kontakt" | "dealer";
   defaultModel?: string;
   submitLabel?: string;
@@ -67,13 +72,13 @@ export function LeadForm({
       <div role="status" className="flex flex-col items-start gap-4 rounded-3xl border border-brand/50 bg-brand-dark/20 p-8 md:p-10">
         <CheckCircle2 className="size-9 text-brand" />
         <p className="font-display text-2xl font-bold">Dziękujemy!</p>
-        <p className="text-white/80">Otrzymaliśmy Twoją wiadomość. Odezwiemy się najszybciej, jak to możliwe.</p>
+        <p className="text-white/80">{successText}</p>
       </div>
     );
   }
 
   return (
-    <form action={action} className="relative rounded-3xl border border-white/10 bg-ink-2 p-6 md:p-10">
+    <form action={action} className={`relative rounded-3xl border border-white/10 bg-ink-2 p-6 md:p-10 ${className}`}>
       <input type="hidden" name="kind" value={kind} />
       {Object.entries(hidden).map(([k, v]) => (
         <input key={k} type="hidden" name={k} value={v} />
