@@ -41,13 +41,16 @@ export const values = [
   },
 ] as const;
 
-// Photo view: one studio photo per colour
+// Photo view: one studio photo per colour. The photos come with different amounts of empty space around
+// the car, so each one carries the car's measured outline (`box`, in pixels: left, top, right, bottom of the
+// solid car body, without the soft shadow some photos have). The configurator crops every photo to that
+// outline, so the car is the same size and in the same place whichever colour is picked.
 export const colors212 = [
-  { name: "Oliwkowy", hex: "#4b5a3a", src: `${U}/2025/10/212-car.png` },
-  { name: "Czarny", hex: "#121212", src: `${U}/2025/10/212-black.png` },
-  { name: "Grafitowy", hex: "#7d8085", src: `${U}/2025/10/212-gray-480x236.png` },
-  { name: "Biały", hex: "#ececec", src: `${U}/2025/10/212-white-2-480x236.png` },
-];
+  { name: "Oliwkowy", hex: "#4b5a3a", src: `${U}/2025/10/212-car.png`, w: 1600, h: 914, box: [223, 196, 1377, 776] },
+  { name: "Czarny", hex: "#121212", src: `${U}/2025/10/212-black.png`, w: 1080, h: 531, box: [47, 2, 1047, 504] },
+  { name: "Grafitowy", hex: "#7d8085", src: `${U}/2025/10/212-gray.png`, w: 1080, h: 531, box: [47, 2, 1047, 504] },
+  { name: "Biały", hex: "#ececec", src: `${U}/2025/10/212-white-2.png`, w: 1080, h: 531, box: [47, 1, 1048, 504] },
+] as const;
 
 // 3D view: paint colours taken from the 212 T01 Blender model
 export const paints212 = [

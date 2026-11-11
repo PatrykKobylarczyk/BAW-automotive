@@ -17,6 +17,38 @@ function useParallax(target: React.RefObject<HTMLElement | null>, distance: numb
   return useTransform(scrollYProgress, [0, 1], [distance, -distance]);
 }
 
+/**
+ * One colour photo of the 212, cropped to the car's measured outline and centred in its box. Every colour fills
+ * the same frame, so the car keeps its size and position when the visitor switches colours.
+ */
+function CroppedCar({ photo }: { photo: (typeof colors212)[number] }) {
+  const [l, t, r, b] = photo.box;
+  const carW = r - l;
+  const carH = b - t;
+  return (
+    <div
+      className="absolute top-1/2 left-1/2 w-[103%] -translate-x-1/2 -translate-y-1/2 overflow-visible"
+      style={{ aspectRatio: `${carW} / ${carH}` }}
+    >
+      <Image
+        src={photo.src}
+        alt={`BAW 212 — ${photo.name}`}
+        width={photo.w}
+        height={photo.h}
+        sizes="(max-width:1024px) 110vw, 62vw"
+        quality={90}
+        className="absolute max-w-none drop-shadow-[0_40px_40px_rgba(0,0,0,.6)]"
+        style={{
+          width: `${(photo.w / carW) * 100}%`,
+          height: `${(photo.h / carH) * 100}%`,
+          left: `${(-l / carW) * 100}%`,
+          top: `${(-t / carH) * 100}%`,
+        }}
+      />
+    </div>
+  );
+}
+
 function SpecGrid({ specs }: { specs: { value: string; label: string }[] }) {
   return (
     <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10">
@@ -107,14 +139,7 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-0"
                 >
-                  <Image
-                    src={colors212[photoIdx].src}
-                    alt={`BAW 212 — ${colors212[photoIdx].name}`}
-                    fill
-                    sizes="(max-width:1024px) 100vw, 55vw"
-                    className="scale-110 object-contain drop-shadow-[0_40px_40px_rgba(0,0,0,.6)]"
-                    quality={90}
-                  />
+                  <CroppedCar photo={colors212[photoIdx]} />
                 </motion.div>
               )}
             </AnimatePresence>
