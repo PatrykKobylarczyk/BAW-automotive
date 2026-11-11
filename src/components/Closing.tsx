@@ -164,27 +164,6 @@ export function Dealer({ headingAs = "h2", ctaHref = "/zostan-dealerem" }: { hea
   );
 }
 
-/** Slim invitation for prospective dealers (home page, about page) */
-export function DealerStrip() {
-  return (
-    <section aria-label="Współpraca dealerska" className="border-t border-white/10 bg-brand-dark">
-      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-6 px-5 py-10 md:px-8">
-        <div>
-          <span className="text-[11px] font-semibold tracking-[0.2em] text-white/60 uppercase">Współpraca</span>
-          <p className="mt-2 font-display text-xl font-bold md:text-2xl">Prowadzisz salon lub serwis? Zostań dealerem BAW.</p>
-        </div>
-        <Link
-          href="/zostan-dealerem"
-          className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-semibold transition hover:border-white hover:bg-white hover:text-brand-dark"
-        >
-          Dowiedz się więcej
-          <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
-        </Link>
-      </div>
-    </section>
-  );
-}
-
 export function Contact({
   headingAs = "h2",
   title = "Umów jazdę próbną lub zapytaj o ofertę.",
