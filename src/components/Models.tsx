@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } fr
 import Link from "next/link";
 import { ArrowUpRight, Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
 import { useRef, useState } from "react";
-import { colors212, lightTruck, media, miniTruckGallery, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
+import { colors212, lightTruck, miniTruckGallery, miniTruckVersions, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
 import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 import ModelGallery from "./ModelGallery";
@@ -252,7 +252,8 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
 
 export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const intro = useRef<HTMLElement>(null);
-  const photoY = useParallax(intro, 70);
+  const photoY = useParallax(intro, 40);
+  const [miniVersion, setMiniVersion] = useState(0);
 
   return (
     <>
@@ -285,12 +286,46 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
               <PriceCta label="Mini Truck, od" price="64 900" cta="Zapytaj o ofertę" detailsHref={detailsHref} />
             </Reveal>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] lg:order-first">
-            <motion.div style={{ y: photoY }} className="absolute -inset-y-[12%] inset-x-0">
-              <Image src={media.evPhoto} alt="BAW Mini Truck EV" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
-            </motion.div>
-            <div className="absolute top-5 left-5 rounded-full bg-brand px-4 py-1.5 text-xs font-bold tracking-widest uppercase">
-              Elektryczny
+          {/* Our photos of both versions, cut out of the background, switched like on the Light Truck */}
+          <div className="lg:order-first">
+            <div className="relative aspect-[4/3]">
+              <div className="absolute top-[60%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/35 blur-[70px]" />
+              <div className="absolute top-2 left-2 z-10 rounded-full bg-brand px-4 py-1.5 text-xs font-bold tracking-widest uppercase">
+                Elektryczny
+              </div>
+              <motion.div style={{ y: photoY }} className="absolute inset-0">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={miniVersion}
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.04 }}
+                    transition={{ duration: 0.45 }}
+                    className="absolute inset-[6%]"
+                  >
+                    <Image
+                      src={miniTruckVersions[miniVersion].src}
+                      alt={`BAW Mini Truck EV — ${miniTruckVersions[miniVersion].label}`}
+                      fill
+                      sizes="(max-width:1024px) 100vw, 50vw"
+                      className="object-contain"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </motion.div>
+            </div>
+            <div className="mt-6 flex justify-center gap-3">
+              {miniTruckVersions.map((v, i) => (
+                <button
+                  key={v.src}
+                  onClick={() => setMiniVersion(i)}
+                  className={`rounded-full border px-5 py-2 text-sm font-semibold transition ${
+                    miniVersion === i ? "border-brand bg-brand" : "border-white/15 text-white/75 hover:border-white/40"
+                  }`}
+                >
+                  {v.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -303,7 +338,7 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
 
 export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const ref = useRef<HTMLElement>(null);
-  const [img, setImg] = useState(lightTruck.image);
+  const [img, setImg] = useState(lightTruck.gallery[0].src);
   const carY = useParallax(ref, 60);
   const wordX = useParallax(ref, -140);
 
@@ -345,7 +380,7 @@ export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
                   transition={{ duration: 0.45 }}
                   className="absolute inset-0"
                 >
-                  <Image src={img} alt="BAW Light Truck" fill sizes="(max-width:1024px) 100vw, 55vw" className="object-contain" />
+                  <Image src={img} alt={`BAW Light Truck — ${lightTruck.gallery.find((g) => g.src === img)?.label ?? ""}`} fill sizes="(max-width:1024px) 100vw, 55vw" className="object-contain" />
                 </motion.div>
               </AnimatePresence>
             </motion.div>
@@ -353,13 +388,15 @@ export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
           <div className="mt-6 grid grid-cols-6 gap-2">
             {lightTruck.gallery.map((g) => (
               <button
-                key={g}
-                onClick={() => setImg(g)}
-                className={`relative aspect-[4/3] overflow-hidden rounded-xl border transition ${
-                  img === g ? "border-brand" : "border-white/10 opacity-60 hover:opacity-100"
+                key={g.src}
+                onClick={() => setImg(g.src)}
+                title={g.label}
+                aria-label={`Pokaż: ${g.label}`}
+                className={`relative aspect-[4/3] overflow-hidden rounded-xl border bg-white/[0.03] transition ${
+                  img === g.src ? "border-brand" : "border-white/10 opacity-60 hover:opacity-100"
                 }`}
               >
-                <Image src={g} alt="BAW Light Truck — miniatura zdjęcia" fill sizes="120px" className="object-cover" />
+                <Image src={g.src} alt="" fill sizes="120px" className="object-contain p-1.5" />
               </button>
             ))}
           </div>

@@ -56,14 +56,14 @@ function PriceCard({ p, i, as: H = "h3" }: { p: (typeof priceList)[number]; i: n
             Flagowy
           </span>
         )}
-        {/* The photos are studio shots on white, so they sit on a light tile */}
-        <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-white">
+        <div className="relative mb-5 aspect-[16/10]">
+          <div className="absolute inset-x-4 bottom-0 h-1/3 rounded-full bg-white/10 blur-2xl" />
           {p.img ? (
-            <Image src={p.img} alt={`BAW ${p.model} ${p.version}`} fill sizes="(max-width:640px) 90vw, (max-width:1024px) 45vw, 240px" className="object-contain p-2" />
+            <Image src={p.img} alt={`BAW ${p.model} ${p.version}`} fill sizes="(max-width:640px) 90vw, (max-width:1024px) 45vw, 240px" className="object-contain" />
           ) : (
-            <div className="absolute inset-0 grid place-items-center bg-white/95 text-center">
-              <span className="font-display text-3xl font-extrabold text-ink/15">{p.model}</span>
-              <span className="absolute bottom-3 text-[11px] font-medium tracking-wider text-ink/45 uppercase">Zdjęcie wkrótce</span>
+            <div className="absolute inset-0 grid place-items-center rounded-2xl border border-dashed border-white/15 text-center">
+              <span className="font-display text-2xl font-extrabold text-white/15">{p.model}</span>
+              <span className="absolute bottom-3 text-[11px] font-medium tracking-wider text-muted uppercase">Zdjęcie wkrótce</span>
             </div>
           )}
         </div>
