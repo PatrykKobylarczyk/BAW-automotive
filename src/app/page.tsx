@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Hero from "@/components/Hero";
-import { Marquee, Stats, Values } from "@/components/Intro";
+import { Stats, Values } from "@/components/Intro";
 import OffroadReveal from "@/components/OffroadReveal";
 import { Contact, Dealer, Pricing } from "@/components/Closing";
 import DealerNetwork from "@/components/DealerNetwork";
@@ -16,7 +16,6 @@ export default function Home() {
   return (
     <main>
       <Hero />
-      <Marquee />
       <Section id="modele" eyebrow="Gama BAW" title="Od terenu po miejską logistykę.">
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr]">
           {models.map((m, i) => (
