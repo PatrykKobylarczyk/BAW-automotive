@@ -150,20 +150,24 @@ export const priceList: ({
   version: string;
   fuel: string;
   href?: string;
-  /** Our photo from the "auta" folder, cut out of the background; none yet for 212 Mavero */
+  /**
+   * Our photo from the "auta" folder, cut out of the background (public/cutouts/kafelki). Every tile uses the same
+   * shot: front three-quarter view, front of the vehicle to the left, same size on the same canvas. The tipper only
+   * has a photo facing right, so it is mirrored with its BAW lettering flipped back. None yet for 212 Mavero.
+   */
   img?: string;
   featured?: boolean;
 } & ({ gross: number; net?: never } | { net: number; gross?: never }))[] = [
-  { model: "212 T01", version: "SUV", fuel: "Diesel", gross: 174500, href: "/modele/baw-212", img: "/cutouts/212/t01-czarny.webp", featured: true },
-  { model: "212 T01", version: "Pick-up", fuel: "Diesel", net: 178049, href: "/modele/baw-212", img: "/cutouts/212/pickup-grafit.webp" },
+  { model: "212 T01", version: "SUV", fuel: "Diesel", gross: 174500, href: "/modele/baw-212", img: "/cutouts/kafelki/212-t01-suv.webp", featured: true },
+  { model: "212 T01", version: "Pick-up", fuel: "Diesel", net: 178049, href: "/modele/baw-212", img: "/cutouts/kafelki/212-t01-pickup.webp" },
   { model: "212 Mavero", version: "SUV", fuel: "Benzyna", gross: 199900 },
-  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", net: 73089, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/skrzynia.webp" },
-  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", net: 76829, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/komunalna.webp" },
-  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/kontener.webp" },
-  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/wywrotka-jednostronna.webp" },
-  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", net: 104900, href: "/modele/baw-light-truck", img: "/cutouts/light-truck/wywrotka-trojstronna.webp" },
-  { model: "Mini Truck EV", version: "Box", fuel: "Elektryczny", gross: 64900, href: "/modele/baw-mini-truck", img: "/cutouts/mini-truck/box.webp" },
-  { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck", img: "/cutouts/mini-truck/cargo.webp" },
+  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", net: 73089, href: "/modele/baw-light-truck", img: "/cutouts/kafelki/lt-skrzynia.webp" },
+  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", net: 76829, href: "/modele/baw-light-truck", img: "/cutouts/kafelki/lt-komunalna.webp" },
+  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/cutouts/kafelki/lt-kontener.webp" },
+  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/cutouts/kafelki/lt-wywrotka.webp" },
+  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", net: 104900, href: "/modele/baw-light-truck", img: "/cutouts/kafelki/lt-wywrotka.webp" },
+  { model: "Mini Truck EV", version: "Box", fuel: "Elektryczny", gross: 64900, href: "/modele/baw-mini-truck", img: "/cutouts/kafelki/mini-box.webp" },
+  { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck", img: "/cutouts/kafelki/mini-cargo.webp" },
 ];
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
