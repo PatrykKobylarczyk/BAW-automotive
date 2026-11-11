@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Contact, Pricing } from "@/components/Closing";
 import { Breadcrumbs, Faq, Section } from "@/components/PageParts";
-import { prices } from "@/lib/content";
+import { grossOf, netOf, priceList } from "@/lib/content";
 import { crumbsOverlay } from "@/lib/styles";
 import { pageMetadata } from "@/lib/seo";
 
@@ -19,9 +19,12 @@ const faq = [
   },
   {
     q: "Który samochód BAW jest najtańszy?",
-    a: "Najtańszy jest elektryczny BAW Mini Truck, od 64 900 zł brutto (52 764 zł netto).",
+    a: "Najtańszy jest elektryczny BAW Mini Truck, od 64 900 zł brutto (52 764,23 zł netto).",
   },
 ];
+
+const zl = (n: number) =>
+  n.toLocaleString("pl-PL", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).replace(/\u00a0| /g, "\u00a0");
 
 export default function Page() {
   return (
@@ -30,27 +33,33 @@ export default function Page() {
       <Pricing headingAs="h1" title="Cennik samochodów BAW 2026" />
       <Section eyebrow="Tabela cen" title="Ceny wszystkich wersji">
         <div className="overflow-x-auto rounded-3xl border border-white/10">
-          <table className="w-full min-w-[560px] text-left text-[15px]">
+          <table className="w-full min-w-[720px] text-left text-[15px]">
             <caption className="sr-only">Cennik samochodów BAW w Polsce, ceny brutto i netto w złotych</caption>
             <thead className="bg-ink-2 text-xs tracking-[0.15em] text-muted uppercase">
               <tr>
                 <th scope="col" className="px-6 py-4 font-semibold">Model</th>
-                <th scope="col" className="px-6 py-4 font-semibold">Napęd / wersja</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Wersja</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Paliwo</th>
                 <th scope="col" className="px-6 py-4 text-right font-semibold">Cena brutto</th>
                 <th scope="col" className="px-6 py-4 text-right font-semibold">Cena netto</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {prices.map((p) => (
-                <tr key={p.name}>
+              {priceList.map((p) => (
+                <tr key={p.model + p.version}>
                   <th scope="row" className="px-6 py-5 font-semibold">
-                    <Link href={p.href} className="transition hover:text-brand">
-                      BAW {p.name}
-                    </Link>
+                    {p.href ? (
+                      <Link href={p.href} className="transition hover:text-brand">
+                        BAW {p.model}
+                      </Link>
+                    ) : (
+                      <>BAW {p.model}</>
+                    )}
                   </th>
+                  <td className="px-6 py-5 text-white/85">{p.version}</td>
                   <td className="px-6 py-5 text-white/75">{p.fuel}</td>
-                  <td className="px-6 py-5 text-right font-display font-bold whitespace-nowrap">{p.gross} zł</td>
-                  <td className="px-6 py-5 text-right whitespace-nowrap text-muted">{p.net} zł</td>
+                  <td className="px-6 py-5 text-right font-display font-bold whitespace-nowrap">{zl(grossOf(p))} zł</td>
+                  <td className="px-6 py-5 text-right whitespace-nowrap text-muted">{zl(netOf(p))} zł</td>
                 </tr>
               ))}
             </tbody>

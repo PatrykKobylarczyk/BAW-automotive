@@ -119,9 +119,40 @@ export const prices = [
   { name: "212 T01", fuel: "Diesel", gross: "174 500", net: "141 869,92", img: `${U}/2025/10/212-black.png`, href: "/modele/baw-212", featured: true },
   { name: "Light Truck", fuel: "Benzyna", gross: "89 900", net: "73 089,43", img: `${U}/2025/10/BAW_Small_005_gallery.png.webp`, href: "/modele/baw-light-truck" },
   { name: "Light Truck Cargo", fuel: "Benzyna · zabudowa Niewiadów", gross: "99 900", net: "81 219,51", img: `${U}/2025/10/BAW_Small_004_gallery.png.webp`, href: "/modele/baw-light-truck" },
-  { name: "Mini Truck", fuel: "Elektryczny", gross: "64 900", net: "52 764,00", img: `${U}/2025/10/baw-mini-box.webp`, href: "/modele/baw-mini-truck" },
+  { name: "Mini Truck", fuel: "Elektryczny", gross: "64 900", net: "52 764,23", img: `${U}/2025/10/baw-mini-box.webp`, href: "/modele/baw-mini-truck" },
   { name: "Mini Truck Cargo", fuel: "Elektryczny", gross: "69 900", net: "56 829,27", img: `${U}/2025/11/BAW-mimitruck.webp`, href: "/modele/baw-mini-truck" },
 ];
+
+/**
+ * Every version with its price, for the table on /cennik. Source: "Modele i ceny" in BAW_baza_danych.xlsx
+ * (project files, baw-dane), taken from the importer's "Wsad do strony". Each row has the one price the
+ * importer gave, gross or net, exactly as in the sheet; the other one is worked out with 23% VAT.
+ * The price cards on the home page and /cennik show every row too.
+ */
+export const priceList: ({
+  model: string;
+  version: string;
+  fuel: string;
+  href?: string;
+  /** Studio photo (white background) from the "auta" folder; none yet for 212 Mavero */
+  img?: string;
+  featured?: boolean;
+} & ({ gross: number; net?: never } | { net: number; gross?: never }))[] = [
+  { model: "212 T01", version: "SUV", fuel: "Diesel", gross: 174500, href: "/modele/baw-212", img: "/gallery/212/t01-czarny-przod.webp", featured: true },
+  { model: "212 T01", version: "Pick-up", fuel: "Diesel", net: 178049, href: "/modele/baw-212", img: "/gallery/212/pickup-grafit-tyl.webp" },
+  { model: "212 Mavero", version: "SUV", fuel: "Benzyna", gross: 199900 },
+  { model: "Light Truck (LT7)", version: "Skrzynia", fuel: "Benzyna", net: 73089, href: "/modele/baw-light-truck", img: "/gallery/light-truck/skrzynia-przod-34-1.webp" },
+  { model: "Light Truck (LT7)", version: "Skrzynia komunalna", fuel: "Benzyna", net: 76829, href: "/modele/baw-light-truck", img: "/gallery/light-truck/komunalna-przod-34-1.webp" },
+  { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/gallery/light-truck/kontener-przod-34-1.webp" },
+  { model: "Light Truck (LT7)", version: "Wywrotka jednostronna", fuel: "Benzyna", net: 81220, href: "/modele/baw-light-truck", img: "/gallery/light-truck/wywrotka-bok.webp" },
+  { model: "Light Truck (LT7)", version: "Wywrotka trójstronna", fuel: "Benzyna", net: 104900, href: "/modele/baw-light-truck", img: "/gallery/light-truck/wywrotka-bok-podniesiona-1.webp" },
+  { model: "Mini Truck EV", version: "Box", fuel: "Elektryczny", gross: 64900, href: "/modele/baw-mini-truck", img: "/gallery/mini-truck/skrzynia-przod-34.webp" },
+  { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck", img: "/gallery/mini-truck/cargo-przod-34-1.webp" },
+];
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+export const grossOf = (p: { gross?: number; net?: number }) => p.gross ?? round2(p.net! * 1.23);
+export const netOf = (p: { gross?: number; net?: number }) => p.net ?? round2(p.gross! / 1.23);
 
 export const company = {
   name: "SERICA trade Sp. z o.o.",
@@ -276,7 +307,7 @@ export const models = [
     faq: [
       {
         q: "Ile kosztuje elektryczny BAW Mini Truck?",
-        a: "BAW Mini Truck kosztuje od 64 900 zł brutto (52 764 zł netto), a wersja Mini Truck Cargo od 69 900 zł brutto (56 829,27 zł netto).",
+        a: "BAW Mini Truck kosztuje od 64 900 zł brutto (52 764,23 zł netto), a wersja Mini Truck Cargo od 69 900 zł brutto (56 829,27 zł netto).",
       },
       {
         q: "Do czego najlepiej sprawdzi się BAW Mini Truck?",

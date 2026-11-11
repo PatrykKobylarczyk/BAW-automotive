@@ -5,13 +5,16 @@ import Link from "next/link";
 import { motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowRight, Mail, MapPin } from "lucide-react";
 import { useRef, type MouseEvent, type ReactNode } from "react";
-import { company, media, models, nav, prices } from "@/lib/content";
+import { company, grossOf, media, models, nav, netOf, priceList } from "@/lib/content";
 import { LeadForm } from "./LeadForm";
 import { Logo } from "./Navbar";
 import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 
-function PriceCard({ p, i, as: H = "h3" }: { p: (typeof prices)[number]; i: number; as?: "h2" | "h3" }) {
+const zl = (n: number) =>
+  n.toLocaleString("pl-PL", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).replace(/\u00a0| /g, "\u00a0");
+
+function PriceCard({ p, i, as: H = "h3" }: { p: (typeof priceList)[number]; i: number; as?: "h2" | "h3" }) {
   const rx = useSpring(useMotionValue(0), { stiffness: 150, damping: 15 });
   const ry = useSpring(useMotionValue(0), { stiffness: 150, damping: 15 });
   const mx = useMotionValue(50);
@@ -49,23 +52,41 @@ function PriceCard({ p, i, as: H = "h3" }: { p: (typeof prices)[number]; i: numb
       >
         <motion.div style={{ background: glare }} className="pointer-events-none absolute inset-0" />
         {p.featured && (
-          <span className="absolute top-4 right-4 rounded-full bg-brand px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
+          <span className="absolute top-4 right-4 z-10 rounded-full bg-brand px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
             Flagowy
           </span>
         )}
-        <div className="relative mb-5 aspect-[16/10]">
-          <div className="absolute inset-x-4 bottom-0 h-1/3 rounded-full bg-white/10 blur-2xl" />
-          <Image src={p.img} alt={p.name} fill sizes="300px" className="object-contain" />
+        {/* The photos are studio shots on white, so they sit on a light tile */}
+        <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-white">
+          {p.img ? (
+            <Image src={p.img} alt={`BAW ${p.model} ${p.version}`} fill sizes="(max-width:640px) 90vw, (max-width:1024px) 45vw, 240px" className="object-contain p-2" />
+          ) : (
+            <div className="absolute inset-0 grid place-items-center bg-white/95 text-center">
+              <span className="font-display text-3xl font-extrabold text-ink/15">{p.model}</span>
+              <span className="absolute bottom-3 text-[11px] font-medium tracking-wider text-ink/45 uppercase">Zdjęcie wkrótce</span>
+            </div>
+          )}
         </div>
         <span className="text-[11px] font-semibold tracking-[0.15em] text-brand uppercase">{p.fuel}</span>
         <H className="mt-1.5 mb-6 text-lg leading-tight font-semibold">
-          <Link href={p.href} className="after:absolute after:inset-0">
-            BAW {p.name}
-          </Link>
+          {p.href ? (
+            <Link href={p.href} className="after:absolute after:inset-0">
+              BAW {p.model}
+            </Link>
+          ) : (
+            <>BAW {p.model}</>
+          )}
+          <span className="mt-1 block text-[15px] font-normal text-white/70">{p.version}</span>
         </H>
+        {/* The big price is the one the importer gave (gross for some versions, net for others); the other one
+            is worked out with 23% VAT */}
         <div className="mt-auto">
-          <div className="font-display text-2xl font-bold">{p.gross} zł</div>
-          <div className="text-[13px] text-muted">{p.net} zł netto</div>
+          <div className="font-display text-2xl font-bold whitespace-nowrap">
+            {zl(p.gross ?? p.net)} zł <span className="font-sans text-sm font-medium text-white/60">{p.gross ? "brutto" : "netto"}</span>
+          </div>
+          <div className="text-[13px] text-muted">
+            {p.gross ? `${zl(netOf(p))} zł netto` : `${zl(grossOf(p))} zł brutto`}
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -97,12 +118,12 @@ export function Pricing({
             />
           </div>
           <Reveal delay={0.2}>
-            <p className="max-w-[36ch] text-muted">Ceny brutto z VAT. Zapytaj dealera o finansowanie i leasing dla firm.</p>
+            <p className="max-w-[36ch] text-muted">Ceny brutto zawierają 23% VAT. Zapytaj dealera o finansowanie i leasing dla firm.</p>
           </Reveal>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {prices.map((p, i) => (
-            <PriceCard key={p.name} p={p} i={i} as={headingAs === "h1" ? "h2" : "h3"} />
+          {priceList.map((p, i) => (
+            <PriceCard key={p.model + p.version} p={p} i={i % 5} as={headingAs === "h1" ? "h2" : "h3"} />
           ))}
         </div>
         {moreHref && (
