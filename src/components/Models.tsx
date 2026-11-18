@@ -132,47 +132,9 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
       </motion.div>
 
       <div className={`relative mx-auto grid max-w-[1280px] gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr] ${modelGrid(headingAs)}`}>
-        <div ref={carBox} className="relative aspect-[4/3]">
-          <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
-          <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
-            {/* Photo view (default); stays visible until the 3D model has loaded */}
-            <AnimatePresence mode="wait">
-              {!(is3d && ready) && (
-                <motion.div
-                  key={is3d ? "loading" : photoIdx}
-                  initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
-                  animate={{ opacity: is3d ? 0.35 : 1, x: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, x: is3d ? 0 : -60, filter: "blur(8px)" }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0"
-                >
-                  <CroppedCar photo={colors212[photoIdx]} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* 3D view: the model is downloaded only after the visitor asks for it */}
-            {is3d && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: ready ? 1 : 0 }}
-                transition={{ duration: 0.8 }}
-                className="absolute -inset-x-[8%] -inset-y-[4%] cursor-grab active:cursor-grabbing"
-              >
-                <Car3D paint={paints212[paintIdx].hex} onReady={() => setReady(true)} />
-              </motion.div>
-            )}
-            {is3d && !ready && (
-              <div className="absolute inset-0 grid place-items-center">
-                <span className="flex items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-2 text-sm text-white/80 backdrop-blur-md">
-                  <Loader2 className="size-4 animate-spin text-brand" /> Ładowanie modelu 3D…
-                </span>
-              </div>
-            )}
-          </motion.div>
-
-          {/* Mode switch */}
-          <div className="absolute top-0 right-0 z-10 flex flex-col items-end gap-2">
+        <div className="relative">
+          {/* Mode switch: on phones it sits in its own row above the car so it never covers it */}
+          <div className="relative z-10 mb-8 flex min-h-10 flex-row-reverse items-center justify-between gap-2 lg:absolute lg:top-0 lg:right-0 lg:mb-0 lg:flex-col lg:items-end lg:justify-start">
             <button
               onClick={() => {
                 setMode(is3d ? "photo" : "3d");
@@ -198,31 +160,71 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
             </AnimatePresence>
           </div>
 
-          <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-3 backdrop-blur-xl">
-            {swatches.map((c, i) => (
-              <button
-                key={c.name}
-                onClick={() => setActive(i)}
-                aria-label={c.name}
-                className="relative size-7 rounded-full ring-1 ring-white/25"
-                style={{ background: c.hex }}
-              >
-                {active === i && (
-                  <motion.span layoutId="swatch-ring" className="absolute -inset-1.5 rounded-full border-2 border-white" />
+          <div ref={carBox} className="relative aspect-[4/3]">
+            <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
+            <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
+              {/* Photo view (default); stays visible until the 3D model has loaded */}
+              <AnimatePresence mode="wait">
+                {!(is3d && ready) && (
+                  <motion.div
+                    key={is3d ? "loading" : photoIdx}
+                    initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
+                    animate={{ opacity: is3d ? 0.35 : 1, x: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, x: is3d ? 0 : -60, filter: "blur(8px)" }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0"
+                  >
+                    <CroppedCar photo={colors212[photoIdx]} />
+                  </motion.div>
                 )}
-              </button>
-            ))}
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={mode + active}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="ml-2 w-32 text-sm text-white/80"
-              >
-                {swatches[active].name}
-              </motion.span>
-            </AnimatePresence>
+              </AnimatePresence>
+
+              {/* 3D view: the model is downloaded only after the visitor asks for it */}
+              {is3d && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: ready ? 1 : 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute -inset-x-[8%] -inset-y-[4%] cursor-grab active:cursor-grabbing"
+                >
+                  <Car3D paint={paints212[paintIdx].hex} onReady={() => setReady(true)} />
+                </motion.div>
+              )}
+              {is3d && !ready && (
+                <div className="absolute inset-0 grid place-items-center">
+                  <span className="flex items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-2 text-sm text-white/80 backdrop-blur-md">
+                    <Loader2 className="size-4 animate-spin text-brand" /> Ładowanie modelu 3D…
+                  </span>
+                </div>
+              )}
+            </motion.div>
+
+            <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-3 backdrop-blur-xl">
+              {swatches.map((c, i) => (
+                <button
+                  key={c.name}
+                  onClick={() => setActive(i)}
+                  aria-label={c.name}
+                  className="relative size-7 rounded-full ring-1 ring-white/25"
+                  style={{ background: c.hex }}
+                >
+                  {active === i && (
+                    <motion.span layoutId="swatch-ring" className="absolute -inset-1.5 rounded-full border-2 border-white" />
+                  )}
+                </button>
+              ))}
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={mode + active}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="ml-2 w-32 text-sm text-white/80"
+                >
+                  {swatches[active].name}
+                </motion.span>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
