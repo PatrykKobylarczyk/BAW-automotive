@@ -5,7 +5,7 @@ import OffroadReveal from "@/components/OffroadReveal";
 import { Contact, Dealer, Pricing } from "@/components/Closing";
 import DealerNetwork from "@/components/DealerNetwork";
 import { ModelCard, Section } from "@/components/PageParts";
-import { Reveal } from "@/components/ui";
+import { MagneticButton, Reveal } from "@/components/ui";
 import { models } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 
@@ -24,6 +24,12 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
+        {/* The three model cards are the whole range; every version with its price sits in the price list below */}
+        <Reveal delay={0.1} className="mt-12 flex justify-center">
+          <MagneticButton href="#cennik" variant="ghost">
+            Zobacz wszystkie auta
+          </MagneticButton>
+        </Reveal>
       </Section>
       <Stats />
       <Values />
