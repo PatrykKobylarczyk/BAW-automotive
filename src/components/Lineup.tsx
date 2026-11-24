@@ -29,6 +29,13 @@ const groupOf = (r: Row): Group =>
 const rowsOf = (v: Vehicle) => priceList.filter((r) => r.img === v.img && v.versions.includes(r.version));
 const modelOf = (g: Group) => models.find((m) => m.slug === g)!;
 
+/** Short price under a vehicle's name: the cheapest of its versions, gross or net as the importer gave it */
+function priceFrom(v: Vehicle) {
+  const rows = rowsOf(v);
+  const r = rows.reduce((a, b) => ((b.gross ?? b.net) < (a.gross ?? a.net) ? b : a));
+  return `${rows.length > 1 ? "od " : ""}${zl(r.gross ?? r.net)} zł ${r.gross ? "brutto" : "netto"}`;
+}
+
 /** Price the importer gave (gross or net), with the other one worked out from 23% VAT */
 function Price({ r, big = false }: { r: Row; big?: boolean }) {
   return (
@@ -80,7 +87,7 @@ export default function Lineup() {
   const minUnit = mobile ? 0.2 : 0.27;
   const u = Math.max(unit, minUnit);
   // The stage is as tall as the tallest vehicle on show, so the full lineup leaves no empty band above it
-  const stageH = maxTall * u * 1.1 + 70;
+  const stageH = maxTall * u * 1.1 + 88;
 
   // Bumped on a click, tap or filter change (not on hover), to bring the picked vehicle to the middle of the stage
   const [centerReq, setCenterReq] = useState(0);
@@ -197,11 +204,11 @@ export default function Lineup() {
         >
           <motion.div initial={false} animate={{ height: stageH }} transition={{ duration: 0.8, ease }} className="relative w-max min-w-full">
           {/* Floor */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-[46px] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[46px] bg-gradient-to-b from-white/[0.04] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-[64px] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[64px] bg-gradient-to-b from-white/[0.04] to-transparent" />
 
           <div
-            className="relative mx-auto flex h-full w-max min-w-full items-end justify-center pb-[46px]"
+            className="relative mx-auto flex h-full w-max min-w-full items-end justify-center pb-[64px]"
             style={{ paddingInline: pad / 2 }}
             onDragStart={(e) => e.preventDefault()}
           >
@@ -285,6 +292,9 @@ export default function Lineup() {
                     >
                       {modelOf(v.group).short}
                       <span className="block font-normal">{v.label}</span>
+                      <span className={`mt-1 block font-normal transition-colors ${isActive ? "text-white/70" : "text-white/35"}`}>
+                        {priceFrom(v)}
+                      </span>
                     </span>
                   </motion.button>
                 </motion.div>
