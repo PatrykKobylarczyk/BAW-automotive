@@ -16,8 +16,8 @@ type Row = (typeof priceList)[number];
 const ease = [0.16, 1, 0.3, 1] as const;
 /** Ground line of every tile in public/cutouts/kafelki */
 const GROUND = 970;
-/** How much each vehicle tucks behind the next one, as a share of its own width */
-const OVERLAP = 0.14;
+/** Free space between neighbouring vehicles, as a share of the vehicle's own width (they never overlap) */
+const GAP = 0.08;
 
 const zl = (n: number) =>
   n.toLocaleString("pl-PL", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).replace(/ | /g, " ");
@@ -73,7 +73,7 @@ export default function Lineup() {
   const mobile = size.w < 768;
   const maxH = mobile ? 230 : Math.min(400, size.h * 0.42);
   const pad = mobile ? 64 : 180;
-  const sumW = visible.reduce((s, v) => s + (v.box[2] - v.box[0]) * v.scale * (1 - OVERLAP), 0);
+  const sumW = visible.reduce((s, v) => s + (v.box[2] - v.box[0]) * v.scale * (1 + GAP), 0);
   const maxTall = Math.max(...visible.map((v) => (GROUND - v.box[1]) * v.scale));
   const unit = Math.min((size.w - pad) / sumW, maxH / maxTall, 0.6);
   const minUnit = mobile ? 0.2 : 0;
@@ -177,7 +177,7 @@ export default function Lineup() {
                   animate={{
                     width: shown ? w : 0,
                     height: h,
-                    marginLeft: shown && !first ? -w * OVERLAP : 0,
+                    marginLeft: shown && !first ? w * GAP : 0,
                     opacity: shown ? 1 : 0,
                   }}
                   transition={{ duration: 0.8, ease }}
