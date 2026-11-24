@@ -170,6 +170,51 @@ export const priceList: ({
   { model: "Mini Truck EV", version: "Cargo", fuel: "Elektryczny", gross: 69900, href: "/modele/baw-mini-truck", img: "/cutouts/kafelki/mini-cargo.webp" },
 ];
 
+/**
+ * The home page lineup: every version we have a photo of, standing side by side like a press photo of the whole
+ * range, in the order of the models (212, Light Truck, Mini Truck). `box` is the vehicle's outline in its 1600 × 1000 tile (public/cutouts/kafelki,
+ * every tile stands on the same ground line, y = 970). The tiles are each fitted to the same width, so `scale` brings
+ * them back to real proportions, measured from the cab height against the real height (Mini 1680 mm, 212 1936 mm,
+ * Light Truck 2050 mm). `versions` are the priceList rows the vehicle stands for (both tippers share one photo).
+ */
+export const lineup: {
+  id: string;
+  group: "baw-212" | "baw-light-truck" | "baw-mini-truck";
+  label: string;
+  img: string;
+  box: [number, number, number, number];
+  scale: number;
+  versions: string[];
+}[] = [
+  { id: "212-suv", group: "baw-212", label: "T01 SUV", img: "/cutouts/kafelki/212-t01-suv.webp", box: [251, 67, 1349, 970], scale: 0.82, versions: ["SUV"] },
+  { id: "212-pickup", group: "baw-212", label: "T01 Pick-up", img: "/cutouts/kafelki/212-t01-pickup.webp", box: [225, 106, 1374, 970], scale: 0.86, versions: ["Pick-up"] },
+  { id: "lt-skrzynia", group: "baw-light-truck", label: "Skrzynia", img: "/cutouts/kafelki/lt-skrzynia.webp", box: [197, 147, 1403, 970], scale: 1, versions: ["Skrzynia"] },
+  { id: "lt-komunalna", group: "baw-light-truck", label: "Komunalna", img: "/cutouts/kafelki/lt-komunalna.webp", box: [183, 166, 1416, 970], scale: 1, versions: ["Skrzynia komunalna"] },
+  { id: "lt-kontener", group: "baw-light-truck", label: "Kontener", img: "/cutouts/kafelki/lt-kontener.webp", box: [239, 85, 1360, 970], scale: 1.15, versions: ["Kontener (Cargo, zabudowa Niewiadów)"] },
+  { id: "lt-wywrotka", group: "baw-light-truck", label: "Wywrotka", img: "/cutouts/kafelki/lt-wywrotka.webp", box: [213, 125, 1387, 970], scale: 1.25, versions: ["Wywrotka jednostronna", "Wywrotka trójstronna"] },
+  { id: "mini-box", group: "baw-mini-truck", label: "Box", img: "/cutouts/kafelki/mini-box.webp", box: [236, 90, 1363, 970], scale: 0.73, versions: ["Box"] },
+  { id: "mini-cargo", group: "baw-mini-truck", label: "Cargo", img: "/cutouts/kafelki/mini-cargo.webp", box: [235, 92, 1365, 970], scale: 0.77, versions: ["Cargo"] },
+];
+
+/** Three key figures per model, shown when a vehicle of that model is picked in the lineup. */
+export const lineupSpecs: Record<(typeof lineup)[number]["group"], { value: string; label: string }[]> = {
+  "baw-212": [
+    { value: "4WD", label: "z reduktorem i blokadami" },
+    { value: "415 Nm", label: "moment obrotowy" },
+    { value: "659 mm", label: "głębokość brodzenia" },
+  ],
+  "baw-light-truck": [
+    { value: "2500 kg", label: "ładowności (do)" },
+    { value: "106 kW", label: "moc (do)" },
+    { value: "6 m", label: "długości (do)" },
+  ],
+  "baw-mini-truck": [
+    { value: "100% EV", label: "zero emisji w mieście" },
+    { value: "150 km", label: "zasięgu (min.)" },
+    { value: "3,8 m", label: "długości, parkuje wszędzie" },
+  ],
+};
+
 const round2 = (n: number) => Math.round(n * 100) / 100;
 export const grossOf = (p: { gross?: number; net?: number }) => p.gross ?? round2(p.net! * 1.23);
 export const netOf = (p: { gross?: number; net?: number }) => p.net ?? round2(p.gross! / 1.23);
