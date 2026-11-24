@@ -50,7 +50,7 @@ function Price({ r, big = false }: { r: Row; big?: boolean }) {
 }
 
 /**
- * The whole BAW range as one lineup (212, Light Truck, Mini Truck), in real proportions. The three
+ * The whole BAW range as one lineup (212, Light Truck, Mini Truck), side by side. The three
  * models above it work as a live filter: the other vehicles drive out and the chosen ones grow to fill the stage.
  * Pointing at (or tapping) a vehicle brings it forward and shows its price and key figures.
  */
@@ -150,7 +150,7 @@ export default function Lineup() {
           />
           <Reveal delay={0.15}>
             <p className="max-w-[38ch] text-muted">
-              Cała gama w jednym ustawieniu, w prawdziwej skali. Wybierz, do czego potrzebujesz auta, albo wskaż
+              Cała gama w jednym ustawieniu. Wybierz, do czego potrzebujesz auta, albo wskaż
               pojazd, żeby zobaczyć cenę.
             </p>
           </Reveal>
@@ -292,7 +292,7 @@ export default function Lineup() {
                     >
                       {modelOf(v.group).short}
                       <span className="block font-normal">{v.label}</span>
-                      <span className={`mt-1 block font-normal transition-colors ${isActive ? "text-white/70" : "text-white/35"}`}>
+                      <span className={`mt-1 block font-semibold transition-colors ${isActive ? "text-brand-hover" : "text-brand"}`}>
                         {priceFrom(v)}
                       </span>
                     </span>
