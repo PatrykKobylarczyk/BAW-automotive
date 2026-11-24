@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "motion/react";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { grossOf, lineup, lineupSpecs, models, netOf, priceList } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
@@ -17,7 +17,7 @@ const ease = [0.16, 1, 0.3, 1] as const;
 /** Ground line of every tile in public/cutouts/kafelki */
 const GROUND = 970;
 /** Free space between neighbouring vehicles, as a share of the vehicle's own width (they never overlap) */
-const GAP = 0.08;
+const GAP = 0.22;
 
 const zl = (n: number) =>
   n.toLocaleString("pl-PL", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).replace(/ | /g, " ");
@@ -43,7 +43,7 @@ function Price({ r, big = false }: { r: Row; big?: boolean }) {
 }
 
 /**
- * The whole BAW range as one lineup, from the smallest to the largest vehicle, in real proportions. The three
+ * The whole BAW range as one lineup (212, Light Truck, Mini Truck), in real proportions. The three
  * models above it work as a live filter: the other vehicles drive out and the chosen ones grow to fill the stage.
  * Pointing at (or tapping) a vehicle brings it forward and shows its price and key figures.
  */
@@ -72,22 +72,46 @@ export default function Lineup() {
   // phone the full lineup would be tiny, so there it keeps a readable size and the stage scrolls sideways instead.
   const mobile = size.w < 768;
   const maxH = mobile ? 230 : Math.min(400, size.h * 0.42);
-  const pad = mobile ? 64 : 180;
+  const pad = mobile ? 40 : Math.max(64, size.w - 1216);
   const sumW = visible.reduce((s, v) => s + (v.box[2] - v.box[0]) * v.scale * (1 + GAP), 0);
   const maxTall = Math.max(...visible.map((v) => (GROUND - v.box[1]) * v.scale));
   const unit = Math.min((size.w - pad) / sumW, maxH / maxTall, 0.6);
-  const minUnit = mobile ? 0.2 : 0;
+  // Never smaller than this: when the vehicles don't fit, the stage scrolls sideways (swipe, drag or arrows)
+  const minUnit = mobile ? 0.2 : 0.27;
   const u = Math.max(unit, minUnit);
   // The stage is as tall as the tallest vehicle on show, so the full lineup leaves no empty band above it
   const stageH = maxTall * u * 1.1 + 70;
 
+  // Bumped on a click, tap or filter change (not on hover), to bring the picked vehicle to the middle of the stage
+  const [centerReq, setCenterReq] = useState(0);
+  const pick = (id: string) => {
+    setActiveId(id);
+    setCenterReq((n) => n + 1);
+  };
   const pickFilter = (f: Filter) => {
     setFilter(f);
     if (f !== "all" && active.group !== f) setActiveId(lineup.find((v) => v.group === f)!.id);
+    setCenterReq((n) => n + 1);
   };
 
-  // On a phone, keep the picked vehicle in the middle of the scrolling stage
+  // Arrows and mouse drag for the sideways scroll on a computer
+  const [edges, setEdges] = useState({ left: false, right: false });
+  const updateEdges = () => {
+    const t = track.current;
+    if (t) setEdges({ left: t.scrollLeft > 4, right: t.scrollLeft + t.clientWidth < t.scrollWidth - 4 });
+  };
   useEffect(() => {
+    const id = setTimeout(updateEdges, 900);
+    return () => clearTimeout(id);
+  }, [u, filter]);
+  const scrollStage = (dir: 1 | -1) => {
+    const t = track.current;
+    t?.scrollBy({ left: dir * t.clientWidth * 0.6, behavior: "smooth" });
+  };
+  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!centerReq) return;
     const t = track.current;
     const el = t?.querySelector<HTMLElement>(`[data-id="${activeId}"]`);
     if (!t || !el || t.scrollWidth <= t.clientWidth) return;
@@ -95,7 +119,8 @@ export default function Lineup() {
       t.scrollTo({ left: el.offsetLeft + el.offsetWidth / 2 - t.clientWidth / 2, behavior: "smooth" });
     }, 350);
     return () => clearTimeout(id);
-  }, [activeId, filter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [centerReq]);
 
   const groupRows = priceList.filter((r) => filter === "all" || groupOf(r) === filter);
   const activeRows = rowsOf(active);
@@ -150,7 +175,25 @@ export default function Lineup() {
       <div ref={stage} className="relative mt-6 md:mt-10">
         <div
           ref={track}
-          className="relative overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          onScroll={updateEdges}
+          onPointerDown={(e) => {
+            if (e.pointerType !== "mouse" || !track.current) return;
+            drag.current = { x: e.clientX, left: track.current.scrollLeft, moved: false };
+          }}
+          onPointerMove={(e) => {
+            const d = drag.current;
+            if (!d || !track.current) return;
+            if (Math.abs(e.clientX - d.x) > 5) d.moved = true;
+            if (d.moved) track.current.scrollLeft = d.left - (e.clientX - d.x);
+          }}
+          onPointerUp={() => setTimeout(() => (drag.current = null))}
+          onPointerLeave={() => (drag.current = null)}
+          onClickCapture={(e) => {
+            if (drag.current?.moved) e.stopPropagation();
+          }}
+          className={`relative isolate overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+            edges.left || edges.right ? "md:cursor-grab md:active:cursor-grabbing" : ""
+          }`}
         >
           <motion.div initial={false} animate={{ height: stageH }} transition={{ duration: 0.8, ease }} className="relative w-max min-w-full">
           {/* Floor */}
@@ -160,6 +203,7 @@ export default function Lineup() {
           <div
             className="relative mx-auto flex h-full w-max min-w-full items-end justify-center pb-[46px]"
             style={{ paddingInline: pad / 2 }}
+            onDragStart={(e) => e.preventDefault()}
           >
             {lineup.map((v, i) => {
               const shown = visible.includes(v);
@@ -189,8 +233,8 @@ export default function Lineup() {
                     tabIndex={shown ? 0 : -1}
                     onMouseEnter={() => setActiveId(v.id)}
                     onFocus={() => setActiveId(v.id)}
-                    onClick={() => setActiveId(v.id)}
-                    className="group absolute inset-0 block origin-bottom cursor-pointer outline-none"
+                    onClick={() => pick(v.id)}
+                    className="group absolute inset-0 block origin-bottom cursor-pointer outline-none md:cursor-[inherit]"
                     initial={{ x: 260, opacity: 0 }}
                     animate={
                       inView
@@ -249,8 +293,30 @@ export default function Lineup() {
           </div>
           </motion.div>
         </div>
-        {mobile && sumW * u > size.w && (
-          <p className="mt-1 px-5 text-center text-xs text-white/40">Przesuń, aby zobaczyć całą gamę →</p>
+        {/* Edge fades and arrows, while there is more to see on that side */}
+        {(["left", "right"] as const).map((side) => (
+          <div
+            key={side}
+            className={`pointer-events-none absolute inset-y-0 z-10 ${side === "left" ? "left-0 bg-gradient-to-r" : "right-0 bg-gradient-to-l"} w-10 from-ink to-transparent transition-opacity duration-300 md:w-28 ${edges[side] ? "opacity-100" : "opacity-0"}`}
+          >
+            <button
+              type="button"
+              aria-label={side === "left" ? "Poprzednie auta" : "Następne auta"}
+              onClick={() => scrollStage(side === "left" ? -1 : 1)}
+              tabIndex={edges[side] ? 0 : -1}
+              className={`absolute top-[42%] hidden size-12 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-ink/80 backdrop-blur-md transition hover:border-brand hover:bg-brand md:grid ${
+                side === "left" ? "left-6" : "right-6"
+              } ${edges[side] ? "pointer-events-auto" : ""}`}
+            >
+              {side === "left" ? <ChevronLeft className="size-5" /> : <ChevronRight className="size-5" />}
+            </button>
+          </div>
+        ))}
+        {(edges.left || edges.right) && (
+          <p className="mt-1 px-5 text-center text-xs text-white/40">
+            <span className="md:hidden">Przesuń palcem, aby zobaczyć całą gamę</span>
+            <span className="hidden md:inline">Przeciągnij albo użyj strzałek, aby zobaczyć całą gamę</span>
+          </p>
         )}
       </div>
 
@@ -324,7 +390,7 @@ export default function Lineup() {
                     <button
                       type="button"
                       disabled={!v}
-                      onClick={() => v && setActiveId(v.id)}
+                      onClick={() => v && pick(v.id)}
                       onMouseEnter={() => v && setActiveId(v.id)}
                       className={`flex flex-wrap items-baseline gap-x-2 rounded-full border px-4 py-2 text-left text-[13px] transition ${
                         on ? "border-brand bg-brand/20" : "border-white/10 hover:border-white/30"
