@@ -6,10 +6,9 @@ import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } fr
 import Link from "next/link";
 import { ArrowUpRight, Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
 import { useRef, useState } from "react";
-import { colors212, lightTruck, miniTruckGallery, miniTruckVersions, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
+import { colors212, lightTruck, miniTruckVersions, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
 import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
-import ModelGallery from "./ModelGallery";
 
 const Car3D = dynamic(() => import("./Car3D"), { ssr: false });
 
@@ -115,7 +114,9 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
   const active = is3d ? paintIdx : photoIdx;
   const setActive = is3d ? setPaintIdx : setPhotoIdx;
   const wordX = useParallax(ref, 160);
-  const carY = useParallax(ref, 50);
+  // The car only drifts down from its place, never up into the view switch above it
+  const { scrollYProgress: sectionProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const carY = useTransform(sectionProgress, [0, 1], [70, 0]);
   // Slide-in is driven by the car box itself (not the whole section), so it finishes as soon as
   // the car is fully on screen — on mobile the stacked section is much taller than the car
   const carBox = useRef<HTMLDivElement>(null);
@@ -132,97 +133,115 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
       </motion.div>
 
       <div className={`relative mx-auto grid max-w-[1280px] gap-14 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr] ${modelGrid(headingAs)}`}>
-        <div ref={carBox} className="relative aspect-[4/3]">
-          <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
-          <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
-            {/* Photo view (default); stays visible until the 3D model has loaded */}
-            <AnimatePresence mode="wait">
-              {!(is3d && ready) && (
-                <motion.div
-                  key={is3d ? "loading" : photoIdx}
-                  initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
-                  animate={{ opacity: is3d ? 0.35 : 1, x: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, x: is3d ? 0 : -60, filter: "blur(8px)" }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0"
+        <div>
+          {/* View switch in its own row above the car, so neither it nor the hint ever covers the photo */}
+          <div className="relative z-10 mb-6 flex min-h-11 flex-wrap items-center justify-between gap-3 md:mb-8">
+            <div role="tablist" aria-label="Widok" className="flex rounded-full border border-white/10 bg-white/[0.04] p-1">
+              {(["photo", "3d"] as const).map((m) => (
+                <button
+                  key={m}
+                  role="tab"
+                  aria-selected={mode === m}
+                  onClick={() => {
+                    if (m === mode) return;
+                    setMode(m);
+                    if (m === "photo") setReady(false);
+                  }}
+                  onMouseEnter={m === "3d" ? () => void import("./Car3D") : undefined}
+                  className={`relative flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    mode === m ? "text-white" : "text-white/60 hover:text-white"
+                  }`}
                 >
-                  <CroppedCar photo={colors212[photoIdx]} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* 3D view: the model is downloaded only after the visitor asks for it */}
-            {is3d && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: ready ? 1 : 0 }}
-                transition={{ duration: 0.8 }}
-                className="absolute -inset-x-[8%] -inset-y-[4%] cursor-grab active:cursor-grabbing"
-              >
-                <Car3D paint={paints212[paintIdx].hex} onReady={() => setReady(true)} />
-              </motion.div>
-            )}
-            {is3d && !ready && (
-              <div className="absolute inset-0 grid place-items-center">
-                <span className="flex items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-2 text-sm text-white/80 backdrop-blur-md">
-                  <Loader2 className="size-4 animate-spin text-brand" /> Ładowanie modelu 3D…
-                </span>
-              </div>
-            )}
-          </motion.div>
-
-          {/* Mode switch */}
-          <div className="absolute top-0 right-0 z-10 flex flex-col items-end gap-2">
-            <button
-              onClick={() => {
-                setMode(is3d ? "photo" : "3d");
-                if (is3d) setReady(false);
-              }}
-              onMouseEnter={() => void import("./Car3D")}
-              className="group flex items-center gap-2 rounded-full border border-white/15 bg-ink/70 px-4 py-2 text-sm font-semibold backdrop-blur-md transition hover:border-brand hover:bg-brand"
-            >
-              {is3d ? <ImageIcon className="size-4" /> : <Box className="size-4 text-brand transition group-hover:text-white" />}
-              {is3d ? "Wróć do zdjęć" : "Zobacz model 3D"}
-            </button>
+                  {mode === m && <motion.span layoutId="view-pill" className="absolute inset-0 rounded-full bg-brand" />}
+                  <span className="relative flex items-center gap-2">
+                    {m === "photo" ? <ImageIcon className="size-4" /> : <Box className="size-4" />}
+                    {m === "photo" ? "Zdjęcia" : "Model 3D"}
+                  </span>
+                </button>
+              ))}
+            </div>
             <AnimatePresence>
               {is3d && ready && (
                 <motion.span
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  className="pointer-events-none flex items-center gap-2 rounded-full border border-white/10 bg-ink/60 px-3 py-1.5 text-xs text-white/70 backdrop-blur-md"
+                  initial={{ opacity: 0, x: 8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 8 }}
+                  className="pointer-events-none flex items-center gap-2 text-xs text-white/60"
                 >
-                  <Rotate3d className="size-3.5 text-brand" /> Przeciągnij, aby obrócić
+                  <Rotate3d className="size-4 text-brand" /> Przeciągnij, aby obrócić
                 </motion.span>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-3 backdrop-blur-xl">
-            {swatches.map((c, i) => (
-              <button
-                key={c.name}
-                onClick={() => setActive(i)}
-                aria-label={c.name}
-                className="relative size-7 rounded-full ring-1 ring-white/25"
-                style={{ background: c.hex }}
-              >
-                {active === i && (
-                  <motion.span layoutId="swatch-ring" className="absolute -inset-1.5 rounded-full border-2 border-white" />
+          <div ref={carBox} className="relative aspect-[4/3]">
+            <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
+            <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
+              {/* Photo view (default); stays visible until the 3D model has loaded */}
+              <AnimatePresence mode="wait">
+                {!(is3d && ready) && (
+                  <motion.div
+                    key={is3d ? "loading" : photoIdx}
+                    initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
+                    animate={{ opacity: is3d ? 0.35 : 1, x: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, x: is3d ? 0 : -60, filter: "blur(8px)" }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0"
+                  >
+                    <CroppedCar photo={colors212[photoIdx]} />
+                  </motion.div>
                 )}
-              </button>
-            ))}
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={mode + active}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="ml-2 w-32 text-sm text-white/80"
-              >
-                {swatches[active].name}
-              </motion.span>
-            </AnimatePresence>
+              </AnimatePresence>
+
+              {/* 3D view: the model is downloaded only after the visitor asks for it */}
+              {is3d && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: ready ? 1 : 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute -inset-x-[8%] -inset-y-[4%] cursor-grab active:cursor-grabbing"
+                >
+                  <Car3D paint={paints212[paintIdx].hex} onReady={() => setReady(true)} />
+                </motion.div>
+              )}
+              {is3d && !ready && (
+                <div className="absolute inset-0 grid place-items-center">
+                  <span className="flex items-center gap-3 rounded-full border border-white/10 bg-ink/70 px-4 py-2 text-sm text-white/80 backdrop-blur-md">
+                    <Loader2 className="size-4 animate-spin text-brand" /> Ładowanie modelu 3D…
+                  </span>
+                </div>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Colours under the car, not over it */}
+          <div className="mt-6 flex justify-center md:mt-8">
+            <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-3 sm:gap-3 sm:px-4">
+              {swatches.map((c, i) => (
+                <button
+                  key={c.name}
+                  onClick={() => setActive(i)}
+                  aria-label={c.name}
+                  className="relative size-6 rounded-full ring-1 ring-white/25 sm:size-7"
+                  style={{ background: c.hex }}
+                >
+                  {active === i && (
+                    <motion.span layoutId="swatch-ring" className="absolute -inset-1.5 rounded-full border-2 border-white" />
+                  )}
+                </button>
+              ))}
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={mode + active}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="ml-1 w-28 text-sm text-white/80 sm:ml-2 sm:w-32"
+                >
+                  {swatches[active].name}
+                </motion.span>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
@@ -243,6 +262,18 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
           <Reveal delay={0.2}>
             <SpecGrid specs={offroadSpecs} />
             <PriceCta label="T01 Diesel, od" price="174 500" cta="Umów jazdę próbną" detailsHref={detailsHref} />
+            {headingAs === "h1" && (
+              <a
+                href="#wersje"
+                className="group mt-8 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 transition hover:border-brand"
+              >
+                <span>
+                  <small className="block text-[13px] text-muted">Trzy wersje 212</small>
+                  <span className="font-semibold">T01 SUV · T01 Pick-up · Mavero</span>
+                </span>
+                <ArrowUpRight className="size-5 shrink-0 text-brand transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+            )}
           </Reveal>
         </div>
       </div>
@@ -330,8 +361,6 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
           </div>
         </div>
       </section>
-
-      <ModelGallery title="Mini Truck z każdej strony" alt="BAW Mini Truck" images={miniTruckGallery} />
     </>
   );
 }

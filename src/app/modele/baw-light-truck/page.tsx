@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LightTruck } from "@/components/Models";
 import { Contact } from "@/components/Closing";
 import ModelGallery from "@/components/ModelGallery";
+import ModelVersions from "@/components/ModelVersions";
 import { Breadcrumbs, Faq, Highlights, JsonLd, OtherModels, SpecTable } from "@/components/PageParts";
 import { lightTruckGallery, modelBySlug } from "@/lib/content";
 import { crumbsOverlay } from "@/lib/styles";
@@ -16,6 +17,11 @@ export default function Page() {
       <JsonLd data={productLd(model)} />
       <Breadcrumbs page="baw-light-truck" className={crumbsOverlay} />
       <LightTruck headingAs="h1" />
+      <ModelVersions
+        model="baw-light-truck"
+        title="Jedna rama, cztery zabudowy."
+        lead="Skrzynia, wersja komunalna, kontener Niewiadów i wywrotka. Ceny według cennika importera."
+      />
       <ModelGallery title="Light Truck z każdej strony" alt="BAW Light Truck" images={lightTruckGallery} fit="contain" />
       <Highlights model={model} />
       <SpecTable model={model} />
