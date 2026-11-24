@@ -358,7 +358,7 @@ export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
           <SplitText as={headingAs} text={headingAs === "h1" ? "BAW Light Truck" : "Light Truck"} className={modelTitle(headingAs)} />
           <Reveal delay={0.1}>
             <p className="mb-8 text-lg text-white/80">
-              Nowa generacja konstrukcji w dwóch typach — bezramowej i z ramą. Przestronna kabina, wygodne fotele,
+              Nowa generacja konstrukcji opartej na ramie, z ładownością 1785 kg. Przestronna kabina, wygodne fotele,
               szerokie pole widzenia i dynamiczna sylwetka. Logiczny układ przyrządów i klasyczna konsola typu „T”.
             </p>
           </Reveal>
