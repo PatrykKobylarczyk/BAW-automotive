@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { capability, geometry, marquee, renders } from "@/lib/content212";
 import { Eyebrow, Reveal, SplitText, Trail, ease } from "./ui";
 
@@ -67,6 +67,14 @@ export function Geometry() {
   const [swiped, setSwiped] = useState(false);
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(1);
+  const scroller = useRef<HTMLDivElement | null>(null);
+  const atEnd = progress > 0.98;
+  const nudge = () => {
+    const el = scroller.current;
+    if (!el) return;
+    if (atEnd) el.scrollTo({ left: 0, behavior: "smooth" });
+    else el.scrollBy({ left: el.clientWidth * 0.8, behavior: "smooth" });
+  };
   const GROUND = 412;
   const WATER = 240; // 850 mm at the render's scale (1936 mm body height ≈ 392 px, ground at 412)
 
@@ -102,6 +110,7 @@ export function Geometry() {
 
         <div
           ref={(el) => {
+            scroller.current = el;
             if (el) setVisible(Math.min(1, el.clientWidth / el.scrollWidth));
           }}
           className="mt-12 overflow-x-auto"
@@ -195,23 +204,28 @@ export function Geometry() {
           </svg>
         </div>
         {/* mobile only: the diagram is wider than the screen; a track under it shows that it scrolls sideways */}
-        <div aria-hidden className="mt-4 flex items-center gap-4 md:hidden">
-          <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-deep/10">
+        <div className="mt-4 flex items-center gap-4 md:hidden">
+          <div aria-hidden className="relative h-1 flex-1 overflow-hidden rounded-full bg-deep/10">
             <div
               className="absolute inset-y-0 rounded-full bg-deep transition-[left] duration-150"
               style={{ width: `${visible * 100}%`, left: `${progress * (1 - visible) * 100}%` }}
             />
           </div>
-          <span className={`flex shrink-0 items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors ${swiped ? "text-deep/40" : "text-forest"}`}>
-            Przesuń
+          <button
+            type="button"
+            onClick={nudge}
+            aria-label={atEnd ? "Przewiń schemat do początku" : "Przewiń schemat w prawo"}
+            className={`-my-2 flex shrink-0 items-center gap-1.5 py-2 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors active:scale-95 ${swiped ? "text-deep/50" : "text-forest"}`}
+          >
+            {atEnd ? "Wróć" : "Przesuń"}
             <motion.span
-              animate={swiped ? { x: 0 } : { x: [0, 5, 0] }}
-              transition={swiped ? { duration: 0.2 } : { duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-              className="grid size-6 place-items-center rounded-full bg-lime text-deep"
+              animate={swiped ? { x: 0, rotate: atEnd ? 180 : 0 } : { x: [0, 5, 0] }}
+              transition={swiped ? { duration: 0.3 } : { duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+              className="grid size-8 place-items-center rounded-full bg-lime text-deep"
             >
-              <ArrowRight className="size-3.5" strokeWidth={2.5} />
+              <ArrowRight className="size-4" strokeWidth={2.5} />
             </motion.span>
-          </span>
+          </button>
         </div>
 
         <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-deep/15 pt-8 md:grid-cols-5">

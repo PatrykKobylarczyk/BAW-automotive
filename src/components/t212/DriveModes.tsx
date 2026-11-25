@@ -110,7 +110,7 @@ export default function DriveModes() {
         <div className="absolute inset-0 bg-gradient-to-t from-deep/90 via-transparent to-deep/50" />
 
         {/* dial, half outside the right edge */}
-        <div className="absolute top-[6%] right-[-42vw] aspect-square w-[84vw] md:top-1/2 md:right-[-14vw] md:w-[min(64vw,86vh)] md:-translate-y-1/2">
+        <div className="absolute top-[6%] right-[-22vw] aspect-square w-[84vw] md:top-1/2 md:right-[-14vw] md:w-[min(64vw,86vh)] md:-translate-y-1/2">
           <Dial rotate={rotate} active={active} />
         </div>
 
@@ -127,7 +127,7 @@ export default function DriveModes() {
                 animate={{ y: "0%" }}
                 exit={{ y: "-100%" }}
                 transition={{ duration: 0.55, ease }}
-                className="font-display text-[clamp(44px,7.4vw,118px)] leading-none font-extrabold tracking-tight whitespace-nowrap"
+                className="font-display text-[8.4vw] leading-none font-extrabold tracking-tight whitespace-nowrap md:text-[clamp(44px,7.4vw,118px)]"
               >
                 {mode.name}
               </motion.h2>
