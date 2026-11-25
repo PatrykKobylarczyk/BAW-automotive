@@ -58,27 +58,55 @@ export const capability = [
   { value: "Reduktor", label: "przełożenie terenowe do pełzania i stromych podjazdów" },
 ];
 
-export const driveModes = [
-  { name: "Standard", text: "Codzienna jazda po asfalcie i szutrze, napęd na tył." },
-  { name: "Eco", text: "Łagodna reakcja na gaz i wcześniejsza zmiana biegów." },
-  { name: "Sport", text: "Szybsza reakcja silnika i dłuższe trzymanie biegów." },
-  { name: "Śnieg", text: "Miękkie ruszanie i kontrola uślizgu na lodzie i śniegu." },
-  { name: "Piasek", text: "Wyższe obroty i mniej ingerencji kontroli trakcji na wydmach." },
-  { name: "Skały", text: "Precyzyjne dawkowanie momentu przy niskiej prędkości." },
-  { name: "Błoto", text: "Pozwala kołom się obracać, by oczyścić bieżnik." },
-  { name: "Brodzenie", text: "Ustawienia do pokonywania wody i grząskiego dna." },
-  { name: "Góry", text: "Kontrola zjazdu i stabilny moment na długich wzniesieniach." },
-  { name: "Nierówności", text: "Kontrola trakcji dopasowana do koleiny i kamieni." },
-  { name: "Crawl Control", text: "Terenowy tempomat: auto pełznie, Ty tylko kierujesz." },
-  { name: "Tank Turn", text: "Zawracanie w miejscu dzięki przyhamowaniu wewnętrznego koła." },
+// Drive modes grouped by terrain; each scene gets a full-bleed still from the 212 film behind the selector dial
+export const terrainScenes = [
+  {
+    name: "Na co dzień",
+    photo: "/media/tryby/codzien.webp",
+    modes: [
+      { name: "Standard", text: "Codzienna jazda po asfalcie i szutrze. Napęd na tylną oś, przód dołącza się wtedy, kiedy trzeba." },
+      { name: "Eco", text: "Łagodniejsza reakcja na gaz i wcześniejsze zmiany biegów. Na długą trasę." },
+      { name: "Sport", text: "Szybsza reakcja silnika i dłużej trzymane biegi przy wyprzedzaniu." },
+    ],
+  },
+  {
+    name: "Zima i woda",
+    photo: "/media/tryby/woda.webp",
+    modes: [
+      { name: "Śnieg", text: "Miękkie ruszanie i szybka kontrola uślizgu na lodzie i ubitym śniegu." },
+      { name: "Błoto", text: "Koła mogą się mocniej obracać, żeby bieżnik oczyścił się z błota." },
+      { name: "Brodzenie", text: "Ustawienia do przejazdu przez wodę do 850 mm i grząskie dno." },
+    ],
+  },
+  {
+    name: "Bezdroża",
+    photo: "/media/tryby/bezdroza.webp",
+    modes: [
+      { name: "Piasek", text: "Wyższe obroty i mniej ingerencji kontroli trakcji, żeby nie zakopać się na wydmie." },
+      { name: "Skały", text: "Precyzyjne dawkowanie momentu przy prędkości pieszego." },
+      { name: "Nierówności", text: "Kontrola trakcji dopasowana do kolein, korzeni i kamieni." },
+    ],
+  },
+  {
+    name: "Góry",
+    photo: "/media/tryby/gory.webp",
+    modes: [
+      { name: "Góry", text: "Kontrola zjazdu i stabilny moment na długich, stromych odcinkach." },
+      { name: "Crawl Control", text: "Terenowy tempomat. Auto pełznie samo, Ty tylko kierujesz." },
+      { name: "Tank Turn", text: "Zawracanie niemal w miejscu dzięki przyhamowaniu wewnętrznego tylnego koła." },
+    ],
+  },
 ];
 
-// Photo view: one render per colour, all from the same camera, so the car stays put when the colour changes
+export const driveModes = terrainScenes.flatMap((s, si) => s.modes.map((m) => ({ ...m, scene: si })));
+
+// Photo view: studio photos from the importer (previous WordPress site). The configurator measures the car in each
+// photo and crops to it, so the car is the same size whichever colour is picked.
 export const colors212 = [
-  { name: "Oliwkowy", hex: "#4b5a3a", src: "/gallery/212/paint-olive.webp" },
-  { name: "Czarny", hex: "#121212", src: "/gallery/212/paint-black.webp" },
-  { name: "Grafitowy", hex: "#7d8085", src: "/gallery/212/paint-graphite.webp" },
-  { name: "Biały", hex: "#ececec", src: "/gallery/212/paint-white.webp" },
+  { name: "Oliwkowy", hex: "#4b5a3a", src: "/gallery/212/kolor-oliwkowy.webp" },
+  { name: "Czarny", hex: "#121212", src: "/gallery/212/kolor-czarny.webp" },
+  { name: "Grafitowy", hex: "#7d8085", src: "/gallery/212/kolor-grafitowy.webp" },
+  { name: "Biały", hex: "#ececec", src: "/gallery/212/kolor-bialy.webp" },
 ];
 
 // 3D view: paint colours taken from the 212 T01 model
@@ -132,16 +160,31 @@ export const specs = [
   },
 ] as const;
 
-/** Our own studio photos of the T01 SUV and Pick-up (white background). Every third one is a portrait. */
-export const gallery = [
-  { src: "/gallery/212/pickup-grafit-tyl.webp", caption: "T01 Pick-up, tył" },
-  { src: "/gallery/212/t01-czarny-przod.webp", caption: "T01 w czerni" },
-  { src: "/gallery/212/pickup-grafit-przod-wyciagarka.webp", caption: "Pick-up z wyciągarką" },
-  { src: "/cutouts/212/t01-bialy-przod.webp", caption: "T01 biały" },
-  { src: "/gallery/212/t01-bialy-tyl-1.webp", caption: "Koło zapasowe na klapie" },
-  { src: "/cutouts/212/pickup-grafit.webp", caption: "T01 Pick-up" },
-  { src: "/cutouts/212/t01-bialy-tyl.webp", caption: "T01 biały, tył" },
-  { src: "/gallery/212/pickup-grafit-przod.webp", caption: "Pick-up, przód" },
+const photos = (dir: string, names: string[]) => names.map((n) => ({ src: `/${dir}/${n}.webp` }));
+
+/**
+ * Gallery tabs, five photos each (one large tile and four small ones). `studio` photos have a white background;
+ * the 3D renders sit on the green tiles. The large tile opens each tab with its strongest front three-quarter view.
+ */
+export const galleryTabs = [
+  {
+    name: "T01 SUV",
+    studio: true,
+    photos: photos("gallery/212", ["t01-czarny-przod", "t01-bialy-przod-1", "t01-bialy-tyl-1", "t01-bialy-przod-2", "t01-bialy-tyl-2"]),
+  },
+  {
+    name: "T01 Pick-up",
+    studio: true,
+    photos: [
+      ...photos("gallery/212", ["pickup-grafit-przod-wyciagarka", "pickup-grafit-przod", "pickup-grafit-tyl"]),
+      ...photos("cutouts/212", ["pickup-grafit", "pickup-wyciagarka"]),
+    ],
+  },
+  {
+    name: "Model 3D",
+    studio: false,
+    photos: photos("gallery/212", ["34-front", "side", "34-rear", "front", "top"]),
+  },
 ];
 
 export const ownership = [

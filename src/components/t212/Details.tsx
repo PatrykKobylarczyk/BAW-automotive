@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import { gallery, renders, specs, timeline } from "@/lib/content212";
+import { useRef } from "react";
+import { renders, specs, timeline } from "@/lib/content212";
 import { Eyebrow, Reveal, SplitText, ease } from "./ui";
 import Image from "next/image";
 import Link from "next/link";
@@ -54,59 +54,6 @@ export function Specs() {
             Pełna karta techniczna
           </Link>
         </p>
-      </div>
-    </section>
-  );
-}
-
-export function Gallery() {
-  const pin = useRef<HTMLElement>(null);
-  const track = useRef<HTMLDivElement>(null);
-  const [distance, setDistance] = useState(0);
-  useEffect(() => {
-    const measure = () => track.current && setDistance(Math.max(0, track.current.scrollWidth - window.innerWidth + 40));
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-  const { scrollYProgress } = useScroll({ target: pin, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], [0, -distance]);
-  const bar = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  return (
-    <section id="galeria" ref={pin} className="relative h-[320vh] bg-bone text-deep">
-      <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden">
-        <div className="mx-auto mb-10 flex w-full max-w-[1320px] items-end justify-between gap-6 px-5 md:px-8">
-          <div>
-            <Eyebrow dark>Galeria</Eyebrow>
-            <h2 className="mt-4 font-display text-[clamp(28px,3.4vw,48px)] leading-none font-extrabold">Z każdej strony.</h2>
-          </div>
-          <div className="hidden h-1 w-52 overflow-hidden rounded-full bg-deep/10 md:block">
-            <motion.div style={{ width: bar }} className="h-full bg-forest" />
-          </div>
-        </div>
-        <motion.div ref={track} style={{ x }} className="flex w-max gap-5 pl-5 md:pl-[max(2rem,calc((100vw-1320px)/2+2rem))]">
-          {gallery.map((g, i) => (
-            <figure
-              key={g.src}
-              className={`group relative shrink-0 overflow-hidden rounded-3xl bg-white ${
-                i % 3 === 1 ? "aspect-[3/4] h-[min(56vh,480px)]" : "aspect-[16/10] h-[min(56vh,480px)]"
-              }`}
-            >
-              <Image
-                src={g.src}
-                alt={`212: ${g.caption}`}
-                fill
-                sizes="(max-width:768px) 90vw, 50vw"
-                className="object-contain p-[6%] transition-transform duration-[1.2s] ease-out-expo group-hover:scale-105"
-              />
-              <figcaption className="absolute bottom-4 left-4 flex items-center gap-3 rounded-full bg-deep/70 px-4 py-2 text-sm text-bone backdrop-blur-md">
-                <span className="font-mono text-[11px] text-lime">{String(i + 1).padStart(2, "0")}</span>
-                {g.caption}
-              </figcaption>
-            </figure>
-          ))}
-        </motion.div>
       </div>
     </section>
   );

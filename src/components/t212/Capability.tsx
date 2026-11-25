@@ -1,8 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { capability, driveModes, geometry, marquee, renders } from "@/lib/content212";
+import { capability, geometry, marquee, renders } from "@/lib/content212";
 import { Eyebrow, Reveal, SplitText, Trail, ease } from "./ui";
 
 export function Marquee() {
@@ -63,6 +64,9 @@ export function Manifesto() {
 /** Side profile of the T01 with its real off-road geometry drawn over it. Coordinates match the 964×434 render. */
 export function Geometry() {
   const [wading, setWading] = useState(false);
+  const [swiped, setSwiped] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [visible, setVisible] = useState(1);
   const GROUND = 412;
   const WATER = 240; // 850 mm at the render's scale (1936 mm body height ≈ 392 px, ground at 412)
 
@@ -96,7 +100,17 @@ export function Geometry() {
           </div>
         </div>
 
-        <div className="mt-12 overflow-x-auto">
+        <div
+          ref={(el) => {
+            if (el) setVisible(Math.min(1, el.clientWidth / el.scrollWidth));
+          }}
+          className="mt-12 overflow-x-auto"
+          onScroll={(e) => {
+            const el = e.currentTarget;
+            setSwiped(el.scrollLeft > 16);
+            setProgress(el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth));
+          }}
+        >
           <svg viewBox="-70 -30 1110 500" className="w-full min-w-[640px]" role="img" aria-label="Profil 212 T01 z kątami natarcia i zejścia, prześwitem oraz głębokością brodzenia">
             <defs>
               <clipPath id="water-clip">
@@ -180,6 +194,25 @@ export function Geometry() {
             </AnimatePresence>
           </svg>
         </div>
+        {/* mobile only: the diagram is wider than the screen; a track under it shows that it scrolls sideways */}
+        <div aria-hidden className="mt-4 flex items-center gap-4 md:hidden">
+          <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-deep/10">
+            <div
+              className="absolute inset-y-0 rounded-full bg-deep transition-[left] duration-150"
+              style={{ width: `${visible * 100}%`, left: `${progress * (1 - visible) * 100}%` }}
+            />
+          </div>
+          <span className={`flex shrink-0 items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors ${swiped ? "text-deep/40" : "text-forest"}`}>
+            Przesuń
+            <motion.span
+              animate={swiped ? { x: 0 } : { x: [0, 5, 0] }}
+              transition={swiped ? { duration: 0.2 } : { duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+              className="grid size-6 place-items-center rounded-full bg-lime text-deep"
+            >
+              <ArrowRight className="size-3.5" strokeWidth={2.5} />
+            </motion.span>
+          </span>
+        </div>
 
         <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-deep/15 pt-8 md:grid-cols-5">
           {[
@@ -195,64 +228,6 @@ export function Geometry() {
             </div>
           ))}
         </dl>
-      </div>
-    </section>
-  );
-}
-
-export function DriveModes() {
-  const [active, setActive] = useState(10);
-  return (
-    <section className="relative bg-pine py-28 md:py-36">
-      <div className="mx-auto grid max-w-[1320px] gap-14 px-5 md:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="lg:sticky lg:top-32 lg:self-start">
-          <Reveal>
-            <Eyebrow>Tryby jazdy</Eyebrow>
-          </Reveal>
-          <SplitText
-            text="Dwanaście nawierzchni. Jedno pokrętło."
-            className="mt-5 max-w-[14ch] font-display text-[clamp(30px,4.2vw,60px)] leading-[1.02] font-extrabold tracking-tight"
-          />
-          <div className="mt-10 min-h-[150px] rounded-3xl border border-lime/30 bg-deep/60 p-7">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.35, ease }}
-              >
-                <span className="font-mono text-[11px] tracking-wider text-moss uppercase">
-                  Tryb {String(active + 1).padStart(2, "0")} / {driveModes.length}
-                </span>
-                <h3 className="mt-2 font-display text-2xl font-extrabold text-lime">{driveModes[active].name}</h3>
-                <p className="mt-2 text-bone/80">{driveModes[active].text}</p>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-          <p className="mt-4 text-sm text-moss">Dostępność trybów zależy od wersji wyposażenia.</p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {driveModes.map((m, i) => (
-            <button
-              key={m.name}
-              onMouseEnter={() => setActive(i)}
-              onFocus={() => setActive(i)}
-              onClick={() => setActive(i)}
-              className={`group relative aspect-[5/4] overflow-hidden rounded-2xl border p-4 text-left transition-colors duration-300 md:p-5 ${
-                active === i ? "border-lime bg-lime text-deep" : "border-bone/10 bg-deep/40 hover:border-bone/30"
-              }`}
-            >
-              <span className={`font-mono text-[11px] ${active === i ? "text-deep/60" : "text-moss"}`}>
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="absolute bottom-4 left-4 font-display text-lg leading-tight font-extrabold md:bottom-5 md:left-5 md:text-xl">
-                {m.name}
-              </span>
-            </button>
-          ))}
-        </div>
       </div>
     </section>
   );

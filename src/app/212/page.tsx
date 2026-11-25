@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/PageParts";
 import Hero from "@/components/t212/Hero";
-import { DriveModes, Geometry, Manifesto, Marquee } from "@/components/t212/Capability";
+import { Geometry, Manifesto, Marquee } from "@/components/t212/Capability";
+import DriveModes from "@/components/t212/DriveModes";
 import Terrain from "@/components/t212/Terrain";
 import Configurator from "@/components/t212/Configurator";
 import Range from "@/components/t212/Range";
-import { Gallery, History, Specs } from "@/components/t212/Details";
+import { History, Specs } from "@/components/t212/Details";
+import Gallery from "@/components/t212/Gallery";
+import BackToTop from "@/components/t212/BackToTop";
 import { Ownership, TestDrive } from "@/components/t212/TestDrive";
 import { modelBySlug } from "@/lib/content";
 import { breadcrumbLd, pageMetadata, productLd, url } from "@/lib/seo";
@@ -33,6 +36,7 @@ export default function Page() {
       <History />
       <Ownership />
       <TestDrive />
+      <BackToTop />
     </main>
   );
 }

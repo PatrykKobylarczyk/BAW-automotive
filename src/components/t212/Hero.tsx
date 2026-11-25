@@ -15,7 +15,7 @@ export default function Hero() {
   const markY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
   const carY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
   const carScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
-  const fade = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
+  const fade = useTransform(scrollYProgress, [0.4, 0.85], [1, 0]);
 
   return (
     <section ref={ref} className="grain relative isolate flex min-h-[760px] flex-col overflow-hidden bg-forest md:h-svh">
