@@ -77,3 +77,76 @@ body {
     animation: none;
   }
 }
+
+/* Ekran startowy z rysującym się logo BAW (LogoIntro). Gra tylko, gdy skrypt w <head> ustawi html[data-intro="play"]. */
+.baw-intro {
+  display: none;
+}
+html[data-intro="play"] .baw-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: var(--color-ink);
+  animation: baw-intro-out 0.55s var(--ease-out-expo) 1.85s forwards;
+}
+.baw-intro-logo {
+  width: min(64vw, 440px);
+  overflow: visible;
+  animation: baw-intro-logo-out 0.55s var(--ease-out-expo) 1.85s forwards;
+}
+.baw-intro-logo path {
+  fill: var(--color-brand);
+  fill-opacity: 0;
+  stroke: #f2f3f5;
+  stroke-width: 0.3;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation:
+    baw-intro-draw 1s cubic-bezier(0.65, 0, 0.35, 1) calc(0.1s + var(--i, 0) * 0.12s) forwards,
+    baw-intro-fill 0.45s ease-out calc(1.15s + var(--i, 0) * 0.06s) forwards;
+}
+.baw-intro-line {
+  height: 1px;
+  width: min(64vw, 440px);
+  background: linear-gradient(to right, transparent, rgb(242 243 245 / 0.5), transparent);
+  transform: scaleX(0);
+  animation: baw-intro-line 1.2s var(--ease-out-expo) 0.4s forwards;
+}
+@keyframes baw-intro-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes baw-intro-fill {
+  to {
+    fill-opacity: 1;
+    stroke-opacity: 0;
+  }
+}
+@keyframes baw-intro-line {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes baw-intro-logo-out {
+  to {
+    transform: scale(1.08);
+  }
+}
+@keyframes baw-intro-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro="play"] .baw-intro {
+    display: none;
+  }
+}

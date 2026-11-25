@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import { Footer } from "@/components/Closing";
 import { JsonLd } from "@/components/PageParts";
 import SmoothScroll from "@/components/SmoothScroll";
+import LogoIntro, { INTRO_SCRIPT } from "@/components/LogoIntro";
 import { INDEXABLE, SITE_NAME, SITE_URL, organizationLd, pages } from "@/lib/seo";
 import "./globals.css";
 
@@ -26,8 +27,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pl" className={`${inter.variable} ${archivo.variable} antialiased`}>
+    <html lang="pl" className={`${inter.variable} ${archivo.variable} antialiased`} suppressHydrationWarning>
+      <head>
+        {/* Przed pierwszym malowaniem: czy pokazać ekran startowy z logo (raz na sesję, bez reduced-motion) */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
+      </head>
       <body className="font-sans">
+        <LogoIntro />
         <JsonLd data={organizationLd} />
         <SmoothScroll>
           <Navbar />
