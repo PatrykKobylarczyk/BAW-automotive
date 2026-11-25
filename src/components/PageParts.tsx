@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, Check, ChevronRight, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 import { models, type Model } from "@/lib/content";
-import { breadcrumbLd, trail, type PageKey } from "@/lib/seo";
+import { breadcrumbLd, trail, type Crumb, type PageKey } from "@/lib/seo";
 import { pageTitle } from "@/lib/styles";
 import { Eyebrow, Reveal, SplitText } from "./ui";
 
@@ -17,11 +17,22 @@ export function JsonLd({ data }: { data: object | object[] }) {
 }
 
 /** `bare` drops the page container, for breadcrumbs placed inside a box that already has its own padding. */
-export function Breadcrumbs({ page, className = "", bare = false }: { page: PageKey; className?: string; bare?: boolean }) {
-  const crumbs = trail(page);
+export function Breadcrumbs({
+  page,
+  extra,
+  className = "",
+  bare = false,
+}: {
+  page: PageKey;
+  /** A page below `page`, e.g. a version of the model */
+  extra?: Crumb;
+  className?: string;
+  bare?: boolean;
+}) {
+  const crumbs = trail(page, extra);
   return (
     <>
-      <JsonLd data={breadcrumbLd(page)} />
+      <JsonLd data={breadcrumbLd(page, extra)} />
       <nav aria-label="Ścieżka" className={`${bare ? "" : "mx-auto max-w-[1280px] px-5 md:px-8"} ${className}`}>
         <ol className="flex flex-wrap items-center gap-1.5 text-[13px] text-muted">
           {crumbs.map((c, i) => (

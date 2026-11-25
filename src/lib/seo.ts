@@ -145,12 +145,15 @@ export function pageMetadata(key: PageKey, image?: string): Metadata {
   };
 }
 
-/** Breadcrumb trail from the home page to `key`, optionally via the models list. */
-export function trail(key: PageKey) {
+export type Crumb = { label: string; path: string };
+
+/** Breadcrumb trail from the home page to `key`, optionally via the models list, plus a page below it (a version). */
+export function trail(key: PageKey, extra?: Crumb) {
   const keys: PageKey[] = ["home"];
   if (key.startsWith("baw-")) keys.push("models");
   if (key !== "home") keys.push(key);
-  return keys.map((k) => ({ label: pages[k].label, path: pages[k].path }));
+  const crumbs = keys.map((k) => ({ label: pages[k].label, path: pages[k].path }));
+  return extra ? [...crumbs, extra] : crumbs;
 }
 
 export const organizationLd = {
@@ -173,11 +176,11 @@ export const organizationLd = {
   areaServed: "PL",
 };
 
-export function breadcrumbLd(key: PageKey) {
+export function breadcrumbLd(key: PageKey, extra?: Crumb) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: trail(key).map((c, i) => ({
+    itemListElement: trail(key, extra).map((c, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: c.label,
