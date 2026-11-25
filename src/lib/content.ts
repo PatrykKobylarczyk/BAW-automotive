@@ -77,12 +77,32 @@ export const offroadFeatures = [
   "Pięciopunktowe, niezależne zawieszenie przód i tył",
 ];
 
-export const gallery212 = [
-  ...["34-front", "side", "34-rear", "front", "paint-white", "paint-graphite", "paint-black", "top"].map((n) => `/gallery/212/${n}.webp`),
-  // Our photos (T01 SUV and Pick-up), cut out of the background
-  ...["t01-czarny", "t01-bialy-przod", "t01-bialy-tyl", "pickup-grafit-przod", "pickup-grafit", "pickup-wyciagarka"].map(
-    (n) => `/cutouts/212/${n}.webp`,
-  ),
+/** A gallery photo: just a path, or a path with a caption and the version it shows (one filter per version). */
+export type GalleryImage = string | { src: string; label?: string; tag?: string };
+
+const g212 = (tag: string, list: [string, string][]): GalleryImage[] => list.map(([n, label]) => ({ src: `/gallery/212/${n}.webp`, label, tag }));
+
+export const gallery212: GalleryImage[] = [
+  ...g212("T01 SUV", [
+    ["34-front", "Przód, widok 3/4"],
+    ["t01-czarny-przod", "Czarny, przód"],
+    ["side", "Profil"],
+    ["t01-bialy-przod-1", "Biały, przód 3/4"],
+    ["34-rear", "Tył, widok 3/4"],
+    ["t01-bialy-tyl-1", "Biały, tył 3/4"],
+    ["front", "Przód"],
+    ["t01-bialy-przod-2", "Biały, przód"],
+    ["t01-bialy-tyl-2", "Biały, tył"],
+    ["paint-white", "Kolor: biel"],
+    ["paint-graphite", "Kolor: szary piaskowy"],
+    ["paint-black", "Kolor: czerń północy"],
+    ["top", "Widok z góry"],
+  ]),
+  ...g212("T01 Pick-up", [
+    ["pickup-grafit-tyl", "Grafitowy, tył 3/4"],
+    ["pickup-grafit-przod", "Grafitowy, przód 3/4"],
+    ["pickup-grafit-przod-wyciagarka", "Przód z wyciągarką"],
+  ]),
 ];
 
 /** Mini Truck versions on its section: our photos cut out of the background */
@@ -95,21 +115,39 @@ export const miniTruckGallery = [1, 10, 6, 7, 12, 11, 3, 2, 8, 5, 9].map(
   (n) => `${U}/2025/10/Mini_truck_est_${n}-${[6, 12, 8, 5].includes(n) ? 2 : 1}-1630x860.jpg`,
 );
 
-// Studio renders on a white background, one or two per body type (model page gallery)
-export const lightTruckGallery = [
-  "przod",
-  "skrzynia-przod-34-1",
-  "skrzynia-tyl-34-1",
-  "kontener-przod-34-1",
-  "kontener-tyl-34-1",
-  "kontener-tyl-otwarty",
-  "wywrotka-przod-podniesiona",
-  "wywrotka-bok-podniesiona-1",
-  "wywrotka-trzy-strony",
-  "komunalna-przod-34-1",
-  "komunalna-tyl-34-1",
-  "komunalna-wymiary-bok",
-].map((n) => `/gallery/light-truck/${n}.webp`);
+// Studio renders on a white background, a few per body type (model page gallery, one filter per body type)
+const gLT = (tag: string, list: [string, string][]): GalleryImage[] =>
+  list.map(([n, label]) => ({ src: `/gallery/light-truck/${n}.webp`, label, tag }));
+
+export const lightTruckGallery: GalleryImage[] = [
+  ...gLT("Skrzynia", [
+    ["skrzynia-przod-34-1", "Przód, widok 3/4"],
+    ["przod", "Przód"],
+    ["skrzynia-tyl-34-1", "Tył, widok 3/4"],
+    ["skrzynia-gora", "Skrzynia z góry"],
+    ["skrzynia-tyl", "Tył"],
+  ]),
+  ...gLT("Komunalna", [
+    ["komunalna-przod-34-1", "Przód, widok 3/4"],
+    ["komunalna-bok-1", "Bok"],
+    ["komunalna-tyl-34-1", "Tył, widok 3/4"],
+    ["komunalna-tyl-otwarta", "Otwarta burta"],
+    ["komunalna-wymiary-bok", "Wymiary"],
+  ]),
+  ...gLT("Kontener", [
+    ["kontener-przod-34-1", "Przód, widok 3/4"],
+    ["kontener-bok-1", "Bok"],
+    ["kontener-tyl-34-1", "Tył, widok 3/4"],
+    ["kontener-tyl-otwarty", "Otwarte drzwi kontenera"],
+  ]),
+  ...gLT("Wywrotka", [
+    ["wywrotka-przod-podniesiona", "Podniesiona skrzynia, przód"],
+    ["wywrotka-bok-podniesiona-1", "Wywrot na bok"],
+    ["wywrotka-tyl-podniesiona-1", "Wywrot do tyłu"],
+    ["wywrotka-trzy-strony", "Wywrotka trójstronna"],
+    ["wywrotka-bok", "Bok"],
+  ]),
+];
 
 // Our own studio photos (the "auta" folder), cut out of the white background: public/cutouts
 export const lightTruck = {
@@ -218,6 +256,132 @@ export const lineupSpecs: Record<(typeof lineup)[number]["group"], { value: stri
 const round2 = (n: number) => Math.round(n * 100) / 100;
 export const grossOf = (p: { gross?: number; net?: number }) => p.gross ?? round2(p.net! * 1.23);
 export const netOf = (p: { gross?: number; net?: number }) => p.net ?? round2(p.gross! / 1.23);
+
+/** Polish price format: 174 500 or 219 000,27, with non-breaking spaces so a price never wraps. */
+export const zl = (n: number) =>
+  n.toLocaleString("pl-PL", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).replace(/\s/g, "\u00a0");
+
+/**
+ * Versions shown on each model page, one tab each. The price comes from `priceList` (matched by model and version),
+ * so it stays the same as on /cennik. `points` only use data approved for the site: the 212 Pick-up and Mavero have
+ * no confirmed technical data yet (project files, dane-techniczne/brakujace-dane-do-akceptacji.md), so they show
+ * only what the importer's price list says.
+ */
+export type ModelVersion = {
+  id: string;
+  name: string;
+  badge: string;
+  /** Row in priceList */
+  price: { model: string; version: string };
+  img?: string;
+  /** Tag of this version's photos in the model's gallery */
+  galleryTag?: string;
+  lead: string;
+  points: string[];
+  note?: string;
+};
+
+export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-truck", ModelVersion[]> = {
+  "baw-212": [
+    {
+      id: "t01-suv",
+      name: "212 T01 SUV",
+      badge: "Diesel · 4x4",
+      price: { model: "212 T01", version: "SUV" },
+      img: "/cutouts/kafelki/212-t01-suv.webp",
+      galleryTag: "T01 SUV",
+      lead: "Pięciodrzwiowy terenowy SUV z turbodieslem i napędem 4WD z reduktorem. Wersja, której dotyczą dane techniczne na tej stronie.",
+      points: [
+        "2.0 turbodiesel: 125 kW (170 KM) i 415 Nm",
+        "Automatyczna skrzynia ZF, 8 biegów",
+        "Brodzenie do 850 mm, podjazd do 100%",
+        "Uciąg przyczepy do 2500 kg",
+      ],
+    },
+    {
+      id: "t01-pickup",
+      name: "212 T01 Pick-up",
+      badge: "Diesel",
+      price: { model: "212 T01", version: "Pick-up" },
+      img: "/cutouts/kafelki/212-t01-pickup.webp",
+      galleryTag: "T01 Pick-up",
+      lead: "Terenowy charakter 212 z otwartą skrzynią ładunkową. Do pracy w terenie, na budowie i w gospodarstwie.",
+      points: ["Silnik Diesla", "Podwójna kabina i otwarta skrzynia ładunkowa"],
+      note: "Pełną kartę techniczną wersji Pick-up potwierdzamy z importerem. Zapytaj dealera o szczegóły.",
+    },
+    {
+      id: "mavero",
+      name: "212 Mavero",
+      badge: "Benzyna",
+      price: { model: "212 Mavero", version: "SUV" },
+      lead: "Benzynowa odmiana 212 w nadwoziu SUV.",
+      points: ["Silnik benzynowy", "Nadwozie SUV"],
+      note: "Zdjęcia i dane techniczne Mavero pojawią się wkrótce. Zapytaj dealera o dostępność.",
+    },
+  ],
+  "baw-light-truck": [
+    {
+      id: "skrzynia",
+      name: "Light Truck Skrzynia",
+      badge: "Benzyna · 1785 kg",
+      price: { model: "Light Truck (LT7)", version: "Skrzynia" },
+      img: "/cutouts/kafelki/lt-skrzynia.webp",
+      galleryTag: "Skrzynia",
+      lead: "Podstawowa wersja z otwartą skrzynią ładunkową, do przewozu materiałów i towarów.",
+      points: ["Skrzynia 3700 × 1770 × 395 mm", "Ładowność 1785 kg, DMC 3495 kg", "Benzyna 1.6, 117 KM"],
+    },
+    {
+      id: "komunalna",
+      name: "Light Truck Komunalna",
+      badge: "Benzyna",
+      price: { model: "Light Truck (LT7)", version: "Skrzynia komunalna" },
+      img: "/cutouts/kafelki/lt-komunalna.webp",
+      galleryTag: "Komunalna",
+      lead: "Skrzynia w wykonaniu komunalnym, dla służb miejskich, zieleni i utrzymania terenu.",
+      points: ["Ładowność 1785 kg, DMC 3495 kg", "Benzyna 1.6, 117 KM"],
+    },
+    {
+      id: "kontener",
+      name: "Light Truck Kontener",
+      badge: "Cargo · Niewiadów",
+      price: { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)" },
+      img: "/cutouts/kafelki/lt-kontener.webp",
+      galleryTag: "Kontener",
+      lead: "Zamknięta zabudowa kontenerowa Niewiadów, gotowa do przewozu towarów.",
+      points: ["Kontener 3600 × 1800 × 1800 mm", "Zabudowa Niewiadów", "Benzyna 1.6, 117 KM"],
+    },
+    {
+      id: "wywrotka",
+      name: "Light Truck Wywrotka",
+      badge: "Jedno- lub trójstronna",
+      price: { model: "Light Truck (LT7)", version: "Wywrotka jednostronna" },
+      img: "/cutouts/kafelki/lt-wywrotka.webp",
+      galleryTag: "Wywrotka",
+      lead: "Wywrotka jednostronna albo trójstronna, do sypkich materiałów na budowie i w ogrodzie.",
+      points: ["Skrzynia wywrotki 3730 × 1850 × 400 mm", "Wersja trójstronna: osobna pozycja w cenniku", "Benzyna 1.6, 117 KM"],
+    },
+  ],
+  "baw-mini-truck": [
+    {
+      id: "box",
+      name: "Mini Truck Box",
+      badge: "Elektryczny",
+      price: { model: "Mini Truck EV", version: "Box" },
+      img: "/cutouts/kafelki/mini-box.webp",
+      lead: "Kompaktowy elektryczny dostawczak do dostaw ostatniej mili i stałych tras po mieście.",
+      points: ["Bateria LiFePO4 15,4 kWh", "Zasięg min. 150 km", "Silnik 30 kW, 110 Nm"],
+    },
+    {
+      id: "cargo",
+      name: "Mini Truck Cargo",
+      badge: "Elektryczny",
+      price: { model: "Mini Truck EV", version: "Cargo" },
+      img: "/cutouts/kafelki/mini-cargo.webp",
+      lead: "Druga wersja zabudowy Mini Trucka, z tym samym napędem elektrycznym.",
+      points: ["Bateria LiFePO4 15,4 kWh", "Zasięg min. 150 km", "Silnik 30 kW, 110 Nm"],
+    },
+  ],
+};
 
 export const company = {
   name: "SERICA trade Sp. z o.o.",
