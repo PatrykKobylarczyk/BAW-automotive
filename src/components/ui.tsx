@@ -40,16 +40,19 @@ export function SplitText({
   delay = 0,
   as: Tag = "h2",
   animateOnMount = false,
+  show = true,
 }: {
   text: string;
   className?: string;
   delay?: number;
   as?: "h1" | "h2" | "h3" | "p";
   animateOnMount?: boolean;
+  /** Tylko z animateOnMount: false wstrzymuje wejście (np. do końca ekranu startowego). */
+  show?: boolean;
 }) {
   const words = text.split(" ");
   const trigger = animateOnMount
-    ? { animate: "show" }
+    ? { animate: show ? "show" : "hidden" }
     : { whileInView: "show", viewport: { once: true, margin: "-10% 0px" } };
   const MotionTag = motion[Tag];
   return (
