@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "motion/react";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { grossOf, lineup, lineupSpecs, models, netOf, priceList, versionOf } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 
@@ -27,6 +29,65 @@ const groupOf = (r: Row): Group =>
   (r.model.startsWith("212") ? "baw-212" : r.model.startsWith("Mini") ? "baw-mini-truck" : "baw-light-truck");
 
 const rowsOf = (v: Vehicle) => priceList.filter((r) => r.img === v.img && v.versions.includes(r.version));
+/** Page of the vehicle's version, or of its model when the version has none */
+const hrefOf = (v: Vehicle) => versionOf(rowsOf(v)[0])?.href ?? `/modele/${v.group}`;
+
+/** The vehicle's photo cropped to its outline, so it fills the box it is given */
+function VehicleImage({ v, sizes }: { v: Vehicle; sizes: string }) {
+  return (
+    <Image
+      src={v.img}
+      alt=""
+      width={1600}
+      height={1000}
+      sizes={sizes}
+      className="absolute max-w-none"
+      style={{
+        width: `${(1600 / (v.box[2] - v.box[0])) * 100}%`,
+        height: `${(1000 / (GROUND - v.box[1])) * 100}%`,
+        left: `${(-v.box[0] / (v.box[2] - v.box[0])) * 100}%`,
+        top: `${(-v.box[1] / (GROUND - v.box[1])) * 100}%`,
+      }}
+    />
+  );
+}
+
+/**
+ * Transition to a vehicle's page: the vehicle grows from where it stands to the middle of the screen over a dark
+ * backdrop, then the page opens.
+ */
+function ZoomOut({ v, from }: { v: Vehicle; from: DOMRect }) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const ratio = from.width / from.height;
+  const w = Math.min(vw * 0.86, vh * 0.6 * ratio, 1100);
+  const h = w / ratio;
+  return createPortal(
+    <motion.div className="fixed inset-0 z-[90]" aria-hidden>
+      <motion.div
+        className="absolute inset-0 bg-ink"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, ease }}
+      />
+      <motion.div
+        className="absolute"
+        initial={{ left: from.left, top: from.top, width: from.width, height: from.height }}
+        animate={{ left: (vw - w) / 2, top: (vh - h) / 2, width: w, height: h }}
+        transition={{ duration: 0.65, ease }}
+      >
+        <motion.span
+          className="absolute -inset-x-[10%] -bottom-[8%] h-[38%] rounded-[50%] bg-brand/55 blur-3xl"
+          initial={{ opacity: 0.6 }}
+          animate={{ opacity: 1 }}
+        />
+        {/* Same sizes as on the stage, so the browser reuses the image it already has */}
+        <VehicleImage v={v} sizes="(max-width:768px) 60vw, 40vw" />
+      </motion.div>
+    </motion.div>,
+    document.body,
+  );
+}
 const modelOf = (g: Group) => models.find((m) => m.slug === g)!;
 
 /** Short price under a vehicle's name: the cheapest of its versions, gross or net as the importer gave it */
@@ -57,6 +118,19 @@ function Price({ r, big = false }: { r: Row; big?: boolean }) {
 export default function Lineup() {
   const [filter, setFilter] = useState<Filter>("all");
   const [activeId, setActiveId] = useState("212-suv");
+  const router = useRouter();
+  const reduceMotion = useReducedMotion();
+  // How the last press started: a touch picks the vehicle first, a second touch opens its page
+  // (and whether the vehicle was already picked when the touch began: a tap also fires focus and mouseenter)
+  const pointer = useRef<{ type: string; wasActive: boolean }>({ type: "mouse", wasActive: false });
+  const [leaving, setLeaving] = useState<{ v: Vehicle; from: DOMRect } | null>(null);
+  const open = (v: Vehicle, el: HTMLElement) => {
+    const href = hrefOf(v);
+    if (reduceMotion) return router.push(href);
+    router.prefetch(href);
+    setLeaving({ v, from: el.getBoundingClientRect() });
+    setTimeout(() => router.push(href), 700);
+  };
   const stage = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const inView = useInView(stage, { once: true, margin: "-15% 0px" });
@@ -135,6 +209,7 @@ export default function Lineup() {
 
   return (
     <section id="modele" className="relative overflow-hidden py-24 md:py-32">
+      <AnimatePresence>{leaving && <ZoomOut v={leaving.v} from={leaving.from} />}</AnimatePresence>
       <div className="text-outline-faint pointer-events-none absolute top-10 left-1/2 -translate-x-1/2 font-display text-[clamp(120px,22vw,340px)] leading-none font-extrabold whitespace-nowrap select-none">
         GAMA BAW
       </div>
@@ -238,14 +313,23 @@ export default function Lineup() {
                     aria-label={`${modelOf(v.group).short} ${v.label}`}
                     aria-pressed={isActive}
                     tabIndex={shown ? 0 : -1}
-                    onMouseEnter={() => setActiveId(v.id)}
+                    onMouseEnter={() => {
+                      if (pointer.current.type === "touch") return;
+                      setActiveId(v.id);
+                      router.prefetch(hrefOf(v));
+                    }}
                     onFocus={() => setActiveId(v.id)}
-                    onClick={() => pick(v.id)}
+                    onPointerDown={(e) => (pointer.current = { type: e.pointerType, wasActive: isActive })}
+                    onClick={(e) => {
+                      // Mouse and keyboard open the page straight away; on a touch screen the first tap only picks
+                      if (pointer.current.type === "touch" && !pointer.current.wasActive) return pick(v.id);
+                      open(v, e.currentTarget);
+                    }}
                     className="group absolute inset-0 block origin-bottom cursor-pointer outline-none md:cursor-[inherit]"
                     initial={{ x: 260, opacity: 0 }}
                     animate={
                       inView
-                        ? { x: 0, opacity: 1, scale: isActive ? 1.08 : 1, y: isActive ? -6 : 0 }
+                        ? { x: 0, opacity: leaving?.v.id === v.id ? 0 : 1, scale: isActive ? 1.12 : 1, y: isActive ? -8 : 0 }
                         : { x: 260, opacity: 0 }
                     }
                     transition={{
@@ -269,20 +353,7 @@ export default function Lineup() {
                         isActive ? "brightness-110" : "brightness-[.62] saturate-[.7] group-hover:brightness-90"
                       }`}
                     >
-                      <Image
-                        src={v.img}
-                        alt=""
-                        width={1600}
-                        height={1000}
-                        sizes="(max-width:768px) 60vw, 40vw"
-                        className="absolute max-w-none"
-                        style={{
-                          width: `${(1600 / (v.box[2] - v.box[0])) * 100}%`,
-                          height: `${(1000 / (GROUND - v.box[1])) * 100}%`,
-                          left: `${(-v.box[0] / (v.box[2] - v.box[0])) * 100}%`,
-                          top: `${(-v.box[1] / (GROUND - v.box[1])) * 100}%`,
-                        }}
-                      />
+                      <VehicleImage v={v} sizes="(max-width:768px) 60vw, 40vw" />
                     </span>
                     {/* Name on the floor */}
                     <span
@@ -295,6 +366,7 @@ export default function Lineup() {
                       <span className={`mt-1 block font-semibold transition-colors ${isActive ? "text-brand-hover" : "text-brand"}`}>
                         {priceFrom(v)}
                       </span>
+
                     </span>
                   </motion.button>
                 </motion.div>
@@ -324,8 +396,8 @@ export default function Lineup() {
         ))}
         {(edges.left || edges.right) && (
           <p className="mt-1 px-5 text-center text-xs text-white/40">
-            <span className="md:hidden">Przesuń palcem, aby zobaczyć całą gamę</span>
-            <span className="hidden md:inline">Przeciągnij albo użyj strzałek, aby zobaczyć całą gamę</span>
+            <span className="md:hidden">Przesuń palcem po gamie. Dotknij auta, aby zobaczyć cenę, i jeszcze raz, aby je otworzyć</span>
+            <span className="hidden md:inline">Przeciągnij albo użyj strzałek, aby zobaczyć całą gamę. Kliknij auto, aby otworzyć jego stronę</span>
           </p>
         )}
       </div>
@@ -371,7 +443,7 @@ export default function Lineup() {
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1">
               <MagneticButton href="#kontakt" className="justify-center">Zapytaj o ofertę</MagneticButton>
               <Link
-                href={versionOf(rowsOf(active)[0])?.href ?? `/modele/${active.group}`}
+                href={hrefOf(active)}
                 className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-7 py-[15px] text-[15px] font-semibold text-white/80 transition hover:border-white/40 hover:text-white"
               >
                 Szczegóły modelu
