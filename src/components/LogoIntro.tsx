@@ -6,10 +6,10 @@ import IntroController from "./IntroController";
 /**
  * Ekran startowy: kontur logo BAW rysuje się sam, wypełnia kolorem marki, po czym ekran znika i odsłania stronę.
  * Rysowanie to CSS (działa przed hydratacją, bez mignięcia strony). Skrypt inline w <head> decyduje, czy intro gra:
- * raz na sesję karty i nigdy przy prefers-reduced-motion. Gdy nie gra, <html> nie dostaje `data-intro` i ekran jest ukryty.
+ * raz na sesję karty, nigdy przy prefers-reduced-motion i nie na /212 (landing 212 ma własne wejście w Hero). Gdy nie gra, <html> nie dostaje `data-intro` i ekran jest ukryty.
  * Kiedy ekran znika, decyduje IntroController: po narysowaniu logo i załadowaniu filmu w Hero (maks. 6 s).
  */
-export const INTRO_SCRIPT = `try{var d=document.documentElement;if(!sessionStorage.getItem("baw-intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.dataset.intro="play"}sessionStorage.setItem("baw-intro","1")}catch(e){}`;
+export const INTRO_SCRIPT = `try{var d=document.documentElement;if(!sessionStorage.getItem("baw-intro")&&location.pathname.indexOf("/212")!==0&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.dataset.intro="play";sessionStorage.setItem("baw-intro","1")}}catch(e){}`;
 
 export default function LogoIntro() {
   return (

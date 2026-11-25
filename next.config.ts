@@ -32,9 +32,6 @@ const legacyRedirects: [string, string][] = [
 
 const nextConfig: NextConfig = {
   images: {
-    // Zdjęcia tymczasowo pobierane z obecnej strony klienta.
-    // Przed przełączeniem domeny przenieść je do /public i usunąć ten wpis (patrz README).
-    remotePatterns: [new URL("https://bawautomotive.pl/wp-content/uploads/**")],
     qualities: [75, 90],
   },
   async redirects() {

@@ -1,17 +1,17 @@
-const U = "https://bawautomotive.pl/wp-content/uploads";
 
+// Video and photos from the previous WordPress site (the importer's own material), hosted here since the switch.
+// The hero film is only 854×480: swap in a 1080p or 4K master when the importer has one.
 export const media = {
-  heroVideo: `${U}/2025/11/1030.mp4`,
-  heroPoster: `${U}/2025/10/212-t3.png`,
-  offroad: `${U}/2025/10/212-t3.png`,
-  evPhoto: `${U}/2025/10/Ev_small_est_2.jpg`,
-  dealerBg: `${U}/2025/10/Mini_truck_est_6-2-1630x860.jpg`,
+  heroVideo: "/media/hero-212.mp4",
+  heroPoster: "/media/212-teren.webp",
+  offroad: "/media/212-teren.webp",
+  dealerBg: "/media/dealer-tlo.webp",
 };
 
 export const nav = [
   { label: "Pojazdy", href: "/modele" },
-  // Separate site of the 212 brand (green identity), opened in a new tab
-  { label: "212", href: "https://212-polska.vercel.app", external: true },
+  // Landing page of the 212 brand (green identity), part of this site so the SEO stays in one place
+  { label: "212", href: "/212" },
   { label: "Cennik", href: "/cennik" },
   { label: "Salony i serwis", href: "/serwis" },
   { label: "O marce", href: "/o-marce" },
@@ -48,10 +48,10 @@ export const values = [
 // solid car body, without the soft shadow some photos have). The configurator crops every photo to that
 // outline, so the car is the same size and in the same place whichever colour is picked.
 export const colors212 = [
-  { name: "Oliwkowy", hex: "#4b5a3a", src: `${U}/2025/10/212-car.png`, w: 1600, h: 914, box: [223, 196, 1377, 776] },
-  { name: "Czarny", hex: "#121212", src: `${U}/2025/10/212-black.png`, w: 1080, h: 531, box: [47, 2, 1047, 504] },
-  { name: "Grafitowy", hex: "#7d8085", src: `${U}/2025/10/212-gray.png`, w: 1080, h: 531, box: [47, 2, 1047, 504] },
-  { name: "Biały", hex: "#ececec", src: `${U}/2025/10/212-white-2.png`, w: 1080, h: 531, box: [47, 1, 1048, 504] },
+  { name: "Oliwkowy", hex: "#4b5a3a", src: "/gallery/212/kolor-oliwkowy.webp", w: 1600, h: 914, box: [223, 196, 1377, 776] },
+  { name: "Czarny", hex: "#121212", src: "/gallery/212/kolor-czarny.webp", w: 1080, h: 531, box: [47, 2, 1047, 504] },
+  { name: "Grafitowy", hex: "#7d8085", src: "/gallery/212/kolor-grafitowy.webp", w: 1080, h: 531, box: [47, 2, 1047, 504] },
+  { name: "Biały", hex: "#ececec", src: "/gallery/212/kolor-bialy.webp", w: 1080, h: 531, box: [47, 1, 1048, 504] },
 ] as const;
 
 // 3D view: paint colours taken from the 212 T01 Blender model
@@ -112,7 +112,7 @@ export const miniTruckVersions = [
 ];
 
 export const miniTruckGallery = [1, 10, 6, 7, 12, 11, 3, 2, 8, 5, 9].map(
-  (n) => `${U}/2025/10/Mini_truck_est_${n}-${[6, 12, 8, 5].includes(n) ? 2 : 1}-1630x860.jpg`,
+  (n) => `/gallery/mini-truck/plener/${n}.webp`,
 );
 
 // Studio renders on a white background, a few per body type (model page gallery, one filter per body type)
@@ -171,11 +171,11 @@ export const lightTruck = {
 };
 
 export const prices = [
-  { name: "212 T01", fuel: "Diesel", gross: "174 500", net: "141 869,92", img: `${U}/2025/10/212-black.png`, href: "/modele/baw-212", featured: true },
-  { name: "Light Truck", fuel: "Benzyna", gross: "89 900", net: "73 089,43", img: `${U}/2025/10/BAW_Small_005_gallery.png.webp`, href: "/modele/baw-light-truck" },
-  { name: "Light Truck Cargo", fuel: "Benzyna · zabudowa Niewiadów", gross: "99 900", net: "81 219,51", img: `${U}/2025/10/BAW_Small_004_gallery.png.webp`, href: "/modele/baw-light-truck" },
-  { name: "Mini Truck", fuel: "Elektryczny", gross: "64 900", net: "52 764,23", img: `${U}/2025/10/baw-mini-box.webp`, href: "/modele/baw-mini-truck" },
-  { name: "Mini Truck Cargo", fuel: "Elektryczny", gross: "69 900", net: "56 829,27", img: `${U}/2025/11/BAW-mimitruck.webp`, href: "/modele/baw-mini-truck" },
+  { name: "212 T01", fuel: "Diesel", gross: "174 500", net: "141 869,92", href: "/modele/baw-212", featured: true },
+  { name: "Light Truck", fuel: "Benzyna", gross: "89 900", net: "73 089,43", href: "/modele/baw-light-truck" },
+  { name: "Light Truck Cargo", fuel: "Benzyna · zabudowa Niewiadów", gross: "99 900", net: "81 219,51", href: "/modele/baw-light-truck" },
+  { name: "Mini Truck", fuel: "Elektryczny", gross: "64 900", net: "52 764,23", href: "/modele/baw-mini-truck" },
+  { name: "Mini Truck Cargo", fuel: "Elektryczny", gross: "69 900", net: "56 829,27", href: "/modele/baw-mini-truck" },
 ];
 
 /**
@@ -445,7 +445,7 @@ export const models = [
     category: "SUV terenowy 4x4",
     fuel: "Diesel",
     priceFrom: 174500,
-    image: `${U}/2025/10/212-black.png`,
+    image: "/gallery/212/kolor-czarny.webp",
     intro:
       "Terenowy SUV z napędem 4WD, blokadami dyferencjałów i turbodieslem 2.0 o mocy 170 KM. Brodzi do 850 mm, podjeżdża pod 100% nachylenia i zachowuje komfort na co dzień.",
     highlights: [

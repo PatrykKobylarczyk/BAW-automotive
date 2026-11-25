@@ -60,6 +60,15 @@ export const pages = {
     changeFrequency: "monthly",
     priority: 0.9,
   },
+  "212": {
+    path: "/212",
+    label: "212",
+    title: "212 T01 — terenowy SUV 4x4 od 1965 roku",
+    description:
+      "212 T01: rama, sztywne mosty, reduktor i trzy blokady dyferencjałów. Turbodiesel 170 KM, brodzenie do 850 mm. Od 174 500 zł brutto. Umów jazdę próbną.",
+    changeFrequency: "monthly",
+    priority: 0.9,
+  },
   "baw-light-truck": {
     path: "/modele/baw-light-truck",
     label: "BAW Light Truck",
