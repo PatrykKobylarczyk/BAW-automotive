@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { INTRO_DONE_EVENT, introPlaying } from "@/lib/intro";
 
-/** Logo musi się narysować i wypełnić, zanim ekran zniknie (liczone od startu nawigacji). */
-const MIN_MS = 1850;
+/** Ile pełne, czerwone logo zostaje na ekranie po skończeniu rysowania, zanim ekran zacznie znikać. */
+const HOLD_MS = 600;
 /** Najdłużej czekamy na film. Po tym czasie ekran znika, nawet jeśli film jeszcze się ładuje. */
 const MAX_MS = 6000;
 
@@ -22,19 +22,35 @@ function videoReady(video: HTMLVideoElement | null) {
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, Math.max(0, ms)));
 
 /**
- * Steruje końcem ekranu startowego: czeka, aż logo się narysuje ORAZ film w Hero (video[data-intro-wait]) będzie
- * gotowy, ale nie dłużej niż MAX_MS. Potem przełącza html[data-intro] na "out" (CSS robi wyjście) i wysyła
+ * Koniec rysowania logo, liczony z zegara samych animacji CSS (kontur, potem wypełnienie). Nie liczymy od startu
+ * nawigacji: na prawdziwym łączu animacja rusza dopiero po pobraniu HTML i CSS, więc stały czas od wejścia
+ * na stronę ucinał rysowanie.
+ */
+function logoDrawn(root: HTMLElement) {
+  const fills = root
+    .getAnimations({ subtree: true })
+    .filter((a) => a instanceof CSSAnimation && a.animationName === "baw-intro-fill");
+  if (!fills.length) return wait(2600);
+  return Promise.all(fills.map((a) => a.finished.catch(() => undefined))).then(() => undefined);
+}
+
+/**
+ * Steruje końcem ekranu startowego: czeka, aż logo się narysuje do końca ORAZ film w Hero (video[data-intro-wait])
+ * będzie gotowy. Na film czeka najwyżej MAX_MS, rysowania logo nie skraca nigdy. Potem przełącza html[data-intro] na "out" (CSS robi wyjście) i wysyła
  * INTRO_DONE_EVENT, na który czekają animacje tekstu w Hero.
  */
 export default function IntroController() {
   useEffect(() => {
     if (!introPlaying()) return;
+    const root = document.getElementById("baw-intro");
     const video = document.querySelector<HTMLVideoElement>("video[data-intro-wait]");
     let cancelled = false;
     const now = performance.now();
-    Promise.race([
-      Promise.all([wait(MIN_MS - now), videoReady(video)]),
-      wait(MAX_MS - now),
+    Promise.all([
+      // Logo zawsze rysuje się do końca i chwilę stoi pełne.
+      (root ? logoDrawn(root) : Promise.resolve()).then(() => wait(HOLD_MS)),
+      // Na film czekamy najwyżej do MAX_MS od wejścia na stronę.
+      Promise.race([videoReady(video), wait(MAX_MS - now)]),
     ]).then(() => {
       if (cancelled) return;
       // Film grał już pod ekranem; puszczamy go od początku, żeby ujęcie zaczynało się razem z odsłonięciem.
