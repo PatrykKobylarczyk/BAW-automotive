@@ -64,10 +64,10 @@ export const paints212 = [
 ];
 
 export const offroadSpecs = [
-  { value: "2.0 T", label: "GDI — turbo z wtryskiem bezpośrednim" },
-  { value: "659 mm", label: "maksymalna głębokość brodzenia" },
-  { value: "80%", label: "maksymalne nachylenie podjazdu" },
-  { value: "40,3°", label: "kąt natarcia (zejścia 35,5°)" },
+  { value: "170 KM", label: "turbodiesel 2.0, 415 Nm" },
+  { value: "850 mm", label: "maksymalna głębokość brodzenia" },
+  { value: "100%", label: "maksymalne nachylenie podjazdu" },
+  { value: "40°", label: "kąt natarcia (zejścia 36°)" },
 ];
 
 export const offroadFeatures = [
@@ -126,7 +126,7 @@ export const lightTruck = {
   specs: [
     { value: '7"', label: "wielofunkcyjny ekran dotykowy" },
     { value: "LCD", label: "elektroniczny panel wskaźników" },
-    { value: "2 typy", label: "konstrukcja frameless lub on-frame" },
+    { value: "1785 kg", label: "ładowność, konstrukcja na ramie" },
     { value: "Tarcze", label: "przednie hamulce tarczowe, tylne bębnowe" },
   ],
 };
@@ -201,12 +201,12 @@ export const lineupSpecs: Record<(typeof lineup)[number]["group"], { value: stri
   "baw-212": [
     { value: "4WD", label: "z reduktorem i blokadami" },
     { value: "415 Nm", label: "moment obrotowy" },
-    { value: "659 mm", label: "głębokość brodzenia" },
+    { value: "850 mm", label: "głębokość brodzenia" },
   ],
   "baw-light-truck": [
-    { value: "2500 kg", label: "ładowności (do)" },
-    { value: "106 kW", label: "moc (do)" },
-    { value: "6 m", label: "długości (do)" },
+    { value: "1785 kg", label: "ładowności" },
+    { value: "117 KM", label: "silnik benzynowy 1.6" },
+    { value: "3,7 m", label: "długość skrzyni" },
   ],
   "baw-mini-truck": [
     { value: "100% EV", label: "zero emisji w mieście" },
@@ -240,15 +240,25 @@ export const models = [
     priceFrom: 174500,
     image: `${U}/2025/10/212-black.png`,
     intro:
-      "Terenowy SUV z napędem 4WD, blokadami dyferencjałów i silnikiem 2.0 T GDI. Brodzi do 659 mm, podjeżdża pod 80% nachylenia i zachowuje komfort na co dzień.",
-    highlights: [...offroadFeatures, "Silnik 2.0 T GDI z turbodoładowaniem i wtryskiem bezpośrednim", "Kąt natarcia 40,3°, kąt zejścia 35,5°"],
+      "Terenowy SUV z napędem 4WD, blokadami dyferencjałów i turbodieslem 2.0 o mocy 170 KM. Brodzi do 850 mm, podjeżdża pod 100% nachylenia i zachowuje komfort na co dzień.",
+    highlights: [
+      ...offroadFeatures,
+      "Silnik 2.0 turbodiesel z intercoolerem: 125 kW (170 KM) i 415 Nm",
+      "Kąt natarcia 40°, kąt zejścia 36°, kąt rampowy 23,6°",
+      "Uciąg przyczepy do 2500 kg",
+    ],
     specs: [
       { label: "Długość × szerokość × wysokość", value: "4705 × 1895 × 1936 mm" },
       { label: "Rozstaw osi", value: "2860 mm" },
+      { label: "Rozstaw kół przód / tył", value: "1598 / 1598 mm" },
       { label: "Prześwit", value: "235 mm" },
+      { label: "Kąt natarcia / zejścia", value: "40° / 36°" },
       { label: "Kąt rampowy", value: "23,6°" },
+      { label: "Głębokość brodzenia", value: "850 mm" },
       { label: "Masa własna", value: "2235 kg" },
-      { label: "Moc maksymalna", value: "125 kW" },
+      { label: "Maksymalna masa holowana", value: "2500 kg" },
+      { label: "Silnik", value: "2.0 turbodiesel z intercoolerem" },
+      { label: "Moc maksymalna", value: "125 kW (170 KM)" },
       { label: "Maksymalny moment obrotowy", value: "415 Nm" },
       { label: "Skrzynia biegów", value: "automatyczna ZF, 8 biegów" },
       { label: "Napęd", value: "4WD part-time z reduktorem" },
@@ -269,7 +279,7 @@ export const models = [
       },
       {
         q: "Jaka jest głębokość brodzenia BAW 212?",
-        a: "Maksymalna głębokość brodzenia BAW 212 wynosi 659 mm, a maksymalne nachylenie podjazdu to 80%.",
+        a: "Maksymalna głębokość brodzenia BAW 212 wynosi 850 mm, a maksymalne nachylenie podjazdu to 100%.",
       },
       {
         q: "Jakie są wymiary BAW 212 T01?",
@@ -290,29 +300,35 @@ export const models = [
     priceFrom: 89900,
     image: lightTruck.image,
     intro:
-      "Lekki samochód użytkowy nowej generacji, w konstrukcji bezramowej lub z ramą. Przestronna kabina, szerokie pole widzenia i wersja Cargo z zabudową Niewiadów.",
+      "Lekki samochód użytkowy nowej generacji na ramie, z ładownością 1785 kg. Przestronna kabina, szerokie pole widzenia i wersja Cargo z zabudową Niewiadów.",
     highlights: [
-      "Dwa typy konstrukcji: bezramowa (frameless) lub z ramą (on-frame)",
+      "Konstrukcja oparta na ramie, ładowność 1785 kg",
       "Przestronna kabina, wygodne fotele i szerokie pole widzenia",
       '7" wielofunkcyjny ekran dotykowy i elektroniczny panel wskaźników LCD',
       "Przednie hamulce tarczowe, tylne bębnowe",
       "Wersja Light Truck Cargo z zabudową Niewiadów",
     ],
     specs: [
-      { label: "Długość", value: "5585 / 5985 mm" },
-      { label: "Szerokość × wysokość", value: "1880 × 2050 mm" },
-      { label: "Rozstaw osi", value: "3400 / 3600 mm" },
-      { label: "Ładowność", value: "2000 / 2500 kg" },
-      { label: "Masa własna", value: "1595 / 1740 kg" },
-      { label: "Pojemność silnika", value: "1590 / 1962 cm³" },
-      { label: "Moc maksymalna", value: "91 / 106 kW" },
-      { label: "Maksymalny moment obrotowy", value: "161 / 200 Nm" },
-      { label: "Prędkość maksymalna", value: "105 km/h" },
+      { label: "Długość × szerokość × wysokość", value: "5985 × 1880 × 2030 mm" },
+      { label: "Rozstaw osi", value: "3600 mm" },
+      { label: "Prześwit", value: "170 mm" },
+      { label: "Ładowność", value: "1785 kg" },
+      { label: "Dopuszczalna masa całkowita", value: "3495 kg" },
+      { label: "Masa własna", value: "1710 kg" },
+      { label: "Silnik", value: "benzynowy, 1590 cm³, wolnossący" },
+      { label: "Moc maksymalna", value: "86 kW (117 KM)" },
+      { label: "Maksymalny moment obrotowy", value: "156 Nm" },
+      { label: "Prędkość maksymalna", value: "100 km/h" },
+      { label: "Średnie zużycie paliwa", value: "8,1 l/100 km" },
+      { label: "Zbiornik paliwa", value: "50 l" },
+      { label: "Norma emisji", value: "Euro 6 EA" },
       { label: "Skrzynia biegów", value: "manualna, 5 biegów" },
       { label: "Napęd", value: "na tylną oś" },
-      { label: "Zawieszenie tylne", value: "resory piórowe" },
+      { label: "Zawieszenie przód i tył", value: "zależne, na resorach piórowych" },
       { label: "Opony", value: "185 R14 LT" },
-      { label: "Zabudowa Cargo (Niewiadów)", value: "kontener 3,6 × 1,8 m" },
+      { label: "Skrzynia otwarta (dł. × szer. × wys.)", value: "3700 × 1770 × 395 mm" },
+      { label: "Skrzynia wywrotki (dł. × szer. × wys.)", value: "3730 × 1850 × 400 mm" },
+      { label: "Kontener Niewiadów (dł. × szer. × wys.)", value: "3600 × 1800 × 1800 mm" },
     ],
     options: ["Zabudowa kontenerowa Niewiadów (wersja Cargo)", "Zabudowa furgon"],
     faq: [
@@ -322,11 +338,11 @@ export const models = [
       },
       {
         q: "Jakim paliwem jest napędzany BAW Light Truck?",
-        a: "BAW Light Truck ma silnik benzynowy o pojemności 1590 lub 1962 cm³ i mocy 91 lub 106 kW, w zależności od wersji. Napęd trafia na tylną oś przez 5-biegową skrzynię manualną.",
+        a: "BAW Light Truck ma wolnossący silnik benzynowy o pojemności 1590 cm³, mocy 86 kW (117 KM) i momencie 156 Nm. Napęd trafia na tylną oś przez 5-biegową skrzynię manualną, a średnie zużycie paliwa to 8,1 l/100 km.",
       },
       {
         q: "Jaka jest ładowność BAW Light Truck?",
-        a: "W zależności od wersji BAW Light Truck przewozi od 2000 do 2500 kg ładunku. Wersje różnią się długością (5585 lub 5985 mm) i rozstawem osi.",
+        a: "BAW Light Truck ma ładowność 1785 kg przy dopuszczalnej masie całkowitej 3495 kg. Ma 5985 mm długości i 3600 mm rozstawu osi, a skrzynia ładunkowa ma 3700 × 1770 mm.",
       },
       {
         q: "Czym różni się Light Truck od Light Truck Cargo?",

@@ -41,7 +41,7 @@ export default function OffroadReveal() {
             </motion.span>
           </h2>
           <motion.p style={{ opacity: subOpacity, y: subY }} className="mt-8 text-lg text-white/80 md:text-xl">
-            BAW 212 Off-Road · 2.0 T GDI · napęd 4WD z blokadami dyferencjałów
+            BAW 212 Off-Road · 2.0 turbodiesel · napęd 4WD z blokadami dyferencjałów
           </motion.p>
         </motion.div>
       </div>

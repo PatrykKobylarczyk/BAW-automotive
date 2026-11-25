@@ -47,7 +47,7 @@ export const pages = {
     label: "BAW 212 T01",
     title: "BAW 212 T01 — terenowy SUV 4x4 od 174 500 zł",
     description:
-      "BAW 212 T01: napęd 4WD, blokady dyferencjałów, silnik 2.0 T GDI i brodzenie do 659 mm. Cena od 174 500 zł brutto. Umów jazdę próbną u importera.",
+      "BAW 212 T01: napęd 4WD, blokady dyferencjałów, turbodiesel 2.0 170 KM i brodzenie do 850 mm. Cena od 174 500 zł brutto. Umów jazdę próbną u importera.",
     changeFrequency: "monthly",
     priority: 0.9,
   },
