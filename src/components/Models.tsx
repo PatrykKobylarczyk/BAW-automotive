@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import { colors212, lightTruck, miniTruckVersions, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
 import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
+import SwipeStage, { useSwipeIndex } from "./SwipeStage";
 
 const Car3D = dynamic(() => import("./Car3D"), { ssr: false });
 
@@ -106,13 +107,14 @@ const modelGrid = (as: "h1" | "h2") => (as === "h1" ? "items-start" : "items-cen
 export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
   const ref = useRef<HTMLElement>(null);
   const [mode, setMode] = useState<"photo" | "3d">("photo");
-  const [photoIdx, setPhotoIdx] = useState(0);
+  const photo = useSwipeIndex(colors212.length);
+  const photoIdx = photo.index;
   const [paintIdx, setPaintIdx] = useState(0);
   const [ready, setReady] = useState(false);
   const is3d = mode === "3d";
   const swatches = is3d ? paints212 : colors212;
   const active = is3d ? paintIdx : photoIdx;
-  const setActive = is3d ? setPaintIdx : setPhotoIdx;
+  const setActive = (i: number) => (is3d ? setPaintIdx(i) : photo.go(i));
   const wordX = useParallax(ref, 160);
   // The car only drifts down from its place, never up into the view switch above it
   const { scrollYProgress: sectionProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
@@ -177,16 +179,28 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
           <div ref={carBox} className="relative aspect-[4/3]">
             <div className="absolute top-[62%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 blur-[70px]" />
             <motion.div style={{ y: carY, x: carX }} className="absolute inset-0">
-              {/* Photo view (default); stays visible until the 3D model has loaded */}
-              <AnimatePresence mode="wait">
-                {!(is3d && ready) && (
+              {/* Photo view (default): swipe or drag through the colours */}
+              {!is3d && (
+                <SwipeStage
+                  count={colors212.length}
+                  index={photoIdx}
+                  dir={photo.dir}
+                  onChange={photo.go}
+                  label="Kolory BAW 212"
+                  itemLabel={(i) => colors212[i].name}
+                  render={(i) => <CroppedCar photo={colors212[i]} />}
+                />
+              )}
+              {/* Stays visible, dimmed, until the 3D model has loaded */}
+              <AnimatePresence>
+                {is3d && !ready && (
                   <motion.div
-                    key={is3d ? "loading" : photoIdx}
-                    initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
-                    animate={{ opacity: is3d ? 0.35 : 1, x: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, x: is3d ? 0 : -60, filter: "blur(8px)" }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0"
+                    key="loading"
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 0.35 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="pointer-events-none absolute inset-0"
                   >
                     <CroppedCar photo={colors212[photoIdx]} />
                   </motion.div>
@@ -284,7 +298,8 @@ export function Offroad212({ headingAs = "h2", detailsHref }: SectionProps) {
 export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const intro = useRef<HTMLElement>(null);
   const photoY = useParallax(intro, 40);
-  const [miniVersion, setMiniVersion] = useState(0);
+  const mini = useSwipeIndex(miniTruckVersions.length);
+  const miniVersion = mini.index;
 
   return (
     <>
@@ -325,31 +340,32 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
                 Elektryczny
               </div>
               <motion.div style={{ y: photoY }} className="absolute inset-0">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={miniVersion}
-                    initial={{ opacity: 0, scale: 0.94 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.04 }}
-                    transition={{ duration: 0.45 }}
-                    className="absolute inset-[6%]"
-                  >
+                <SwipeStage
+                  count={miniTruckVersions.length}
+                  index={miniVersion}
+                  dir={mini.dir}
+                  onChange={mini.go}
+                  label="Wersje BAW Mini Truck EV"
+                  itemLabel={(i) => miniTruckVersions[i].label}
+                  slideClassName="absolute inset-[6%]"
+                  render={(i) => (
                     <Image
-                      src={miniTruckVersions[miniVersion].src}
-                      alt={`BAW Mini Truck EV — ${miniTruckVersions[miniVersion].label}`}
+                      src={miniTruckVersions[i].src}
+                      alt={`BAW Mini Truck EV — ${miniTruckVersions[i].label}`}
                       fill
                       sizes="(max-width:1024px) 100vw, 50vw"
+                      draggable={false}
                       className="object-contain"
                     />
-                  </motion.div>
-                </AnimatePresence>
+                  )}
+                />
               </motion.div>
             </div>
             <div className="mt-6 flex justify-center gap-3">
               {miniTruckVersions.map((v, i) => (
                 <button
                   key={v.src}
-                  onClick={() => setMiniVersion(i)}
+                  onClick={() => mini.go(i)}
                   className={`rounded-full border px-5 py-2 text-sm font-semibold transition ${
                     miniVersion === i ? "border-brand bg-brand" : "border-white/15 text-white/75 hover:border-white/40"
                   }`}
@@ -367,7 +383,7 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
 
 export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const ref = useRef<HTMLElement>(null);
-  const [img, setImg] = useState(lightTruck.gallery[0].src);
+  const shot = useSwipeIndex(lightTruck.gallery.length);
   const carY = useParallax(ref, 60);
   const wordX = useParallax(ref, -140);
 
@@ -400,29 +416,35 @@ export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
           <div className="relative aspect-[4/3]">
             <div className="absolute top-[60%] left-1/2 h-1/3 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/35 blur-[70px]" />
             <motion.div style={{ y: carY }} className="absolute inset-0">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={img}
-                  initial={{ opacity: 0, scale: 0.94 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.04 }}
-                  transition={{ duration: 0.45 }}
-                  className="absolute inset-0"
-                >
-                  <Image src={img} alt={`BAW Light Truck — ${lightTruck.gallery.find((g) => g.src === img)?.label ?? ""}`} fill sizes="(max-width:1024px) 100vw, 55vw" className="object-contain" />
-                </motion.div>
-              </AnimatePresence>
+              <SwipeStage
+                count={lightTruck.gallery.length}
+                index={shot.index}
+                dir={shot.dir}
+                onChange={shot.go}
+                label="Zdjęcia BAW Light Truck"
+                itemLabel={(i) => lightTruck.gallery[i].label}
+                render={(i) => (
+                  <Image
+                    src={lightTruck.gallery[i].src}
+                    alt={`BAW Light Truck — ${lightTruck.gallery[i].label}`}
+                    fill
+                    sizes="(max-width:1024px) 100vw, 55vw"
+                    draggable={false}
+                    className="object-contain"
+                  />
+                )}
+              />
             </motion.div>
           </div>
           <div className="mt-6 grid grid-cols-6 gap-2">
-            {lightTruck.gallery.map((g) => (
+            {lightTruck.gallery.map((g, i) => (
               <button
                 key={g.src}
-                onClick={() => setImg(g.src)}
+                onClick={() => shot.go(i)}
                 title={g.label}
                 aria-label={`Pokaż: ${g.label}`}
                 className={`relative aspect-[4/3] overflow-hidden rounded-xl border bg-white/[0.03] transition ${
-                  img === g.src ? "border-brand" : "border-white/10 opacity-60 hover:opacity-100"
+                  shot.index === i ? "border-brand" : "border-white/10 opacity-60 hover:opacity-100"
                 }`}
               >
                 <Image src={g.src} alt="" fill sizes="120px" className="object-contain p-1.5" />
