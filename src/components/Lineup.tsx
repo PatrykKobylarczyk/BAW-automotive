@@ -367,11 +367,12 @@ export default function Lineup() {
                 </div>
               ))}
             </dl>
-            <div className="flex flex-wrap items-center gap-5 md:flex-col md:items-start">
-              <MagneticButton href="#kontakt">Zapytaj o ofertę</MagneticButton>
+            {/* Both actions the same width and centred on one axis, so they line up although only one has a fill */}
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1">
+              <MagneticButton href="#kontakt" className="justify-center">Zapytaj o ofertę</MagneticButton>
               <Link
                 href={`/modele/${active.group}`}
-                className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white/80 transition hover:text-white"
+                className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-7 py-[15px] text-[15px] font-semibold text-white/80 transition hover:border-white/40 hover:text-white"
               >
                 Szczegóły modelu
                 <ArrowUpRight className="size-4 text-brand transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
