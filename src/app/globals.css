@@ -13,6 +13,15 @@
   --color-muted: #9aa0ab;
   /* Dealer map: locations marked "Otwarcie wkrótce" */
   --color-soon: #d4a72c;
+  /* 212 landing (/212) */
+  --color-deep: #0b1d15;
+  --color-pine: #12301f;
+  --color-forest: #22543f;
+  --color-forest-2: #2b664d;
+  --color-lime: #c8dc48;
+  --color-lime-2: #dbea6e;
+  --color-bone: #f1f4e8;
+  --color-moss: #92a89a;
   --font-sans: var(--font-inter);
   --font-display: var(--font-archivo);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -184,4 +193,37 @@ html[data-intro="out"] .baw-intro-logo {
   html[data-intro="out"] .baw-intro {
     display: none;
   }
+}
+
+/* ---------- 212 landing (/212): its own world inside the BAW frame ---------- */
+/* Forest green ground, lime "trail" accent, bone-white type. Colours are global tokens (bg-forest, text-lime…),
+   the type and details below apply only inside .t212. */
+.t212 {
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+  background: var(--color-deep);
+  color: var(--color-bone);
+}
+/* Archivo at its widest cut: the chunky, planted look of the 212 wordmark */
+.t212 .font-display {
+  font-stretch: 125%;
+}
+.t212 :is(h1, h2, h3) {
+  text-wrap: balance;
+}
+.t212 ::selection {
+  background: var(--color-lime);
+  color: var(--color-deep);
+}
+.t212 :focus-visible {
+  outline: 2px solid var(--color-lime);
+  outline-offset: 3px;
+}
+.t212 .text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(200 220 72 / 0.18);
+}
+/* Topographic contour lines used as a quiet texture behind sections */
+.t212 .topo {
+  background-image: repeating-radial-gradient(ellipse at 70% 40%, transparent 0 38px, rgb(200 220 72 / 0.06) 38px 39px);
 }

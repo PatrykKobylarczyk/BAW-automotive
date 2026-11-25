@@ -48,8 +48,11 @@ export async function sendLead(_prev: LeadState, form: FormData): Promise<LeadSt
 
   const name = get(FIELDS.name);
   const email = get(FIELDS.email);
-  if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { status: "error", message: "Podaj imię i nazwisko oraz poprawny adres e-mail." };
+  const phone = get(FIELDS.phone);
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  // E-mail or phone: the test drive form on /212 asks for a phone and leaves the e-mail optional
+  if (!name || (email && !emailOk) || (!emailOk && phone.replace(/\D/g, "").length < 9)) {
+    return { status: "error", message: "Podaj imię i nazwisko oraz poprawny adres e-mail lub telefon." };
   }
   if (kind === "dealer" && (!get(FIELDS.company) || !get(FIELDS.phone))) {
     return { status: "error", message: "Podaj nazwę firmy i telefon kontaktowy." };
@@ -89,7 +92,7 @@ export async function sendLead(_prev: LeadState, form: FormData): Promise<LeadSt
     await transport.sendMail({
       from: { name: "Strona BAW Automotive", address: process.env.LEADS_FROM ?? SMTP_USER },
       to: process.env.LEADS_TO ?? company.email,
-      replyTo: { name, address: email },
+      ...(emailOk ? { replyTo: { name, address: email } } : {}),
       subject,
       text,
       html,

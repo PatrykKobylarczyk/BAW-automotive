@@ -32,7 +32,7 @@ export function rememberAttribution() {
   }
 }
 
-function readAttribution(): Record<string, string> {
+export function readAttribution(): Record<string, string> {
   try {
     return JSON.parse(sessionStorage.getItem(KEY) ?? "{}");
   } catch {
