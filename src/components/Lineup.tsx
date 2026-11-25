@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Hand } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { grossOf, lineup, lineupSpecs, models, netOf, priceList, versionOf } from "@/lib/content";
@@ -153,15 +153,18 @@ export default function Lineup() {
   // phone the full lineup would be tiny, so there it keeps a readable size and the stage scrolls sideways instead.
   const mobile = size.w < 768;
   const maxH = mobile ? 230 : Math.min(400, size.h * 0.42);
-  const pad = mobile ? 40 : Math.max(64, size.w - 1216);
+  // Side room on a phone, so the picked vehicle (drawn a little larger) is never cut at the screen edge
+  const pad = mobile ? 72 : Math.max(64, size.w - 1216);
   const sumW = visible.reduce((s, v) => s + (v.box[2] - v.box[0]) * v.scale * (1 + GAP), 0);
   const maxTall = Math.max(...visible.map((v) => (GROUND - v.box[1]) * v.scale));
   const unit = Math.min((size.w - pad) / sumW, maxH / maxTall, 0.6);
   // Never smaller than this: when the vehicles don't fit, the stage scrolls sideways (swipe, drag or arrows)
   const minUnit = mobile ? 0.2 : 0.27;
   const u = Math.max(unit, minUnit);
-  // The stage is as tall as the tallest vehicle on show, so the full lineup leaves no empty band above it
-  const stageH = maxTall * u * 1.1 + 88;
+  // Band under the floor line for the names and prices
+  const floor = mobile ? 88 : 72;
+  // The stage is as tall as the tallest vehicle on show plus air above it for the picked one, which grows and lifts
+  const stageH = maxTall * u * 1.24 + floor + 12;
 
   // Bumped on a click, tap or filter change (not on hover), to bring the picked vehicle to the middle of the stage
   const [centerReq, setCenterReq] = useState(0);
@@ -254,7 +257,7 @@ export default function Lineup() {
       </div>
 
       {/* The stage: full width, vehicles standing on one floor */}
-      <div ref={stage} className="relative mt-6 md:mt-10">
+      <div ref={stage} className="relative mt-8 md:mt-10">
         <div
           ref={track}
           onScroll={updateEdges}
@@ -279,12 +282,12 @@ export default function Lineup() {
         >
           <motion.div initial={false} animate={{ height: stageH }} transition={{ duration: 0.8, ease }} className="relative w-max min-w-full">
           {/* Floor */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-[64px] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[64px] bg-gradient-to-b from-white/[0.04] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" style={{ bottom: floor }} />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-b from-white/[0.04] to-transparent" style={{ height: floor }} />
 
           <div
-            className="relative mx-auto flex h-full w-max min-w-full items-end justify-center pb-[64px]"
-            style={{ paddingInline: pad / 2 }}
+            className="relative mx-auto flex h-full w-max min-w-full items-end justify-center"
+            style={{ paddingInline: pad / 2, paddingBottom: floor }}
             onDragStart={(e) => e.preventDefault()}
           >
             {lineup.map((v, i) => {
@@ -394,11 +397,23 @@ export default function Lineup() {
             </button>
           </div>
         ))}
+        {/* Short hint with arrows that show which way there is more to see */}
         {(edges.left || edges.right) && (
-          <p className="mt-1 px-5 text-center text-xs text-white/40">
-            <span className="md:hidden">Przesuń palcem po gamie. Dotknij auta, aby zobaczyć cenę, i jeszcze raz, aby je otworzyć</span>
-            <span className="hidden md:inline">Przeciągnij albo użyj strzałek, aby zobaczyć całą gamę. Kliknij auto, aby otworzyć jego stronę</span>
-          </p>
+          <div className="mt-5 flex justify-center px-5 md:mt-4">
+            <p className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.05] py-2 pr-3 pl-2 text-[13px] font-medium text-white/85 backdrop-blur-md">
+              <ChevronLeft className={`size-4 transition-opacity ${edges.left ? "text-brand opacity-100" : "opacity-25"}`} />
+              <Hand className="size-4 text-brand md:hidden" />
+              <span className="md:hidden">Przesuń · dotknij auta</span>
+              <span className="hidden md:inline">Przeciągnij · kliknij auto</span>
+              <motion.span
+                animate={edges.right && !reduceMotion ? { x: [0, 4, 0] } : { x: 0 }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                className="flex"
+              >
+                <ChevronRight className={`size-4 transition-opacity ${edges.right ? "text-brand opacity-100" : "opacity-25"}`} />
+              </motion.span>
+            </p>
+          </div>
         )}
       </div>
 
