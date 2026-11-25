@@ -15,6 +15,7 @@ npm run build    # build produkcyjny
 | `/` | strona główna |
 | `/modele` | przegląd gamy |
 | `/modele/baw-212`, `/modele/baw-mini-truck`, `/modele/baw-light-truck` | strona modelu: sekcja modelu, cechy, FAQ, inne modele, formularz |
+| `/212` | landing marki 212 (T01): własna, zielona identyfikacja w ramie strony BAW; komponenty `src/components/t212`, treści `src/lib/content212.ts` |
 | `/cennik` | karty cen + tabela brutto/netto + FAQ |
 | `/o-marce`, `/zostan-dealerem`, `/serwis`, `/kontakt`, `/polityka-prywatnosci` | strony informacyjne |
 
@@ -38,7 +39,7 @@ Mail zawiera dane z formularza oraz źródło: podstronę, stronę wejścia, ref
 
 ## Przełączenie domeny bawautomotive.pl
 
-1. Skopiować zdjęcia i wideo z `wp-content/uploads` do `public/` i podmienić adresy w `content.ts` (po wyłączeniu WordPressa obecne linki przestaną działać).
+1. ~~Skopiować zdjęcia i wideo z WordPressa~~ — zrobione: `public/media`, `public/gallery/212/kolor-*`, `public/gallery/mini-truck/plener`. Film w hero ma tylko 854×480; podmienić `public/media/hero-212.mp4`, gdy będzie wersja 1080p/4K.
 2. Ustawić zmienne SMTP i `NEXT_PUBLIC_SITE_URL=https://bawautomotive.pl`, wysłać testowe zapytanie.
 3. Podpiąć domenę w Vercelu (rekordy DNS), sprawdzić przekierowania starych adresów.
 4. W Google Search Console zgłosić `https://bawautomotive.pl/sitemap.xml` i obserwować raport „Strony” przez 2–4 tygodnie.
@@ -54,6 +55,5 @@ Mail zawiera dane z formularza oraz źródło: podstronę, stronę wejścia, ref
 
 ## Przed wdrożeniem
 
-- Zdjęcia i wideo są pobierane bezpośrednio z bawautomotive.pl. Skopiować je do `public/` i podmienić ścieżki w `content.ts`, potem usunąć `remotePatterns` z `next.config.ts`.
 - Formularz kontaktowy nie wysyła danych — podpiąć np. Server Action + Resend/SMTP.
 - Zdjęcie `212-t3.png` ma tylko 1600×600 px — na pełnym ekranie przyda się wersja w wyższej rozdzielczości.
