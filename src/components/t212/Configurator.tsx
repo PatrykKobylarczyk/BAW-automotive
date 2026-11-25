@@ -3,12 +3,80 @@
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
 import { Box, ImageIcon, Loader2, Rotate3d } from "lucide-react";
-import { useState } from "react";
+import { useState, type SyntheticEvent } from "react";
 import { colors212, paints212, price } from "@/lib/content212";
 import Image from "next/image";
 import { Eyebrow, MagneticButton, Reveal, SplitText, Wordmark, ease } from "./ui";
 
 const Car3D = dynamic(() => import("@/components/Car3D"), { ssr: false });
+
+/** Where the car sits inside a photo, as fractions of the image, plus the aspect ratio of that box. */
+type Crop = { x: number; y: number; w: number; h: number; aspect: number };
+
+/** Finds the car's bounding box by comparing pixels against the photo's corner (transparent or flat background). */
+function measureCar(img: HTMLImageElement): Crop | null {
+  try {
+    const W = 240;
+    const H = Math.max(1, Math.round((W * img.naturalHeight) / img.naturalWidth));
+    const ctx = Object.assign(document.createElement("canvas"), { width: W, height: H }).getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(img, 0, 0, W, H);
+    const d = ctx.getImageData(0, 0, W, H).data;
+    const [r0, g0, b0, a0] = [d[0], d[1], d[2], d[3]];
+    let x1 = W, y1 = H, x2 = -1, y2 = -1;
+    for (let y = 0; y < H; y++)
+      for (let x = 0; x < W; x++) {
+        const i = (y * W + x) * 4;
+        const solid = a0 < 128 ? d[i + 3] > 40 : Math.abs(d[i] - r0) + Math.abs(d[i + 1] - g0) + Math.abs(d[i + 2] - b0) > 48;
+        if (!solid) continue;
+        x1 = Math.min(x1, x); x2 = Math.max(x2, x); y1 = Math.min(y1, y); y2 = Math.max(y2, y);
+      }
+    if (x2 < x1 || y2 < y1) return null;
+    const c = { x: x1 / W, y: y1 / H, w: (x2 - x1 + 1) / W, h: (y2 - y1 + 1) / H };
+    return { ...c, aspect: (c.w * img.naturalWidth) / (c.h * img.naturalHeight) };
+  } catch {
+    return null; // cross-origin image without CORS: show it as is
+  }
+}
+
+/**
+ * Colour photo scaled so the car itself fills the frame. The source photos have different
+ * canvas sizes and margins, so fitting the whole image made some cars look smaller than others.
+ */
+function CarPhoto({ color }: { color: (typeof colors212)[number] }) {
+  const [crop, setCrop] = useState<Crop | null | undefined>(undefined);
+  const onLoad = (e: SyntheticEvent<HTMLImageElement>) => setCrop(measureCar(e.currentTarget));
+  const photo = (className: string) => (
+    <Image
+      src={color.src}
+      alt={`212 T01, kolor ${color.name}`}
+      fill
+      sizes="(max-width:1024px) 100vw, 80vw"
+      quality={90}
+      onLoad={onLoad}
+      className={className}
+    />
+  );
+
+  if (!crop)
+    return <div className={`absolute inset-0 ${crop === undefined ? "opacity-0" : ""}`}>{photo("object-contain drop-shadow-[0_40px_40px_rgba(0,0,0,.45)]")}</div>;
+
+  return (
+    <div
+      className="relative drop-shadow-[0_40px_40px_rgba(0,0,0,.45)]"
+      style={{ aspectRatio: crop.aspect, width: `min(92cqw, ${crop.aspect} * 92cqh)` }}
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className="absolute"
+          style={{ left: `${(-crop.x / crop.w) * 100}%`, top: `${(-crop.y / crop.h) * 100}%`, width: `${100 / crop.w}%`, height: `${100 / crop.h}%` }}
+        >
+          {photo("object-fill")}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Configurator() {
   const [mode, setMode] = useState<"photo" | "3d">("photo");
@@ -58,16 +126,9 @@ export default function Configurator() {
                 animate={{ opacity: is3d ? 0.35 : 1, x: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, x: is3d ? 0 : -80, filter: "blur(8px)" }}
                 transition={{ duration: 0.55, ease }}
-                className="absolute inset-[4%]"
+                className="absolute inset-[4%] grid place-items-center [container-type:size]"
               >
-                <Image
-                  src={colors212[photoIdx].src}
-                  alt={`212 T01, kolor ${colors212[photoIdx].name}`}
-                  fill
-                  sizes="(max-width:1024px) 100vw, 80vw"
-                  className="object-contain drop-shadow-[0_40px_40px_rgba(0,0,0,.45)]"
-                  quality={90}
-                />
+                <CarPhoto color={colors212[photoIdx]} />
               </motion.div>
             )}
           </AnimatePresence>
