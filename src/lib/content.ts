@@ -152,14 +152,15 @@ export const lightTruckGallery: GalleryImage[] = [
 // Our own studio photos (the "auta" folder), cut out of the white background: public/cutouts
 export const lightTruck = {
   image: "/cutouts/light-truck/skrzynia.webp",
-  // One photo per body type, switched with the thumbnails on the Light Truck section
+  // Cut-out photos at the top of the Light Truck section, swiped through; `body` names the body type's button
+  // and its filter in the model page gallery (lightTruckGallery tags)
   gallery: [
-    { src: "/cutouts/light-truck/skrzynia.webp", label: "Skrzynia" },
-    { src: "/cutouts/light-truck/skrzynia-tyl.webp", label: "Skrzynia, tył" },
-    { src: "/cutouts/light-truck/komunalna.webp", label: "Skrzynia komunalna" },
-    { src: "/cutouts/light-truck/kontener.webp", label: "Kontener" },
-    { src: "/cutouts/light-truck/wywrotka-jednostronna.webp", label: "Wywrotka jednostronna" },
-    { src: "/cutouts/light-truck/wywrotka-trojstronna.webp", label: "Wywrotka trójstronna" },
+    { src: "/cutouts/light-truck/skrzynia.webp", label: "Skrzynia", body: "Skrzynia" },
+    { src: "/cutouts/light-truck/skrzynia-tyl.webp", label: "Skrzynia, tył", body: "Skrzynia" },
+    { src: "/cutouts/light-truck/komunalna.webp", label: "Skrzynia komunalna", body: "Komunalna" },
+    { src: "/cutouts/light-truck/kontener.webp", label: "Kontener", body: "Kontener" },
+    { src: "/cutouts/light-truck/wywrotka-jednostronna.webp", label: "Wywrotka jednostronna", body: "Wywrotka" },
+    { src: "/cutouts/light-truck/wywrotka-trojstronna.webp", label: "Wywrotka trójstronna", body: "Wywrotka" },
   ],
   specs: [
     { value: '7"', label: "wielofunkcyjny ekran dotykowy" },

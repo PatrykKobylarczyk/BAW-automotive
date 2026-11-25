@@ -4,12 +4,14 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import Link from "next/link";
-import { ArrowUpRight, Box, Check, ImageIcon, Loader2, Rotate3d } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Box, Check, ImageIcon, Images, Loader2, Rotate3d } from "lucide-react";
+import { useLenis } from "lenis/react";
 import { useRef, useState } from "react";
-import { colors212, lightTruck, miniTruckVersions, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
+import { colors212, lightTruck, lightTruckGallery, miniTruckVersions, offroadFeatures, offroadSpecs, paints212 } from "@/lib/content";
 import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 import SwipeStage, { useSwipeIndex } from "./SwipeStage";
+import { GALLERY_EVENT } from "./ModelGallery";
 
 const Car3D = dynamic(() => import("./Car3D"), { ssr: false });
 
@@ -384,6 +386,16 @@ export function MiniTruck({ headingAs = "h2", detailsHref }: SectionProps) {
 export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
   const ref = useRef<HTMLElement>(null);
   const shot = useSwipeIndex(lightTruck.gallery.length);
+  const lenis = useLenis();
+  const bodies = [...new Set(lightTruck.gallery.map((g) => g.body))];
+  const current = lightTruck.gallery[shot.index];
+  const photoCount = (body: string) => lightTruckGallery.filter((g) => typeof g !== "string" && g.tag === body).length;
+  // On the model's own page: scroll to the photo gallery below, showing only this body type
+  const showPhotos = (body: string) => {
+    window.dispatchEvent(new CustomEvent(GALLERY_EVENT, { detail: body }));
+    if (lenis) lenis.scrollTo("#galeria", { offset: -40 });
+    else document.getElementById("galeria")?.scrollIntoView({ behavior: "smooth" });
+  };
   const carY = useParallax(ref, 60);
   const wordX = useParallax(ref, -140);
 
@@ -436,20 +448,34 @@ export function LightTruck({ headingAs = "h2", detailsHref }: SectionProps) {
               />
             </motion.div>
           </div>
-          <div className="mt-6 grid grid-cols-6 gap-2">
-            {lightTruck.gallery.map((g, i) => (
+          {/* Body types, like Box / Cargo on the Mini Truck; the photo above can also be swiped */}
+          <div role="group" aria-label="Zabudowy" className="mt-6 flex flex-wrap justify-center gap-2">
+            {bodies.map((b) => (
               <button
-                key={g.src}
-                onClick={() => shot.go(i)}
-                title={g.label}
-                aria-label={`Pokaż: ${g.label}`}
-                className={`relative aspect-[4/3] overflow-hidden rounded-xl border bg-white/[0.03] transition ${
-                  shot.index === i ? "border-brand" : "border-white/10 opacity-60 hover:opacity-100"
+                key={b}
+                onClick={() => shot.go(lightTruck.gallery.findIndex((g) => g.body === b))}
+                aria-pressed={current.body === b}
+                className={`rounded-full border px-5 py-2 text-sm font-semibold transition ${
+                  current.body === b ? "border-brand bg-brand" : "border-white/15 text-white/75 hover:border-white/40"
                 }`}
               >
-                <Image src={g.src} alt="" fill sizes="120px" className="object-contain p-1.5" />
+                {b}
               </button>
             ))}
+          </div>
+          <div className="mt-4 flex min-h-6 flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+            <span className="text-white/60">
+              {current.label} · {shot.index + 1}/{lightTruck.gallery.length}
+            </span>
+            {headingAs === "h1" && (
+              <button
+                onClick={() => showPhotos(current.body)}
+                className="group inline-flex items-center gap-2 font-semibold text-white/85 transition hover:text-white"
+              >
+                <Images className="size-4 text-brand" /> Zobacz zdjęcia: {current.body} ({photoCount(current.body)})
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>
