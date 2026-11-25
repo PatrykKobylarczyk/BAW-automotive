@@ -3,11 +3,14 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { media } from "@/lib/content";
+import { introDelay } from "@/lib/intro";
 import { pageTitle, pageTop } from "@/lib/styles";
 import { Eyebrow, MagneticButton, SplitText } from "./ui";
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
+  // Gdy gra ekran startowy z logo, tekst Hero wchodzi dopiero, gdy ekran znika.
+  const d = introDelay();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "35%"]);
   const videoScale = useTransform(scrollYProgress, [0, 1], [1.05, 1.25]);
@@ -36,20 +39,20 @@ export default function Hero() {
         style={{ y: contentY, opacity: contentOpacity }}
         className={`relative z-10 mx-auto w-full max-w-[1280px] px-5 pb-24 md:px-8 md:pb-32 ${pageTop}`}
       >
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1 }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: d + 0.2, duration: 1 }}>
           <Eyebrow light>Oficjalny importer BAW w Polsce</Eyebrow>
         </motion.div>
         <SplitText
           as="h1"
           animateOnMount
-          delay={0.35}
+          delay={d + 0.35}
           text="Moc w każdej klasie. Niezawodność w każdej trasie."
           className={`mt-5 mb-8 max-w-[17ch] ${pageTitle}`}
         />
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ delay: d + 1.1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10 max-w-[52ch] text-[clamp(16px,1.35vw,19px)] text-white/80"
         >
           Globalna marka obecna na ponad 60 rynkach — teraz także w Polsce. Od terenowego 212 po elektryczne Mini
@@ -58,7 +61,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ delay: d + 1.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-wrap gap-4"
         >
           <MagneticButton href="/modele">Poznaj modele</MagneticButton>
@@ -71,7 +74,7 @@ export default function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
+        transition={{ delay: d + 1.8 }}
         className="absolute right-8 bottom-10 z-10 hidden flex-col items-center gap-4 md:flex"
       >
         <span className="text-[11px] tracking-[0.3em] text-muted uppercase [writing-mode:vertical-rl]">Przewiń</span>
