@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Contact, Pricing } from "@/components/Closing";
 import { Breadcrumbs, Faq, Section } from "@/components/PageParts";
-import { grossOf, netOf, priceList } from "@/lib/content";
+import { grossOf, netOf, priceList, versionOf } from "@/lib/content";
 import { crumbsOverlay } from "@/lib/styles";
 import { pageMetadata } from "@/lib/seo";
 
@@ -48,8 +48,8 @@ export default function Page() {
               {priceList.map((p) => (
                 <tr key={p.model + p.version}>
                   <th scope="row" className="px-6 py-5 font-semibold">
-                    {p.href ? (
-                      <Link href={p.href} className="transition hover:text-brand">
+                    {p.href || versionOf(p) ? (
+                      <Link href={versionOf(p)?.href ?? p.href!} className="transition hover:text-brand">
                         BAW {p.model}
                       </Link>
                     ) : (

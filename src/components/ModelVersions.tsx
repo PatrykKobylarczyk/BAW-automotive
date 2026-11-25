@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, Images, Info } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { useState } from "react";
-import { grossOf, modelVersions, netOf, priceList, zl, type ModelVersion } from "@/lib/content";
+import Link from "next/link";
+import { grossOf, modelVersions, netOf, priceList, versionHref, zl, type ModelVersion } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 import { GALLERY_EVENT } from "./ModelGallery";
 
@@ -150,15 +151,26 @@ export default function ModelVersions({
                 <Price v={v} />
                 <MagneticButton href="#kontakt">Zapytaj o tę wersję</MagneticButton>
               </div>
+              <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
+              {v.slug && (
+                <Link
+                  href={versionHref(model, v)}
+                  className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white transition hover:text-brand"
+                >
+                  Strona wersji {v.name.replace(/^(212 T01|Light Truck|Mini Truck) /, "")}
+                  <ArrowRight className="size-4 text-brand transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              )}
               {v.galleryTag && (
                 <button
                   onClick={() => showPhotos(v.galleryTag!)}
-                  className="group mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-white/80 transition hover:text-white"
+                  className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white/80 transition hover:text-white"
                 >
                   <Images className="size-4 text-brand" /> Zobacz zdjęcia tej wersji
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                 </button>
               )}
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>

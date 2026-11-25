@@ -269,10 +269,18 @@ export const zl = (n: number) =>
  */
 export type ModelVersion = {
   id: string;
+  /** Address of the version's own page, /modele/<model>/<slug>; null for the version the model page itself shows */
+  slug: string | null;
   name: string;
+  /** Eyebrow on the version's page, when it differs from the model's category */
+  category?: string;
   badge: string;
   /** Row in priceList */
   price: { model: string; version: string };
+  /** Other priceList rows this page also covers (the three-way tipper shares the tipper page) */
+  alsoVersions?: string[];
+  /** Preselected topic in the contact form (one of `prices`) */
+  leadModel?: string;
   img?: string;
   /** Tag of this version's photos in the model's gallery */
   galleryTag?: string;
@@ -285,6 +293,8 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
   "baw-212": [
     {
       id: "t01-suv",
+      slug: null,
+      leadModel: "212 T01",
       name: "212 T01 SUV",
       badge: "Diesel · 4x4",
       price: { model: "212 T01", version: "SUV" },
@@ -300,7 +310,10 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
     },
     {
       id: "t01-pickup",
+      slug: "pick-up",
+      leadModel: "212 T01",
       name: "212 T01 Pick-up",
+      category: "Terenowy pick-up",
       badge: "Diesel",
       price: { model: "212 T01", version: "Pick-up" },
       img: "/cutouts/kafelki/212-t01-pickup.webp",
@@ -311,7 +324,9 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
     },
     {
       id: "mavero",
+      slug: "mavero",
       name: "212 Mavero",
+      category: "SUV",
       badge: "Benzyna",
       price: { model: "212 Mavero", version: "SUV" },
       lead: "Benzynowa odmiana 212 w nadwoziu SUV.",
@@ -322,6 +337,8 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
   "baw-light-truck": [
     {
       id: "skrzynia",
+      slug: "skrzynia",
+      leadModel: "Light Truck",
       name: "Light Truck Skrzynia",
       badge: "Benzyna · 1785 kg",
       price: { model: "Light Truck (LT7)", version: "Skrzynia" },
@@ -332,6 +349,8 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
     },
     {
       id: "komunalna",
+      slug: "komunalna",
+      leadModel: "Light Truck",
       name: "Light Truck Komunalna",
       badge: "Benzyna",
       price: { model: "Light Truck (LT7)", version: "Skrzynia komunalna" },
@@ -342,6 +361,8 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
     },
     {
       id: "kontener",
+      slug: "kontener",
+      leadModel: "Light Truck Cargo",
       name: "Light Truck Kontener",
       badge: "Cargo · Niewiadów",
       price: { model: "Light Truck (LT7)", version: "Kontener (Cargo, zabudowa Niewiadów)" },
@@ -352,9 +373,12 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
     },
     {
       id: "wywrotka",
+      slug: "wywrotka",
+      leadModel: "Light Truck",
       name: "Light Truck Wywrotka",
       badge: "Jedno- lub trójstronna",
       price: { model: "Light Truck (LT7)", version: "Wywrotka jednostronna" },
+      alsoVersions: ["Wywrotka trójstronna"],
       img: "/cutouts/kafelki/lt-wywrotka.webp",
       galleryTag: "Wywrotka",
       lead: "Wywrotka jednostronna albo trójstronna, do sypkich materiałów na budowie i w ogrodzie.",
@@ -364,6 +388,8 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
   "baw-mini-truck": [
     {
       id: "box",
+      slug: "box",
+      leadModel: "Mini Truck",
       name: "Mini Truck Box",
       badge: "Elektryczny",
       price: { model: "Mini Truck EV", version: "Box" },
@@ -373,6 +399,8 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
     },
     {
       id: "cargo",
+      slug: "cargo",
+      leadModel: "Mini Truck Cargo",
       name: "Mini Truck Cargo",
       badge: "Elektryczny",
       price: { model: "Mini Truck EV", version: "Cargo" },
@@ -382,6 +410,20 @@ export const modelVersions: Record<"baw-212" | "baw-light-truck" | "baw-mini-tru
     },
   ],
 };
+
+export type VersionModel = keyof typeof modelVersions;
+
+export const versionHref = (model: VersionModel, v: ModelVersion) => (v.slug ? `/modele/${model}/${v.slug}` : `/modele/${model}`);
+
+/** The version page for a priceList row (by its model and version name), if there is one. */
+export function versionOf(row: { model: string; version: string }) {
+  for (const model of Object.keys(modelVersions) as VersionModel[]) {
+    const v = modelVersions[model].find(
+      (x) => x.price.model === row.model && (x.price.version === row.version || x.alsoVersions?.includes(row.version)),
+    );
+    if (v) return { model, v, href: versionHref(model, v) };
+  }
+}
 
 export const company = {
   name: "SERICA trade Sp. z o.o.",

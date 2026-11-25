@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { grossOf, lineup, lineupSpecs, models, netOf, priceList } from "@/lib/content";
+import { grossOf, lineup, lineupSpecs, models, netOf, priceList, versionOf } from "@/lib/content";
 import { Eyebrow, MagneticButton, Reveal, SplitText } from "./ui";
 
 type Group = (typeof lineup)[number]["group"];
@@ -371,7 +371,7 @@ export default function Lineup() {
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1">
               <MagneticButton href="#kontakt" className="justify-center">Zapytaj o ofertę</MagneticButton>
               <Link
-                href={`/modele/${active.group}`}
+                href={versionOf(rowsOf(active)[0])?.href ?? `/modele/${active.group}`}
                 className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-7 py-[15px] text-[15px] font-semibold text-white/80 transition hover:border-white/40 hover:text-white"
               >
                 Szczegóły modelu
