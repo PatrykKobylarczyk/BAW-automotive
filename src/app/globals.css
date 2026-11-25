@@ -78,11 +78,14 @@ body {
   }
 }
 
-/* Ekran startowy z rysującym się logo BAW (LogoIntro). Gra tylko, gdy skrypt w <head> ustawi html[data-intro="play"]. */
+/* Ekran startowy z rysującym się logo BAW (LogoIntro).
+   play: skrypt w <head> włączył intro, logo się rysuje i ekran czeka (na film w Hero, patrz IntroController).
+   out:  IntroController dał sygnał, ekran znika. Awaryjnie, gdyby JS nie ruszył, ekran znika sam po 8 s. */
 .baw-intro {
   display: none;
 }
-html[data-intro="play"] .baw-intro {
+html[data-intro="play"] .baw-intro,
+html[data-intro="out"] .baw-intro {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -92,12 +95,19 @@ html[data-intro="play"] .baw-intro {
   justify-content: center;
   gap: 28px;
   background: var(--color-ink);
-  animation: baw-intro-out 0.55s var(--ease-out-expo) 1.85s forwards;
+}
+html[data-intro="play"] .baw-intro {
+  animation: baw-intro-out 0.55s var(--ease-out-expo) 8s forwards;
+}
+html[data-intro="out"] .baw-intro {
+  animation: baw-intro-exit 0.55s var(--ease-out-expo) forwards;
+}
+html[data-intro="out"] .baw-intro-logo {
+  animation: baw-intro-logo-out 0.55s var(--ease-out-expo) forwards;
 }
 .baw-intro-logo {
   width: min(64vw, 440px);
   overflow: visible;
-  animation: baw-intro-logo-out 0.55s var(--ease-out-expo) 1.85s forwards;
 }
 .baw-intro-logo path {
   fill: var(--color-brand);
@@ -112,11 +122,23 @@ html[data-intro="play"] .baw-intro {
     baw-intro-fill 0.45s ease-out calc(1.15s + var(--i, 0) * 0.06s) forwards;
 }
 .baw-intro-line {
+  position: relative;
+  overflow: hidden;
   height: 1px;
   width: min(64vw, 440px);
-  background: linear-gradient(to right, transparent, rgb(242 243 245 / 0.5), transparent);
+  background: linear-gradient(to right, transparent, rgb(242 243 245 / 0.35), transparent);
   transform: scaleX(0);
   animation: baw-intro-line 1.2s var(--ease-out-expo) 0.4s forwards;
+}
+/* Gdy film jeszcze się ładuje: po linii przesuwa się czerwony błysk, żeby było widać, że strona żyje. */
+.baw-intro-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 30%;
+  background: linear-gradient(to right, transparent, var(--color-brand-hover), transparent);
+  transform: translateX(-100%);
+  animation: baw-intro-scan 1.1s ease-in-out 1.9s infinite;
 }
 @keyframes baw-intro-draw {
   to {
@@ -134,19 +156,32 @@ html[data-intro="play"] .baw-intro {
     transform: scaleX(1);
   }
 }
+@keyframes baw-intro-scan {
+  to {
+    transform: translateX(340%);
+  }
+}
 @keyframes baw-intro-logo-out {
   to {
     transform: scale(1.08);
   }
 }
+/* Dwie identyczne klatki o różnych nazwach: zmiana stanu play → out musi uruchomić animację od nowa. */
 @keyframes baw-intro-out {
   to {
     opacity: 0;
     visibility: hidden;
   }
 }
+@keyframes baw-intro-exit {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  html[data-intro="play"] .baw-intro {
+  html[data-intro="play"] .baw-intro,
+  html[data-intro="out"] .baw-intro {
     display: none;
   }
 }
