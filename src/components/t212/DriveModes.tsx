@@ -97,12 +97,13 @@ export default function DriveModes() {
             transition={{ duration: 1.1, ease }}
             className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_60%,var(--color-forest-2),var(--color-deep)_75%)]"
           >
+            {/* Stills from the film are sandy; shown in greyscale over the green, so the section stays in the 212 palette */}
             <Image
               src={scene.photo}
               alt={`212 T01: ${scene.name}`}
               fill
               sizes="100vw"
-              className="object-cover"
+              className="object-cover opacity-45 grayscale mix-blend-luminosity"
             />
           </motion.div>
         </AnimatePresence>
